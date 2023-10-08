@@ -1,4 +1,4 @@
-import Navbar from "../components/site/Navbar";
+import Navbar from "../components/Navbar/Navbar";
 
 const SiteLayout = ({ children }) => {
     return (

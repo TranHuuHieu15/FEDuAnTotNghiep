@@ -11,7 +11,6 @@ Button.propTypes = {
   color: propTypes.string,
   className: propTypes.string,
   children: propTypes.element,
-  src: propTypes.string,
   outline: propTypes.string
 };
 export default Button;

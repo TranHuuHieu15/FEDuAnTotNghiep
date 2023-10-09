@@ -16,6 +16,6 @@ Radio.prototype = {
     color: propTypes.string,
     icon: propTypes.string,
     label: propTypes.string,
-    children: propTypes.element
+    children: propTypes.element.isRequired
 }
 export default Radio;

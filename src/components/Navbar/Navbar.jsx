@@ -1,5 +1,4 @@
 import {
-  Button,
   IconButton,
   MobileNav,
   Typography,
@@ -7,6 +6,7 @@ import {
 } from "@material-tailwind/react";
 import React from "react";
 import logo from "/src/assets/images/logo.jpg";
+import Button from "../button/Button";
 
 const Navbar = () => {
   const [openNav, setOpenNav] = React.useState(false);
@@ -73,8 +73,11 @@ const Navbar = () => {
           />
         </div>
         <div className="hidden lg:block">{navList}</div>
-        <Button variant="gradient" size="sm" className="hidden lg:inline-block">
-          <span>Login</span>
+        <Button
+          className="hover:bg-gray-300 hover:text-blue-gray-900"
+          outline="outline"
+        >
+          Login
         </Button>
         <IconButton
           variant="text"

@@ -120,8 +120,11 @@ const Navbar = () => {
       <MobileNav open={openNav}>
         <div className="container mx-auto">
           {navList}
-          <Button variant="gradient" size="sm" fullWidth className="mb-2">
-            <span>Buy Now</span>
+          <Button
+            className="hover:bg-gray-300 hover:text-blue-gray-900"
+            outline="outline"
+          >
+            Login
           </Button>
         </div>
       </MobileNav>

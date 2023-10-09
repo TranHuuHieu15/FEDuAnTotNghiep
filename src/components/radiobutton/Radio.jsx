@@ -2,9 +2,9 @@ import React from 'react';
 import { Radio as RadioButton } from "@material-tailwind/react";
 import propTypes from "prop-types";
 
-const Radio = ({ className, name = "type", icon, color, variant, label, children }) => {
+const Radio = ({ className, name, color, label, children }) => {
     return (
-        <RadioButton className={className} name={name} label={label} variant={variant} color={color} icon={icon}>
+        <RadioButton className={className} name={name} label={label} color={color}>
             {children}
         </RadioButton>
     );
@@ -12,10 +12,8 @@ const Radio = ({ className, name = "type", icon, color, variant, label, children
 Radio.prototype = {
     className: propTypes.string,
     name: propTypes.string,
-    variant: propTypes.string,
     color: propTypes.string,
-    icon: propTypes.string,
     label: propTypes.string,
-    children: propTypes.element.isRequired
+    children: propTypes.element
 }
 export default Radio;

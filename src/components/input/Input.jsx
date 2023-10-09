@@ -2,9 +2,9 @@
 import propTypes from "prop-types";
 import { Input as InputTailWind } from "@material-tailwind/react";
 
-const Input = ({ className, name, variant, color, children, icon, error }) => {
+const Input = ({ className, name, variant, color, children, icon }) => {
   return (
-    <InputTailWind className={className} name={name} variant={variant} color={color} icon={icon} error={error}>
+    <InputTailWind className={className} name={name} variant={variant} color={color} icon={icon}>
       {children}
     </InputTailWind>
   );
@@ -15,7 +15,6 @@ Input.propTypes = {
   variant: propTypes.string,
   color: propTypes.string,
   icon: propTypes.node,
-  children: propTypes.element.isRequired,
-  error: propTypes.bool
+  children: propTypes.element
 };
 export default Input;

@@ -1,7 +1,7 @@
 import { Select as Selectbox } from '@material-tailwind/react';
 import propTypes from "prop-types";
 
-const Select = ({ label, children, className = "", color }) => {
+const Select = ({ label, children, className, color }) => {
     return (
         <div className={className}>
             <Selectbox color={color} label={label}>

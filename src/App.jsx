@@ -1,22 +1,19 @@
-
-// import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
+import ContactPage from "./pages/ContactPage";
 import HomePage from "./pages/HomePage";
-// import LoginPage from "./pages/LoginPage";
-// import ContactPage from "./pages/ContactPage";
-import Button from "./components/button/Button";
-
+import SignInPage from "./pages/SignInPage";
+import SignUpPage from "./pages/SignUpPage";
 
 function App() {
   return (
     <>
-      <Button color="red">Button</Button>
-      <HomePage></HomePage>
-      {/* <Routes>
+      <Routes>
         <Route path="/" element={<HomePage></HomePage>}></Route>
         <Route path="/contact" element={<ContactPage></ContactPage>}></Route>
-        <Route path="/login" element={<LoginPage></LoginPage>}></Route>
-      </Routes> */}
+        <Route path="/login" element={<SignInPage></SignInPage>}></Route>
+        <Route path="/signup" element={<SignUpPage></SignUpPage>}></Route>
+      </Routes>
     </>
   );
 }

@@ -13,6 +13,12 @@ module.exports = withMT({
     fontFamily: {
       eculid: ["Euclid Circular A"],
     },
+    backgroundImage: {
+      "image-grid-one": "url('/src/assets/images/hl1.png')",
+      "image-grid-two": "url('/src/assets/images/hl2.png')",
+      "image-grid-three": "url('/src/assets/images/hl3.png')",
+      "image-grid-four": "url('/src/assets/images/hl4.png')",
+    },
   },
   plugins: [],
 });

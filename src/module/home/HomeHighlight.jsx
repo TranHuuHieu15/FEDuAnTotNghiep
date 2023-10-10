@@ -1,14 +1,32 @@
 import Heading from "../../components/heading/Heading";
-import hl1 from "/src/assets/images/hl1.png";
-import hl2 from "/src/assets/images/hl2.png";
-import hl3 from "/src/assets/images/hl3.png";
-import hl4 from "/src/assets/images/hl4.png";
 
 const HomeHighlight = () => {
   return (
-    <div>
+    <>
       <Heading className="my-2 text-center">This Weeks Highlights</Heading>
-    </div>
+      <div className="grid grid-cols-3 text-[#FAFAFA] gap-4 mx-24">
+        <div className="text-center bg-image-grid-one h-[506px] object-cover">
+          <h3 className="mx-12 text-[56px] font-semibold text-center my-44 font-eculid">
+            Exclusive Shoes
+          </h3>
+        </div>
+        <div className="col-span-2 bg-image-grid-two h-[506px] object-cover">
+          <h3 className="mx-28 text-[56px] text-center font-semibold my-44 font-eculid">
+            Exquisite Styles & Collections
+          </h3>
+        </div>
+        <div className="col-span-2 text-center bg-image-grid-three h-[506px] object-cover">
+          <h3 className="mx-56 text-[56px] text-center font-semibold my-48 font-eculid">
+            New Arrivals
+          </h3>
+        </div>
+        <div className="text-center bg-image-grid-four h-[506px] object-cover">
+          <h3 className="mx-14 text-[56px] text-center font-semibold my-40 font-eculid">
+            Exclusive Items
+          </h3>
+        </div>
+      </div>
+    </>
   );
 };
 

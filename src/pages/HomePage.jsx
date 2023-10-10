@@ -1,5 +1,6 @@
 import SiteLayout from "../layout/SiteLayout";
 import HomeBanner from "../module/home/HomeBanner";
+import HomeCard from "../module/home/HomeCard";
 import HomeHighlight from "../module/home/HomeHighlight";
 
 const HomePage = () => {
@@ -8,6 +9,7 @@ const HomePage = () => {
       <SiteLayout>
         <HomeBanner></HomeBanner>
         <HomeHighlight></HomeHighlight>
+        <HomeCard></HomeCard>
       </SiteLayout>
     </>
   );

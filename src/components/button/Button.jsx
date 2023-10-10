@@ -2,11 +2,7 @@ import propTypes from "prop-types";
 import { Button as ButtonTailWind } from "@material-tailwind/react";
 const Button = ({ color = "", className = "w-[120px]", children, outline }) => {
   return (
-    <ButtonTailWind
-      variant={outline}
-      className={className}
-      color={color}
-    >
+    <ButtonTailWind variant={outline} className={className} color={color}>
       {children}
     </ButtonTailWind>
   );
@@ -14,7 +10,7 @@ const Button = ({ color = "", className = "w-[120px]", children, outline }) => {
 Button.propTypes = {
   color: propTypes.string,
   className: propTypes.string,
-  children: propTypes.element,
-  outline: propTypes.string
+  children: propTypes.any,
+  outline: propTypes.string,
 };
 export default Button;

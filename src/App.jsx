@@ -12,6 +12,7 @@ import './App.css'
 import Button from './components/button/Button'
 import Input from './components/input/Input'
 import Radio from './components/radiobutton/Radio'
+import Footer from "./components/footer/footer";
 
 function App() {
   return (
@@ -22,8 +23,11 @@ function App() {
       <Radio color="red" label="hiep" name="type"></Radio>
       <Radio color="red" label="dhf" name="type"></Radio>
 
+
       <Input type="password" className="w-[500px] m-2" size='lg' color="red" label="Fullname"></Input>
+      <Footer></Footer>
     </div>
+
   );
 }
 

@@ -2,7 +2,7 @@ import propTypes from "prop-types";
 const Heading = ({ className = "", children }) => {
   return (
     <h2
-      className={`font-eculid text-[#374151] font-semibold uppercase text-[24px] ${className}`}
+      className={`font-eculid text-[#374151] font-semibold uppercase text-[24px] mt-5 ${className}`}
     >
       {children}
     </h2>
@@ -11,6 +11,6 @@ const Heading = ({ className = "", children }) => {
 
 Heading.propTypes = {
   className: propTypes.string,
-  children: propTypes.element.isRequired,
+  children: propTypes.any,
 };
 export default Heading;

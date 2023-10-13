@@ -3,7 +3,7 @@ import Heading from "../../components/heading/Heading";
 const HomeHighlight = () => {
   return (
     <>
-      <Heading className="my-2 text-center">This Weeks Highlights</Heading>
+      <Heading className="mb-5 text-center">This Weeks Highlights</Heading>
       <div className="grid grid-cols-3 text-[#FAFAFA] gap-4 mx-24">
         <div className="text-center bg-image-grid-one h-[506px] object-cover">
           <h3 className="mx-12 text-[56px] font-semibold text-center my-44 font-eculid">

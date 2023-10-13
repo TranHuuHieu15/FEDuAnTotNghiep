@@ -74,7 +74,7 @@ const Navbar = () => {
         </div>
         <div className="hidden lg:block">{navList}</div>
         <Button
-          className="hover:bg-gray-300 hover:text-blue-gray-900"
+          className="hidden hover:bg-gray-300 hover:text-blue-gray-900 lg:inline-block"
           outline="outline"
         >
           Sign In

@@ -4,7 +4,7 @@ import propTypes from "prop-types";
 const Select = ({ label, children, className = "w-[200px]", color }) => {
   return (
     <div className={className}>
-      <Selectbox size="md" color={color} label={label}>
+      <Selectbox color={color} label={label}>
         {children}
       </Selectbox>
     </div>

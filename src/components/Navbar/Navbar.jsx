@@ -7,6 +7,7 @@ import {
 import React from "react";
 import logo from "/src/assets/images/logo.jpg";
 import Button from "../button/Button";
+import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const [openNav, setOpenNav] = React.useState(false);
@@ -25,9 +26,9 @@ const Navbar = () => {
         color="blue-gray"
         className="p-1 font-normal text-md"
       >
-        <a href="#" className="flex items-center">
+        <NavLink to="/" className="flex items-center">
           Home
-        </a>
+        </NavLink>
       </Typography>
       <Typography
         as="li"
@@ -35,9 +36,9 @@ const Navbar = () => {
         color="blue-gray"
         className="p-1 font-normal text-md"
       >
-        <a href="#" className="flex items-center">
+        <NavLink to="/product" href="#" className="flex items-center">
           Products
-        </a>
+        </NavLink>
       </Typography>
       <Typography
         as="li"
@@ -45,9 +46,9 @@ const Navbar = () => {
         color="blue-gray"
         className="p-1 font-normal text-md"
       >
-        <a href="#" className="flex items-center">
+        <NavLink to="/about" href="#" className="flex items-center">
           About Us
-        </a>
+        </NavLink>
       </Typography>
       <Typography
         as="li"
@@ -55,9 +56,9 @@ const Navbar = () => {
         color="blue-gray"
         className="p-1 font-normal text-md"
       >
-        <a href="#" className="flex items-center">
+        <NavLink to="/contact" href="#" className="flex items-center">
           Contact
-        </a>
+        </NavLink>
       </Typography>
     </ul>
   );

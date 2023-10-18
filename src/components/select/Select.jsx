@@ -13,7 +13,7 @@ const Select = ({ label, children, className = "w-[200px]", color }) => {
 
 Select.propTypes = {
   label: propTypes.string,
-  children: propTypes.element,
+  children: propTypes.any,
   className: propTypes.string,
   color: propTypes.string,
 };

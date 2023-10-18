@@ -1,8 +1,8 @@
 import {
   IconButton,
-  MobileNav,
   Typography,
   Navbar as MenuNav,
+  Collapse,
 } from "@material-tailwind/react";
 import React from "react";
 import logo from "/src/assets/images/logo.jpg";
@@ -74,8 +74,8 @@ const Navbar = () => {
         </div>
         <div className="hidden lg:block">{navList}</div>
         <Button
-          className="hidden hover:bg-gray-300 hover:text-blue-gray-900 lg:inline-block"
-          outline="outline"
+          className="hidden text-gray-200 bg-blue-gray-900 hover:bg-gray-300 hover:text-blue-gray-900 lg:inline-block"
+          outline="outlined"
         >
           Sign In
         </Button>
@@ -117,17 +117,17 @@ const Navbar = () => {
           )}
         </IconButton>
       </div>
-      <MobileNav open={openNav}>
+      <Collapse open={openNav}>
         <div className="container mx-auto">
           {navList}
           <Button
-            className="hover:bg-gray-300 hover:text-blue-gray-900"
-            outline="outline"
+            className=" hover:bg-gray-300 hover:text-blue-gray-900"
+            outline="outlined"
           >
             Sign In
           </Button>
         </div>
-      </MobileNav>
+      </Collapse>
     </MenuNav>
   );
 };

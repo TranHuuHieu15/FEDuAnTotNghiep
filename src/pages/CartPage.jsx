@@ -6,6 +6,7 @@ import CartCard from "../components/card/CartCard";
 import Select from "../components/select/Select";
 import Button from "../components/button/Button";
 import SiteLayout from "../layout/SiteLayout";
+import { FaShippingFast } from "react-icons/fa";
 const CartPage = () => {
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -19,6 +20,9 @@ const CartPage = () => {
             </Step>
             <Step onClick={() => setActiveStep(1)}>
               <MdPayment className="w-5 h-5" />
+            </Step>
+            <Step onClick={() => setActiveStep(2)}>
+              <FaShippingFast className="w-5 h-5" />
             </Step>
           </Stepper>
         </div>
@@ -59,7 +63,7 @@ const CartPage = () => {
               </Select>
             </div>
             <Button className="w-[462px] shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
-              Payment
+              Purchase
             </Button>
           </div>
         </div>

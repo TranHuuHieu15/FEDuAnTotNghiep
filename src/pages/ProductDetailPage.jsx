@@ -12,12 +12,12 @@ const ProductDetailPage = () => {
   const toggleOpen = () => setOpen((cur) => !cur);
   return (
     <SiteLayout>
-      <div className="flex mx-32 mt-5">
-        <div className="flex flex-col">
+      <div className="flex gap-6 mx-32 mt-5">
+        <div className="flex w-[630px] flex-col">
           <img
             src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGNsb3RoZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
             alt=""
-            className="w-[630px] h-[554px] object-fill"
+            className="w-full h-[554px] object-fill"
           />
           <div className="flex flex-row gap-3 mx-auto mt-2">
             <img
@@ -42,12 +42,11 @@ const ProductDetailPage = () => {
             />
           </div>
         </div>
-        <div className="flex flex-col items-start gap-8 p-6">
-          <div className="flex flex-col items-start gap-6">
+        <div className="flex flex-col items-start gap-8 mt-2">
+          <div className="flex flex-col items-start w-full gap-6">
             <div className="gap-4">
-              <p className="text-xl not-italic font-normal font-eculid">
-                Floral Print Notched Neckline Dress Without Belt Notched
-                Neckline
+              <p className="text-2xl not-italic font-normal font-eculid">
+                Floral Print Notched Neckline Dress
               </p>
               <span className="text-3xl not-italic font-bold leading-normal font-eculid">
                 $100.00
@@ -84,10 +83,10 @@ const ProductDetailPage = () => {
               </div>
             </div>
             <div className="inline-flex flex-col items-start gap-2">
-              <h5 className="text-sm not-italic font-semibold font-eculid">
+              <h5 className="text-lg not-italic font-semibold font-eculid">
                 Quantity:
               </h5>
-              <div className="flex items-center justify-center gap-2 p-2 h-9 outline w-28">
+              <div className="flex items-center justify-center gap-2 p-2 h-9 outline outline-offset-2 outline-2 w-28">
                 <button>
                   <FaMinusCircle />
                 </button>
@@ -104,9 +103,14 @@ const ProductDetailPage = () => {
                 </button>
               </div>
             </div>
-            <Button className="w-[462px] shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
-              Add to Cart
-            </Button>
+            <div className="flex w-[560px] gap-4">
+              <Button className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
+                Add to Cart
+              </Button>
+              <Button className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
+                Buy Now
+              </Button>
+            </div>
             <div className="flex flex-col items-start gap-14">
               <div className="flex gap-3 px-4 py-8 bg-[#F3F4F6] w-[560px]">
                 <div className="flex flex-col gap-2">
@@ -135,14 +139,14 @@ const ProductDetailPage = () => {
               </div>
               <div className="flex flex-col items-start gap-10">
                 <div className="flex items-center justify-center gap-[465px]">
-                  <p className="text-base font-semibold font-eculid">
+                  <p className="text-lg font-semibold font-eculid">
                     Description
                   </p>
                   <button onClick={toggleOpen}>
                     <AiOutlinePlus />
                   </button>
                 </div>
-                <div className="">
+                <div>
                   <Collapse open={open} className="flex flex-col">
                     <Typography className="w-[480px] mx-auto my-2">
                       Use our Tailwind CSS collapse for your website. You can

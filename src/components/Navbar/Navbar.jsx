@@ -1,12 +1,13 @@
 import {
   IconButton,
-  MobileNav,
   Typography,
   Navbar as MenuNav,
+  Collapse,
 } from "@material-tailwind/react";
 import React from "react";
 import logo from "/src/assets/images/logo.jpg";
 import Button from "../button/Button";
+import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const [openNav, setOpenNav] = React.useState(false);
@@ -25,9 +26,9 @@ const Navbar = () => {
         color="blue-gray"
         className="p-1 font-normal text-md"
       >
-        <a href="#" className="flex items-center">
+        <NavLink to="/" className="flex items-center">
           Home
-        </a>
+        </NavLink>
       </Typography>
       <Typography
         as="li"
@@ -35,9 +36,9 @@ const Navbar = () => {
         color="blue-gray"
         className="p-1 font-normal text-md"
       >
-        <a href="#" className="flex items-center">
+        <NavLink to="/product" href="#" className="flex items-center">
           Products
-        </a>
+        </NavLink>
       </Typography>
       <Typography
         as="li"
@@ -45,9 +46,9 @@ const Navbar = () => {
         color="blue-gray"
         className="p-1 font-normal text-md"
       >
-        <a href="#" className="flex items-center">
+        <NavLink to="/about" href="#" className="flex items-center">
           About Us
-        </a>
+        </NavLink>
       </Typography>
       <Typography
         as="li"
@@ -55,9 +56,9 @@ const Navbar = () => {
         color="blue-gray"
         className="p-1 font-normal text-md"
       >
-        <a href="#" className="flex items-center">
+        <NavLink to="/contact" href="#" className="flex items-center">
           Contact
-        </a>
+        </NavLink>
       </Typography>
     </ul>
   );
@@ -74,8 +75,8 @@ const Navbar = () => {
         </div>
         <div className="hidden lg:block">{navList}</div>
         <Button
-          className="hidden hover:bg-gray-300 hover:text-blue-gray-900 lg:inline-block"
-          outline="outline"
+          className="hidden text-gray-200 bg-blue-gray-900 hover:bg-gray-300 hover:text-blue-gray-900 lg:inline-block"
+          outline="outlined"
         >
           Sign In
         </Button>
@@ -117,17 +118,17 @@ const Navbar = () => {
           )}
         </IconButton>
       </div>
-      <MobileNav open={openNav}>
+      <Collapse open={openNav}>
         <div className="container mx-auto">
           {navList}
           <Button
-            className="hover:bg-gray-300 hover:text-blue-gray-900"
-            outline="outline"
+            className=" hover:bg-gray-300 hover:text-blue-gray-900"
+            outline="outlined"
           >
             Sign In
           </Button>
         </div>
-      </MobileNav>
+      </Collapse>
     </MenuNav>
   );
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import { Stepper, Step, Option } from "@material-tailwind/react";
+import { Stepper, Step } from "@material-tailwind/react";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { MdPayment } from "react-icons/md";
 import CartCard from "../components/card/CartCard";
@@ -54,12 +54,12 @@ const CartPage = () => {
             </div>
 
             <div className="flex flex-col">
-              <p className="px-1 pb-4 font-bold">Appy Coupon:</p>
-              <Select label="Choose your coupon">
-                <Option>Mã Coupon</Option>
-                <Option>Mã Coupon</Option>
-                <Option>Mã Coupon</Option>
-                <Option>Mã Coupon</Option>
+              <Select title="Apply Coupon: " className="px-3 py-2 w-[200px]" className2="px-1 pb-4 font-bold w-[200px]">
+                <option value="">Choose the option</option>
+                <option value="">Mã coupon</option>
+                <option value="">Mã coupon</option>
+                <option value="">Mã coupon</option>
+                <option value="">Mã coupon</option>
               </Select>
             </div>
             <Button className="w-[462px] shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">

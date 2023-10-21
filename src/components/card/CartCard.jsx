@@ -1,5 +1,6 @@
 import { BsTrash } from "react-icons/bs";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
+import Select from "../select/Select";
 
 const CartCard = () => {
   return (
@@ -28,15 +29,21 @@ const CartCard = () => {
             </div>
           </div>
           <div className="flex items-start gap-5">
-            <div className="flex items-start gap-2 p-2 outline outline-offset-1 outline-2">
-              <h5 className="text-sm not-italic font-semibold font-eculid">
+            <div className="flex gap-2 py-2 p-2 rounded-md shadow-3xl outline-2">
+              <Select title="Size: " className="outline-none mr-2 hover:cursor-pointer">
+                <option value="option1">S</option>
+                <option value="option2">M</option>
+                <option value="option3">L</option>
+                <option value="option4">XL</option>
+              </Select>
+              {/* <h5 className="text-sm not-italic font-semibold font-eculid">
                 Size:
               </h5>
               <span className="text-sm not-italic font-semibold font-eculid">
                 M
-              </span>
+              </span> */}
             </div>
-            <div className="flex items-center gap-2 p-2 h-9 outline outline-offset-1 outline-2 w-28">
+            <div className="flex items-center gap-2 p-3 h-10 rounded-md shadow-3xl outline-2 w-28">
               <button className="flex items-center justify-center">
                 <FaMinusCircle />
               </button>
@@ -44,7 +51,7 @@ const CartCard = () => {
                 type="number"
                 min="0"
                 value="1"
-                className="flex items-center justify-center w-20 "
+                className="flex items-center justify-center w-20"
               >
                 1
               </span>
@@ -54,8 +61,8 @@ const CartCard = () => {
             </div>
           </div>
         </div>
-        <div className="flex w-[150px] gap-2">
-          <BsTrash className="w-5 h-5" />
+        <div className="flex w-[150px] gap-2 items-center justify-center hover:cursor-pointer">
+          <BsTrash className="w-5 h-5" size={"100px"} />
           <p className="text-sm not-italic font-normal cursor-pointer font-eculid">
             Remove Item
           </p>

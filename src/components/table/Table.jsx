@@ -1,5 +1,6 @@
 import { Card, Typography } from "@material-tailwind/react";
 import PropTypes from "prop-types";
+
 const TableHead = ({ headers }) => (
     <thead>
         <tr>

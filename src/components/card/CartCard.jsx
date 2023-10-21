@@ -36,12 +36,6 @@ const CartCard = () => {
                 <option value="option3">L</option>
                 <option value="option4">XL</option>
               </Select>
-              {/* <h5 className="text-sm not-italic font-semibold font-eculid">
-                Size:
-              </h5>
-              <span className="text-sm not-italic font-semibold font-eculid">
-                M
-              </span> */}
             </div>
             <div className="flex items-center gap-2 p-3 h-10 rounded-md shadow-3xl outline-2 w-28">
               <button className="flex items-center justify-center">

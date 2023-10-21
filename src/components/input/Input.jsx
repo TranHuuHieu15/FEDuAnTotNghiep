@@ -1,4 +1,4 @@
-import propTypes from "prop-types";
+import PropTypes from "prop-types";
 import { Input as InputTailWind } from "@material-tailwind/react";
 
 const Input = ({ className, icon = "", color, label, type }) => {
@@ -9,10 +9,10 @@ const Input = ({ className, icon = "", color, label, type }) => {
   );
 };
 Input.propTypes = {
-  color: propTypes.string,
-  label: propTypes.string,
-  type: propTypes.string,
-  className: propTypes.string,
-  icon: propTypes.any,
+  color: PropTypes.string,
+  label: PropTypes.string,
+  type: PropTypes.string,
+  className: PropTypes.string,
+  icon: PropTypes.any,
 };
 export default Input;

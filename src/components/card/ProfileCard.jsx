@@ -12,7 +12,7 @@ import {
   faInstagram,
   faTiktok,
 } from "@fortawesome/free-brands-svg-icons";
-import propTypes from "prop-types";
+import PropTypes from "prop-types";
 
 const ProfileCard = ({ item }) => {
   const { name, role, img } = item;
@@ -51,10 +51,10 @@ const ProfileCard = ({ item }) => {
 };
 
 ProfileCard.propTypes = {
-  name: propTypes.string,
-  role: propTypes.string,
-  item: propTypes.object,
-  img: propTypes.string,
+  name: PropTypes.string,
+  role: PropTypes.string,
+  item: PropTypes.object,
+  img: PropTypes.string,
 };
 
 export default ProfileCard;

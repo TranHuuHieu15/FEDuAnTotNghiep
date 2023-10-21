@@ -23,7 +23,7 @@ const Comment = () => {
         <div className="flex flex-col col-span-11 gap-2 mx-2">
           <p>Emily</p>
           <p>July 11,2023</p>
-          <Rating />
+          <Rating value={4} readonly />
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda
             quaerat nisi cumque! Incidunt necessitatibus esse, illum harum autem

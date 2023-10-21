@@ -1,4 +1,4 @@
-import propTypes from "prop-types";
+import PropTypes from "prop-types";
 const Heading = ({ className = "", children }) => {
   return (
     <h2
@@ -10,7 +10,7 @@ const Heading = ({ className = "", children }) => {
 };
 
 Heading.propTypes = {
-  className: propTypes.string,
-  children: propTypes.any,
+  className: PropTypes.string,
+  children: PropTypes.any,
 };
 export default Heading;

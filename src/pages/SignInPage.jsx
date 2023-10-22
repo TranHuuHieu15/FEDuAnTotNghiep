@@ -2,6 +2,7 @@ import { BsFacebook } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import Button from "../components/button/Button";
 import Input from "../components/input/Input";
+import logo from "../assets/images/logo-removebg.png"
 
 const SignInPage = () => {
   return (
@@ -10,7 +11,8 @@ const SignInPage = () => {
       <div className="relative justify-center min-h-screen bg-transparent shadow-xl sm:flex sm:flex-row rounded-3xl">
         <div className="z-10 flex flex-col self-center lg:px-14 sm:max-w-4xl xl:max-w-md">
           <div className="flex-col self-start hidden text-gray-300 lg:flex">
-            <h1 className="my-3 text-4xl font-semibold text-gray-900">
+            <img src={logo} alt="Logo" width="80%" />
+            <h1 className="my-2 text-4xl font-semibold text-gray-900">
               Welcome back
             </h1>
             <p className="pr-3 text-sm text-gray-900 opacity-75">
@@ -21,31 +23,31 @@ const SignInPage = () => {
           </div>
         </div>
         <div className="z-10 flex self-center justify-center">
-          <div className="p-12 mx-auto bg-white rounded-3xl w-96 ">
+          <div className="p-12 mx-auto bg-white rounded-3xl w-[450px] shadow-lg">
             <div className="mb-7">
               <h3 className="text-2xl font-semibold text-gray-800">Sign In </h3>
               <p className="text-gray-400">
                 Don't have an account?
                 <a
-                  href="#"
+                  href="/signup"
                   className="text-sm text-purple-700 hover:text-purple-700"
                 >
                   Sign Up
                 </a>
               </p>
             </div>
-            <div className="space-y-6">
+            <div className="space-y-5">
               <form>
                 <Input
                   type="text"
                   label="Enter your username"
-                  className="w-[285px] my-4"
+                  className="w-[355px] my-4"
                 />
 
                 <Input
                   type="password"
                   label="Enter your password"
-                  className="w-[285px]"
+                  className="w-[355px]"
                 />
               </form>
               <div className="flex items-center justify-between">
@@ -56,22 +58,21 @@ const SignInPage = () => {
                 </div>
               </div>
               <div>
-                <Button className="w-[285px] bg-[#F7C59F] text-gray-800">
+                <Button className="w-[355px] bg-[#F7C59F] text-gray-800">
                   Sign in
                 </Button>
               </div>
-              <div className="flex items-center justify-center my-5 space-x-2">
-                <span className="w-16 h-px bg-gray-100"></span>
-                <span className="font-normal text-gray-300">or</span>
-                <span className="w-16 h-px bg-gray-100"></span>
+              <div className="flex items-center justify-center space-x-3">
+                <span className="w-16 h-px bg-gray-300"></span>
+                <span className="font-normal text-gray-600">or</span>
+                <span className="w-16 h-px bg-gray-300"></span>
               </div>
-              <div className="flex justify-between w-full gap-4 ">
-                <Button className="flex w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900">
+              <div className="flex justify-center w-full gap-7">
+                <Button className="flex justify-center w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900">
                   <FcGoogle className="w-4 h-4" />
                   <span>Google</span>
                 </Button>
-
-                <Button className="flex w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 w- hover:border-gray-900 hover:bg-gray-900">
+                <Button className="flex justify-center w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900">
                   <BsFacebook color="blue" className="w-4 h-4" />
                   <span>Facebook</span>
                 </Button>

@@ -7,6 +7,7 @@ import SignUpPage from "./pages/SignUpPage";
 import ProductPage from "./pages/ProductPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import CartPage from "./pages/CartPage";
+import Forgotpw from "./pages/Forgotpw";
 import CheckoutPage from "./pages/CheckoutPage";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
         ></Route>
         <Route path="/login" element={<SignInPage></SignInPage>}></Route>
         <Route path="/signup" element={<SignUpPage></SignUpPage>}></Route>
+        <Route path="/resetpassword" element={<Forgotpw></Forgotpw>}></Route>
       </Routes>
     </>
   );

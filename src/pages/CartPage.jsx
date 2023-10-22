@@ -3,7 +3,6 @@ import { Stepper, Step } from "@material-tailwind/react";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { MdPayment } from "react-icons/md";
 import CartCard from "../components/card/CartCard";
-import Select from "../components/select/Select";
 import Button from "../components/button/Button";
 import SiteLayout from "../layout/SiteLayout";
 import { FaShippingFast } from "react-icons/fa";
@@ -53,15 +52,6 @@ const CartPage = () => {
               <span>$283.17</span>
             </div>
 
-            <div className="flex flex-col">
-              <Select title="Apply Coupon: " className="px-3 py-2 w-[200px]" className2="px-1 pb-4 font-bold w-[200px]">
-                <option value="">Choose the option</option>
-                <option value="">Mã coupon</option>
-                <option value="">Mã coupon</option>
-                <option value="">Mã coupon</option>
-                <option value="">Mã coupon</option>
-              </Select>
-            </div>
             <Button className="w-[462px] shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
               Purchase
             </Button>

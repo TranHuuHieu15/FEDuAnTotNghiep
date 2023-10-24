@@ -1,6 +1,6 @@
 import { Step, Stepper } from "@material-tailwind/react";
 import SiteLayout from "../layout/SiteLayout";
-import { AiOutlineShoppingCart } from "react-icons/ai";
+import { AiOutlineCheck, AiOutlineShoppingCart } from "react-icons/ai";
 import { MdPayment } from "react-icons/md";
 import { FaShippingFast } from "react-icons/fa";
 import { useState } from "react";
@@ -8,9 +8,12 @@ import Heading from "../components/heading/Heading";
 import { BsTrash } from "react-icons/bs";
 import Select from "../components/select/Select";
 import Button from "../components/button/Button";
+import RadioButton from "../components/radioButton/RadioButton";
+import Input from "../components/input/Input";
 
 const CheckoutPage = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [isDelivery, setIsDelivery] = useState(false);
   return (
     <>
       <SiteLayout>
@@ -31,7 +34,107 @@ const CheckoutPage = () => {
           <div className="flex flex-col w-full">
             <Heading className="px-2 text-base">Shipping information</Heading>
             <form>
-              <div className="flex flex-col gap-3 my-2"></div>
+              <div className="flex flex-col gap-3 my-2">
+                /...................../
+              </div>
+              <label className="text-lg font-eculid">Delivery method</label>
+              <div className="flex gap-2 py-2">
+                <div
+                  className={`flex w-[170px] px-2 py-1 cursor-pointer ${
+                    isDelivery
+                      ? " rounded-lg outline outline-1 outline-pink-400"
+                      : "outline outline-1 outline-blue-gray-800 rounded-lg"
+                  }`}
+                  onClick={() => setIsDelivery(true)}
+                >
+                  <div>
+                    <p className="text-base font-eculid">Standard</p>
+                    <p className="text-sm text-gray-600 font-eculid">
+                      4-10 business days
+                    </p>
+                    <p className="text-base font-normal font-eculid">$5.00</p>
+                  </div>
+                  {isDelivery && (
+                    <AiOutlineCheck
+                      className="mt-1 ml-auto bg-pink-400 rounded-full justify-self-end"
+                      color="white"
+                    />
+                  )}
+                </div>
+                <div
+                  className={`flex w-[170px] px-2 py-1 cursor-pointer ${
+                    isDelivery
+                      ? " rounded-lg outline outline-1 outline-pink-400"
+                      : "outline outline-1 outline-blue-gray-800 rounded-lg"
+                  }`}
+                  onClick={() => setIsDelivery(true)}
+                >
+                  <div>
+                    <p className="text-base font-eculid">Express</p>
+                    <p className="text-sm text-gray-600 font-eculid">
+                      3-5 business days
+                    </p>
+                    <p className="text-base font-normal font-eculid">$10.00</p>
+                  </div>
+                  {isDelivery && (
+                    <AiOutlineCheck
+                      className="mt-1 ml-auto bg-pink-400 rounded-full justify-self-end"
+                      color="white"
+                    />
+                  )}
+                </div>
+                <div
+                  className={`flex w-[170px] px-2 py-1 cursor-pointer ${
+                    isDelivery
+                      ? " rounded-lg outline outline-1 outline-pink-400"
+                      : "outline outline-1 outline-blue-gray-800 rounded-lg"
+                  }`}
+                  onClick={() => setIsDelivery(true)}
+                >
+                  <div>
+                    <p className="text-base font-eculid">Viettel Post</p>
+                    <p className="text-sm text-gray-600 font-eculid">
+                      5-7 business days
+                    </p>
+                    <p className="text-base font-normal font-eculid">$7.00</p>
+                  </div>
+                  {isDelivery && (
+                    <AiOutlineCheck
+                      className="mt-1 ml-auto bg-pink-400 rounded-full justify-self-end"
+                      color="white"
+                    />
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-lg font-eculid">Payment</label>
+                <div className="flex justify-start gap-2">
+                  <RadioButton
+                    label="Credit card"
+                    name="paymentMethod"
+                    ripple={true}
+                    color="pink"
+                  />
+                  <RadioButton
+                    label="VNPay"
+                    name="paymentMethod"
+                    ripple={true}
+                    color="pink"
+                  />
+                  <RadioButton
+                    label="Momo"
+                    name="paymentMethod"
+                    ripple={true}
+                    color="pink"
+                  />
+                </div>
+                <div className="flex flex-col gap-3 w-[525px]">
+                  <Input label="Card number" />
+                  <Input label="Name on card" />
+                  <Input label="Expriration date (MM/YY)" />
+                  <Input label="CVV" />
+                </div>
+              </div>
             </form>
           </div>
           <div className="flex flex-col w-full gap-2">

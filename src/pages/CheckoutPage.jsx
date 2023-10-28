@@ -11,9 +11,25 @@ import Button from "../components/button/Button";
 import RadioButton from "../components/radioButton/RadioButton";
 import Input from "../components/input/Input";
 
+const deliveryMethods = [
+  { id: 1, name: "Standard", description: "4-10 business days", price: 5.0 },
+  { id: 2, name: "Express", description: "3-5 business days", price: 10.0 },
+  { id: 3, name: "Viettel Post", description: "5-7 business days", price: 7.0 },
+];
+
 const CheckoutPage = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [isDelivery, setIsDelivery] = useState(false);
+  const [selectedDelivery, setSelectedDelivery] = useState(null);
+
+  const handleMethodClick = (id) => {
+    if (selectedDelivery === id) {
+      // Bỏ chọn nếu phương thức đã được chọn
+      setSelectedDelivery(null);
+    } else {
+      // Chọn phương thức mới
+      setSelectedDelivery(id);
+    }
+  };
   return (
     <>
       <SiteLayout>
@@ -39,72 +55,33 @@ const CheckoutPage = () => {
               </div>
               <label className="text-lg font-eculid">Delivery method</label>
               <div className="flex gap-2 py-2">
-                <div
-                  className={`flex w-[170px] px-2 py-1 cursor-pointer ${
-                    isDelivery
-                      ? " rounded-lg outline outline-1 outline-pink-400"
-                      : "outline outline-1 outline-blue-gray-800 rounded-lg"
-                  }`}
-                  onClick={() => setIsDelivery(true)}
-                >
-                  <div>
-                    <p className="text-base font-eculid">Standard</p>
-                    <p className="text-sm text-gray-600 font-eculid">
-                      4-10 business days
-                    </p>
-                    <p className="text-base font-normal font-eculid">$5.00</p>
+                {deliveryMethods.map((delivery) => (
+                  <div
+                    key={delivery.id}
+                    className={`flex w-[170px] px-2 py-1 cursor-pointer ${
+                      selectedDelivery === delivery.id
+                        ? " rounded-lg outline outline-1 outline-pink-400"
+                        : "outline outline-1 outline-blue-gray-800 rounded-lg"
+                    }`}
+                    onClick={() => handleMethodClick(delivery.id)}
+                  >
+                    <div>
+                      <p className="text-base font-eculid">{delivery.name}</p>
+                      <p className="text-sm text-gray-600 font-eculid">
+                        {delivery.description}
+                      </p>
+                      <p className="text-base font-normal font-eculid">
+                        ${delivery.price}
+                      </p>
+                    </div>
+                    {selectedDelivery === delivery.id && (
+                      <AiOutlineCheck
+                        className="mt-1 ml-auto bg-pink-400 rounded-full justify-self-end"
+                        color="white"
+                      />
+                    )}
                   </div>
-                  {isDelivery && (
-                    <AiOutlineCheck
-                      className="mt-1 ml-auto bg-pink-400 rounded-full justify-self-end"
-                      color="white"
-                    />
-                  )}
-                </div>
-                <div
-                  className={`flex w-[170px] px-2 py-1 cursor-pointer ${
-                    isDelivery
-                      ? " rounded-lg outline outline-1 outline-pink-400"
-                      : "outline outline-1 outline-blue-gray-800 rounded-lg"
-                  }`}
-                  onClick={() => setIsDelivery(true)}
-                >
-                  <div>
-                    <p className="text-base font-eculid">Express</p>
-                    <p className="text-sm text-gray-600 font-eculid">
-                      3-5 business days
-                    </p>
-                    <p className="text-base font-normal font-eculid">$10.00</p>
-                  </div>
-                  {isDelivery && (
-                    <AiOutlineCheck
-                      className="mt-1 ml-auto bg-pink-400 rounded-full justify-self-end"
-                      color="white"
-                    />
-                  )}
-                </div>
-                <div
-                  className={`flex w-[170px] px-2 py-1 cursor-pointer ${
-                    isDelivery
-                      ? " rounded-lg outline outline-1 outline-pink-400"
-                      : "outline outline-1 outline-blue-gray-800 rounded-lg"
-                  }`}
-                  onClick={() => setIsDelivery(true)}
-                >
-                  <div>
-                    <p className="text-base font-eculid">Viettel Post</p>
-                    <p className="text-sm text-gray-600 font-eculid">
-                      5-7 business days
-                    </p>
-                    <p className="text-base font-normal font-eculid">$7.00</p>
-                  </div>
-                  {isDelivery && (
-                    <AiOutlineCheck
-                      className="mt-1 ml-auto bg-pink-400 rounded-full justify-self-end"
-                      color="white"
-                    />
-                  )}
-                </div>
+                ))}
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-lg font-eculid">Payment</label>
@@ -139,7 +116,7 @@ const CheckoutPage = () => {
           </div>
           <div className="flex flex-col w-full gap-2">
             <Heading className="px-4 text-base">Order summary</Heading>
-            <div className="flex flex-col gap-2 px-4 py-4 mx-4 rounded-lg shadow-3xl">
+            <div className="flex flex-col gap-2 px-4 py-4 mx-4 rounded-lg shadow-xl">
               <div className="flex gap-4">
                 <img
                   src="https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&q=80&w=1887&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"

@@ -2,6 +2,9 @@ import ProductCard from "../components/card/ProductCard";
 import Pagination from "../components/pagination/Pagination";
 import SiteLayout from "../layout/SiteLayout";
 import { Checkbox } from "@material-tailwind/react";
+import InputSearch from "../components/input/InputSearch";
+import Select from "../components/select/Select";
+import RadioButton from "../components/radioButton/RadioButton";
 
 const productData = [
   {
@@ -76,48 +79,62 @@ const ProductPage = () => {
         <div className="flex p-5 mx-20 my-10">
           <div className="mx-6 w-96">
             <div className="flex flex-col h-full w-72">
-              <div className="my-5 bg-blue-gray-600 w-44">asdsa</div>
+              <InputSearch maxWidth="max-w-[300px]" />
               <div className="flex flex-col my-5">
                 <h3 className="font-normal">FILTERs</h3>
-                <Checkbox label="Woman" />
-                <Checkbox label="Man" />
-                <Checkbox label="Girls" />
-                <Checkbox label="Babies" />
+                <RadioButton label="Woman" name="filter" />
+                <RadioButton label="Man" name="filter" />
+                <RadioButton label="Girls" name="filter" />
+                <RadioButton label="Babies" name="filter" />
               </div>
               <div className="flex flex-col my-5">
                 <h3 className="font-normal">BRANDS</h3>
-                <Checkbox label="Chanel" />
-                <Checkbox label="Gucci" />
-                <Checkbox label="D&G" />
-                <Checkbox label="Zara" />
-                <Checkbox label="Dior" />
-                <Checkbox label="Versace" />
+                <RadioButton label="Chanel" name="brand" />
+                <RadioButton label="Gucci" name="brand" />
+                <RadioButton label="D&G" name="brand" />
+                <RadioButton label="Zara" name="brand" />
+                <RadioButton label="Dior" name="brand" />
+                <RadioButton label="Versace" name="brand" />
               </div>
               <div className="flex flex-col my-5">
                 <h3 className="font-normal">CATEGORIES</h3>
-                <Checkbox label="Dresses" />
-                <Checkbox label="Jacket" />
-                <Checkbox label="Tops" />
-                <Checkbox label="Vintages" />
+                <RadioButton label="Dresses" name="category" />
+                <RadioButton label="Jacket" name="category" />
+                <RadioButton label="Tops" name="category" />
+                <RadioButton label="Vintages" name="category" />
               </div>
               <div className="flex flex-col my-5">
                 <h3 className="font-normal">SIZES</h3>
-                <Checkbox label="Sexy Plus Size" />
-                <Checkbox label="Plus Size" />
-                <Checkbox label="Large" />
-                <Checkbox label="Medium" />
+                <RadioButton label="Sexy Plus Size" name="size" />
+                <RadioButton label="Plus Size" name="size" />
+                <RadioButton label="Large" name="size" />
+                <RadioButton label="Medium" name="size" />
               </div>
             </div>
           </div>
-          <div className="flex flex-wrap gap-3">
-            {productData.length > 0 &&
-              productData.map((item) => (
-                <ProductCard
-                  className="mx-2 my-2 w-72"
-                  key={item.id}
-                  item={item}
-                ></ProductCard>
-              ))}
+          <div className="flex flex-col">
+            <div className="flex justify-end w-full pr-[58px] font-eculid">
+              <Select
+                title="Sort by price:"
+                className="px-1 py-1"
+                className2="p-2"
+              >
+                <option value="">price</option>
+                <option value="low">low</option>
+                <option value="medium">medium</option>
+                <option value="hight">high</option>
+              </Select>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {productData.length > 0 &&
+                productData.map((item) => (
+                  <ProductCard
+                    className="mx-2 my-2 w-72"
+                    key={item.id}
+                    item={item}
+                  ></ProductCard>
+                ))}
+            </div>
           </div>
         </div>
         <Pagination></Pagination>

@@ -9,6 +9,9 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import CartPage from "./pages/CartPage";
 import ForgotPWPage from "./pages/ForgotPWPage";
 import CheckoutPage from "./pages/CheckoutPage";
+import AdminLayout from "./layout/AdminLayout";
+import DashboardPage from "./pages/DashboardPage";
+import PageNotFound from "./pages/PageNotFound";
 
 function App() {
   return (
@@ -29,6 +32,13 @@ function App() {
           path="/resetpassword"
           element={<ForgotPWPage></ForgotPWPage>}
         ></Route>
+        <Route element={<AdminLayout></AdminLayout>}>
+          <Route
+            path="/admin"
+            element={<DashboardPage></DashboardPage>}
+          ></Route>
+        </Route>
+        <Route path="*" element={<PageNotFound></PageNotFound>}></Route>
       </Routes>
     </>
   );

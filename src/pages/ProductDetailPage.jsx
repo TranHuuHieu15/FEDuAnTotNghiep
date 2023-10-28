@@ -12,28 +12,28 @@ const ProductDetailPage = () => {
   const toggleOpen = () => setOpen((cur) => !cur);
   return (
     <SiteLayout>
-      <div className="flex gap-6 mx-32 mt-5">
-        <div className="flex w-[630px] flex-col">
+      <div className="flex gap-3 mx-32 mt-5">
+        <div className="flex w-[630px] flex-col gap-5 mt-2">
           <img
             src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGNsb3RoZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
             alt=""
-            className="w-full h-[554px] object-fill"
+            className="w-full max-w-[600px] h-[540px] object-fill hover:scale-105 hover:duration-500"
           />
-          <div className="flex flex-row gap-3 mx-auto mt-2">
+          <div className="flex flex-row gap-3 mt-2">
             <img
               src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGNsb3RoZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
               alt=""
-              className="w-[146px] h-[154px] object-fill"
+              className="w-[140px] h-[154px] object-fill"
             />
             <img
               src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGNsb3RoZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
               alt=""
-              className="w-[146px] h-[154px] object-fill"
+              className="w-[140px] h-[154px] object-fill"
             />
             <img
               src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGNsb3RoZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
               alt=""
-              className="w-[146px] h-[154px] object-fill"
+              className="w-[140px] h-[154px] object-fill"
             />
             <img
               src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGNsb3RoZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
@@ -43,8 +43,8 @@ const ProductDetailPage = () => {
           </div>
         </div>
         <div className="flex flex-col items-start gap-8 mt-2">
-          <div className="flex flex-col items-start w-full gap-6">
-            <div className="gap-4">
+          <div className="flex flex-col items-start w-full gap-4">
+            <div className="gap-3">
               <p className="text-2xl not-italic font-normal font-eculid">
                 Floral Print Notched Neckline Dress
               </p>
@@ -164,6 +164,11 @@ const ProductDetailPage = () => {
         <Comment></Comment>
         <Comment></Comment>
         <Comment></Comment>
+        <div className="flex items-center justify-center my-8">
+          <Button className="text-base font-semibold w-60 bg-blue-gray-800 hover:scale-105">
+            Load More
+          </Button>
+        </div>
       </div>
     </SiteLayout>
   );

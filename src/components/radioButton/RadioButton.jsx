@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { Radio } from "@material-tailwind/react";
 const RadioButton = ({
-  color = "black",
+  color = "blue-gray",
   label,
   labelRadio,
   className,

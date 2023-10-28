@@ -20,6 +20,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import React from "react";
+import logo from "../../assets/images/logo.jpg";
 
 const SideBar = () => {
   const [open, setOpen] = React.useState(0);
@@ -28,12 +29,12 @@ const SideBar = () => {
     setOpen(open === value ? 0 : value);
   };
   return (
-    <div>
-      <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
-        <div className="p-4 mb-2">
-          <Typography variant="h5" color="blue-gray">
-            Sidebar
-          </Typography>
+    <>
+      <Card
+        className={`h-full min-h-screen w-full max-w-xs p-4 shadow-xl shadow-blue-gray-900/5`}
+      >
+        <div className="px-5 py-2">
+          <img src={logo} alt="" className="w-20 h-20" />
         </div>
         <List>
           <Accordion
@@ -201,8 +202,7 @@ const SideBar = () => {
           </ListItem>
         </List>
       </Card>
-      ;
-    </div>
+    </>
   );
 };
 

@@ -7,7 +7,7 @@ import {
 import React from "react";
 import logo from "/src/assets/images/logo.jpg";
 import Button from "../button/Button";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const [openNav, setOpenNav] = React.useState(false);
@@ -66,20 +66,28 @@ const Navbar = () => {
   return (
     <MenuNav className="max-w-full px-0 py-0 mx-auto">
       <div className="container flex items-center justify-between mx-auto text-blue-gray-900">
-        <div className="w-20">
+        <Link className="w-20" to="/">
           <img
             className="object-cover object-center rounded-full"
             src={logo}
             alt="nature image"
           />
-        </div>
+        </Link>
         <div className="hidden lg:block">{navList}</div>
-        <Button
-          className="hidden text-gray-200 bg-blue-gray-900 hover:bg-gray-300 hover:text-blue-gray-900 lg:inline-block"
-          outline="outlined"
-        >
-          Sign In
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            className="hidden bg-gray-200 text-blue-gray-800 hover:bg-blue-gray-900 hover:text-gray-300 lg:inline-block"
+            outline="text"
+          >
+            Sign In
+          </Button>
+          <Button
+            className="hidden text-gray-200 bg-blue-gray-900 hover:bg-gray-300 hover:text-blue-gray-900 lg:inline-block"
+            outline="outlined"
+          >
+            Sign Up
+          </Button>
+        </div>
         <IconButton
           variant="text"
           className="w-6 h-6 ml-auto text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
@@ -121,12 +129,20 @@ const Navbar = () => {
       <Collapse open={openNav}>
         <div className="container mx-auto">
           {navList}
-          <Button
-            className=" hover:bg-gray-300 hover:text-blue-gray-900"
-            outline="outlined"
-          >
-            Sign In
-          </Button>
+          <div className="flex flex-col gap-2 pb-4">
+            <Button
+              className="w-24 hover:bg-blue-gray-900 hover:text-gray-300"
+              outline="text"
+            >
+              Sign In
+            </Button>
+            <Button
+              className="w-24 hover:bg-gray-300 hover:text-blue-gray-900"
+              outline="outlined"
+            >
+              Sign Up
+            </Button>
+          </div>
         </div>
       </Collapse>
     </MenuNav>

@@ -2,10 +2,8 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Typography,
 } from "@material-tailwind/react";
-import Button from "../../components/button/Button";
 import PropTypes from "prop-types";
 import { Rating } from "@mui/material";
 
@@ -52,11 +50,6 @@ const ProductCard = ({ item, className }) => {
           <span className="text-xs">Purchased: {orderCount}</span>
         </Typography>
       </CardBody>
-      <CardFooter className="pt-0">
-        <Button className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
-          Add to Cart
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

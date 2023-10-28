@@ -26,7 +26,7 @@ const HomeProfile = () => {
   return (
     <>
       <Heading className="text-center">ABOUT US</Heading>
-      <div className="flex flex-row justify-center gap-5 mx-24">
+      <div className="flex items-center justify-center gap-5">
         {profileData.length > 0 &&
           profileData.map((item) => (
             <ProfileCard key={item.id} item={item}></ProfileCard>

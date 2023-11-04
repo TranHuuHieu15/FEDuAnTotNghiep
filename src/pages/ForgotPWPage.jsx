@@ -1,29 +1,41 @@
 import Input from "../components/input/Input";
 import Button from "../components/button/Button";
-import logo from "../assets/images/logo-removebg.png"
+import logo from "../assets/images/logo-removebg.png";
 
-const Forgotpw = () => {
+const ForgotPWPage = () => {
   return (
     <>
       <div className="absolute top-0 bottom-0 left-0 w-full h-full overflow-hidden leading-5 bg-[#F7C59F] bg-gradient-to-b"></div>
       <div className="relative justify-center min-h-screen bg-transparent shadow-xl sm:flex sm:flex-row rounded-3xl">
         <div className="z-10 flex self-center">
           <div className="p-12 mx-auto bg-white rounded-3xl w-[550px] shadow-lg">
-            <img src={logo} width="30%" alt="" className="flex justify-center items-center" />
+            <img
+              src={logo}
+              width="30%"
+              alt=""
+              className="flex items-center justify-center"
+            />
             <div className="mb-1">
-              <h1 className="text-2xl font-semibold text-gray-800 mt-3">Forgot your password?</h1>
-              <h2 className="text-gray-500 mt-2">
+              <h1 className="mt-3 text-2xl font-semibold text-gray-800">
+                Forgot your password?
+              </h1>
+              <h2 className="mt-2 text-gray-500">
                 Follow these simple steps to reset your account:
               </h2>
-              <p className="text-gray-400 mt-3 ml-6">
+              <p className="mt-3 ml-6 text-gray-400">
                 <ol className="list-decimal">
                   <li>Enter your username or email.</li>
-                  <li>Visit your email account, open the email sent by The Trendy Fashionista</li>
-                  <li>Follow the instruction in the mail to change password.</li>
+                  <li>
+                    Visit your email account, open the email sent by The Trendy
+                    Fashionista
+                  </li>
+                  <li>
+                    Follow the instruction in the mail to change password.
+                  </li>
                 </ol>
               </p>
             </div>
-            <div className="mb-4 flex flex-col items-center w-full gap-5">
+            <div className="flex flex-col items-center w-full gap-5 mb-4">
               <form>
                 <Input
                   type="email"
@@ -32,7 +44,9 @@ const Forgotpw = () => {
                 />
               </form>
               <div>
-                <Button className="w-[455px] bg-[#F7C59F]">Get new password</Button>
+                <Button className="w-[455px] bg-[#F7C59F]">
+                  Get new password
+                </Button>
               </div>
             </div>
           </div>
@@ -53,4 +67,4 @@ const Forgotpw = () => {
   );
 };
 
-export default Forgotpw;
+export default ForgotPWPage;

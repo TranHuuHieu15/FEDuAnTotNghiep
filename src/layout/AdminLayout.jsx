@@ -1,18 +1,19 @@
 import SideBar from "../module/dashboard/SideBar";
 import Header from "../module/dashboard/Header";
 import { Outlet } from "react-router-dom";
-
 const AdminLayout = () => {
   return (
-    <div className="grid grid-cols-5 gap-8">
-      <SideBar></SideBar>
-      <div className="col-span-4">
-        <Header></Header>
-        <div className="my-10">
-          <Outlet></Outlet>
+    <>
+      <div className="grid grid-cols-5 gap-8">
+        <SideBar></SideBar>
+        <div className="col-span-4">
+          <Header></Header>
+          <div className="my-10">
+            <Outlet></Outlet>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -12,49 +12,51 @@ const CartPage = () => {
   return (
     <>
       <SiteLayout>
-        <div className="w-[1000px] mx-auto px-8 py-4">
-          <Stepper activeStep={activeStep}>
-            <Step onClick={() => setActiveStep(0)}>
-              <AiOutlineShoppingCart className="w-5 h-5" />
-            </Step>
-            <Step onClick={() => setActiveStep(1)}>
-              <MdPayment className="w-5 h-5" />
-            </Step>
-            <Step onClick={() => setActiveStep(2)}>
-              <FaShippingFast className="w-5 h-5" />
-            </Step>
-          </Stepper>
-        </div>
-        <div className="flex gap-10 mx-36">
-          <div className="flex flex-col">
-            <CartCard></CartCard>
-            <CartCard></CartCard>
-            <CartCard></CartCard>
-            <CartCard></CartCard>
-            <CartCard></CartCard>
+        <div className="flex flex-col items-center justify-center">
+          <div className="w-[1000px] my-10">
+            <Stepper activeStep={activeStep}>
+              <Step onClick={() => setActiveStep(0)}>
+                <AiOutlineShoppingCart className="w-5 h-5" />
+              </Step>
+              <Step onClick={() => setActiveStep(1)}>
+                <MdPayment className="w-5 h-5" />
+              </Step>
+              <Step onClick={() => setActiveStep(2)}>
+                <FaShippingFast className="w-5 h-5" />
+              </Step>
+            </Stepper>
           </div>
-          <div className="flex flex-col gap-5 mx-5 my-10">
-            <div className="flex gap-20 bg-[#F3F4F6] px-5 py-5">
-              <div className="flex flex-col">
-                <p>Total Amount:</p>
-                <p>Shipping Fee:</p>
-                <p>Taxes:</p>
-              </div>
-              <div className="flex flex-col not-italic font-bold font-eculid">
-                <span>$274.97</span>
-                <span>NIL</span>
-                <span>$0.2</span>
-              </div>
+          <div className="flex gap-20">
+            <div className="flex flex-col items-center justify-center">
+              <CartCard></CartCard>
+              <CartCard></CartCard>
+              <CartCard></CartCard>
+              <CartCard></CartCard>
+              <CartCard></CartCard>
             </div>
+            <div className="flex flex-col gap-5">
+              <div className="flex gap-20 bg-[#F3F4F6] px-5 py-5">
+                <div className="flex flex-col">
+                  <p>Total Amount:</p>
+                  <p>Shipping Fee:</p>
+                  <p>Taxes:</p>
+                </div>
+                <div className="flex flex-col not-italic font-bold font-eculid">
+                  <span>$274.97</span>
+                  <span>NIL</span>
+                  <span>$0.2</span>
+                </div>
+              </div>
 
-            <div className="flex gap-36 bg-[#F3F4F6] px-5 py-3 font-bold">
-              <p>Total:</p>
-              <span>$283.17</span>
+              <div className="flex gap-36 bg-[#F3F4F6] px-5 py-3 font-bold">
+                <p>Total:</p>
+                <span>$283.17</span>
+              </div>
+
+              <Button className="w-[462px] shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
+                Purchase
+              </Button>
             </div>
-
-            <Button className="w-[462px] shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
-              Purchase
-            </Button>
           </div>
         </div>
       </SiteLayout>

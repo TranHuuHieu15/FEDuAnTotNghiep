@@ -40,7 +40,7 @@ const HomeCard = () => {
   return (
     <>
       <Heading className="text-center">Popular this week</Heading>
-      <div className="flex flex-row mx-24">
+      <div className="flex items-center justify-center gap-5">
         {productData.length > 0 &&
           productData.map((item) => (
             <ProductCard

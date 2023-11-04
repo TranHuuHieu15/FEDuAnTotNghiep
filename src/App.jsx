@@ -12,6 +12,11 @@ import CheckoutPage from "./pages/CheckoutPage";
 import AdminLayout from "./layout/AdminLayout";
 import DashboardPage from "./pages/DashboardPage";
 import PageNotFound from "./pages/PageNotFound";
+import AddCategory from "./module/category/AddCategory";
+import AddNewBrand from "./module/brand/AddNewBrand";
+import BrandManage from "./module/brand/BrandManage";
+import UpdateBrand from "./module/brand/UpdateBrand";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -37,9 +42,37 @@ function App() {
             path="/admin"
             element={<DashboardPage></DashboardPage>}
           ></Route>
+          <Route
+            path="/admin/addCategory"
+            element={<AddCategory></AddCategory>}
+          ></Route>
+          <Route
+            path="/admin/addBrand"
+            element={<AddNewBrand></AddNewBrand>}
+          ></Route>
+          <Route
+            path="/admin/updateBrand"
+            element={<UpdateBrand></UpdateBrand>}
+          ></Route>
+          <Route
+            path="/admin/brand"
+            element={<BrandManage></BrandManage>}
+          ></Route>
         </Route>
         <Route path="*" element={<PageNotFound></PageNotFound>}></Route>
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 }

@@ -66,9 +66,10 @@ const UpdateBrand = () => {
 
   const onSubmitHandler = async (values) => {
     if (!isValid) return;
-    console.log(brandId);
     const formData = new FormData();
-    formData.append("file", values.image);
+    typeof values.image === "string"
+      ? formData.append("image", values.image)
+      : formData.append("imageFile", values.image);
     const brand = {
       id: brandId,
       name: values.name,
@@ -95,7 +96,7 @@ const UpdateBrand = () => {
         theme: "light",
       });
     } catch (err) {
-      console.log(err.response);
+      console.log(err.response.data.message);
     }
   };
   return (

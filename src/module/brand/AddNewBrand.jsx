@@ -50,12 +50,13 @@ const AddNewBrand = () => {
   const onSubmitHandler = async (values) => {
     if (!isValid) return;
     const formData = new FormData();
-    formData.append("file", values.image);
+    formData.append("imageFile", values.image);
     const brand = {
       name: values.name,
       description: values.description,
     };
     formData.append("brandDto", JSON.stringify(brand));
+    console.log(formData);
     try {
       const response = await axios.post("/brand/create", formData);
       console.log(response);
@@ -76,7 +77,7 @@ const AddNewBrand = () => {
         theme: "light",
       });
     } catch (err) {
-      console.log(err.response);
+      console.log(err.response.data.message);
     }
   };
   return (

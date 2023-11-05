@@ -12,11 +12,11 @@ import CheckoutPage from "./pages/CheckoutPage";
 import AdminLayout from "./layout/AdminLayout";
 import DashboardPage from "./pages/DashboardPage";
 import PageNotFound from "./pages/PageNotFound";
-import AddCategory from "./module/category/AddCategory";
 import AddNewBrand from "./module/brand/AddNewBrand";
 import BrandManage from "./module/brand/BrandManage";
 import UpdateBrand from "./module/brand/UpdateBrand";
 import { ToastContainer } from "react-toastify";
+import CategoryManage from "./module/category/CategoryManage";
 
 function App() {
   return (
@@ -43,8 +43,8 @@ function App() {
             element={<DashboardPage></DashboardPage>}
           ></Route>
           <Route
-            path="/admin/addCategory"
-            element={<AddCategory></AddCategory>}
+            path="/admin/category"
+            element={<CategoryManage></CategoryManage>}
           ></Route>
           <Route
             path="/admin/addBrand"

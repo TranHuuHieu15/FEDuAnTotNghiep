@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "../../config/axios.js";
-import Button from "../../components/button/Button";
+// import Button from "../../components/button/Button";
 import { useNavigate } from "react-router-dom";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import { toast } from "react-toastify";
+import { BsTrash3 } from "react-icons/bs";
+import { CiEdit } from "react-icons/ci";
 
 const BrandManage = () => {
   const [showDialog, setShowDialog] = useState({
@@ -58,37 +60,48 @@ const BrandManage = () => {
     });
   };
   return (
-    <div>
-      <table>
-        <thead>
+    <div className="">
+      <table className="w-full table-auto text-center">
+        <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-400">
           <tr>
-            <th>Name</th>
-            <th>Image</th>
-            <th>Description</th>
-            <th>Action</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Name</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Image</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Description</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-gray-100 text-sm">
           {brandData.map((brand) => (
-            <tr key={brand.id}>
-              <td>{brand.name}</td>
-              <td>
+            <tr key={brand.id} className="">
+              <td className="p-2 font-medium text-gray-800">{brand.name}</td>
+              <td className="p-2 flex items-center justify-center">
+                <div></div>
                 <img
                   src={brand.image}
                   alt={brand.name}
                   style={{ width: "100px" }}
                 />
               </td>
-              <td>{brand.description}</td>
-              <td>
-                <Button
-                  onClick={() => navigate(`/admin/updateBrand?id=${brand.id}`)}
-                >
-                  Edit
-                </Button>
-                <Button onClick={() => handleDeleteBrand(brand.id)}>
-                  Delete
-                </Button>
+              <td className="p-2">{brand.description}</td>
+              <td className="p-2">
+                <span className="flex items-center justify-center gap-3">
+                  <a
+                    className="p-3 text-2xl hover:text-blue-500 cursor-pointer"
+                    // outline="text"
+                    onClick={() => navigate(`/admin/updateBrand?id=${brand.id}`)}
+                  >
+                    <CiEdit></CiEdit>
+                    {/* Edit */}
+                  </a>
+                  <a
+                    className="ml-2 p-2 text-2xl  hover:text-blue-500 cursor-pointer"
+                    // outline="text"
+                    onClick={() => handleDeleteBrand(brand.id)}
+                  >
+                    <BsTrash3 />
+                    {/* Delete */}
+                  </a>
+                </span>
               </td>
             </tr>
           ))}

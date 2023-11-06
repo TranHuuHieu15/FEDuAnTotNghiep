@@ -6,6 +6,7 @@ const Button = ({
   outline,
   onClick = () => {},
   type,
+  ...props
 }) => {
   return (
     <ButtonTailWind
@@ -13,6 +14,7 @@ const Button = ({
       variant={outline}
       className={className}
       onClick={onClick}
+      {...props}
     >
       {children}
     </ButtonTailWind>

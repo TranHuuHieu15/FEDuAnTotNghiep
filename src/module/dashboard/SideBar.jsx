@@ -21,6 +21,7 @@ import {
 import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import logo from "../../assets/images/logo.jpg";
+import { Link } from "react-router-dom";
 
 const SideBar = () => {
   const [open, setOpen] = React.useState(0);
@@ -109,60 +110,78 @@ const SideBar = () => {
               </ListItem>
               <AccordionBody className="py-1">
                 <List className="p-0">
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                    </ListItemPrefix>
-                    Orders
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                    </ListItemPrefix>
-                    Products
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                    </ListItemPrefix>
-                    Category
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                    </ListItemPrefix>
-                    Brand
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                    </ListItemPrefix>
-                    Account
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                    </ListItemPrefix>
-                    Payment
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                    </ListItemPrefix>
-                    Voucher
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                    </ListItemPrefix>
-                    Discount
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                    </ListItemPrefix>
-                    Evaluate
-                  </ListItem>
+                  <Link to="/admin/order">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Orders
+                    </ListItem>
+                  </Link>
+                  <Link to="/admin/product">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Products
+                    </ListItem>
+                  </Link>
+                  <Link to="/admin/category">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Category
+                    </ListItem>
+                  </Link>
+                  <Link to="/admin/brand">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Brand
+                    </ListItem>
+                  </Link>
+                  <Link to="/admin/account">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Account
+                    </ListItem>
+                  </Link>
+                  <Link to="/admin/payment">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Payment
+                    </ListItem>
+                  </Link>
+                  <Link to="/admin/voucher">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Voucher
+                    </ListItem>
+                  </Link>
+                  <Link to="/admin/discount">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Discount
+                    </ListItem>
+                  </Link>
+                  <Link to="/admin/evaluate">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Evaluate
+                    </ListItem>
+                  </Link>
                 </List>
               </AccordionBody>
             </Accordion>

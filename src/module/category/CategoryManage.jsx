@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import DialogCE from "../../components/dialog/DialogCE";
 
 const CategoryManage = () => {
+  console.log("re-render");
   const [categoryData, setCategoryData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -18,17 +19,20 @@ const CategoryManage = () => {
     show: false,
     id: null,
   });
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("/category");
+      setCategoryData(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("/category");
-        setCategoryData(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     fetchData();
-  }, [categoryData]);
+  }, []);
+  useEffect(() => {
+    showDialogCERef.current = showDialogCE;
+  }, [showDialogCE]);
   const handleCreateTrue = () => {
     setShowDialogCE({
       show: true,
@@ -36,16 +40,16 @@ const CategoryManage = () => {
       isUpdate: false,
       action: handleCreate,
     });
-    showDialogCERef.current = showDialogCE;
   };
 
   const handleCreate = async (categoryDto) => {
     try {
       if (showDialogCERef.current.show) {
         const response = await axios.post("/category/create", categoryDto);
-        console.log(response.data);
+        console.log(response);
         handleCloseDialogCE();
-        toast.success("🦄 Create category successfully!", {
+        fetchData();
+        toast.success("Create category successfully!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -68,11 +72,7 @@ const CategoryManage = () => {
       isUpdate: true,
       action: handleUpdate,
     });
-    showDialogCERef.current = showDialogCE;
   };
-  useEffect(() => {
-    showDialogCERef.current = showDialogCE;
-  }, [showDialogCE]);
   const handleUpdate = async (categoryDto) => {
     console.log("In ra id in handleUpdate:", showDialogCERef.current.id);
     try {
@@ -81,9 +81,10 @@ const CategoryManage = () => {
           `/category/update/${showDialogCERef.current.id}`,
           categoryDto
         );
-        console.log(response.data);
+        console.log(response);
         handleCloseDialogCE();
-        toast.success("🦄 Update category successfully!", {
+        fetchData();
+        toast.success("Update category successfully!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -113,7 +114,7 @@ const CategoryManage = () => {
           categoryData.filter((item) => item.id !== showDialog.id)
         );
         handleCloseDialog();
-        toast.success("🦄 Delete category successfully!", {
+        toast.success("Delete category successfully!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -156,23 +157,26 @@ const CategoryManage = () => {
           </tr>
         </thead>
         <tbody>
-          {categoryData.map((item) => (
-            <tr key={item.id}>
-              <td>{item.name}</td>
-              <td>{item.description}</td>
-              <td>
-                <Button onClick={() => handleUpdateTrue(item.id)}>Edit</Button>
-                <Button onClick={() => handleDeleteTrue(item.id)}>
-                  Delete
-                </Button>
-              </td>
-            </tr>
-          ))}
+          {categoryData.length > 0 &&
+            categoryData.map((item) => (
+              <tr key={item.id}>
+                <td>{item.name}</td>
+                <td>{item.description}</td>
+                <td>
+                  <Button onClick={() => handleUpdateTrue(item.id)}>
+                    Edit
+                  </Button>
+                  <Button onClick={() => handleDeleteTrue(item.id)}>
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
       <DialogDelete
         show={showDialog.show}
-        title="brand"
+        title="category"
         confirm={handleDelete}
         cancel={handleCloseDialog}
       />
@@ -181,6 +185,7 @@ const CategoryManage = () => {
         isUpdate={showDialogCE.isUpdate}
         handleSubmitCategory={showDialogCE.action}
         cancel={handleCloseDialogCE}
+        title="Category"
       />
     </>
   );

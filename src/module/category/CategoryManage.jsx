@@ -13,6 +13,7 @@ const CategoryManage = () => {
     id: null,
     isUpdate: false,
     action: null,
+    categoryDataToEdit: {},
   });
   const showDialogCERef = useRef(null);
   const [showDialog, setShowDialog] = useState({
@@ -39,6 +40,7 @@ const CategoryManage = () => {
       id: null,
       isUpdate: false,
       action: handleCreate,
+      categoryDataToEdit: {},
     });
   };
 
@@ -66,11 +68,13 @@ const CategoryManage = () => {
   };
   const handleUpdateTrue = (id) => {
     console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
+    const dataEdit = categoryData.find((item) => item.id === id);
     setShowDialogCE({
       show: true,
       id: id,
       isUpdate: true,
       action: handleUpdate,
+      categoryDataToEdit: dataEdit,
     });
   };
   const handleUpdate = async (categoryDto) => {
@@ -186,6 +190,7 @@ const CategoryManage = () => {
         handleSubmitCategory={showDialogCE.action}
         cancel={handleCloseDialogCE}
         title="Category"
+        categoryDataToEdit={showDialogCE.categoryDataToEdit}
       />
     </>
   );

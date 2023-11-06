@@ -3,7 +3,14 @@ import Heading from "../heading/Heading";
 import PropTypes from "prop-types";
 import FormCategory from "../../module/category/FormCategory";
 
-const DialogCE = ({ show, isUpdate, handleSubmitCategory, cancel, title }) => {
+const DialogCE = ({
+  show,
+  isUpdate,
+  handleSubmitCategory,
+  cancel,
+  title,
+  categoryDataToEdit,
+}) => {
   return (
     <>
       <Dialog open={show}>
@@ -17,6 +24,7 @@ const DialogCE = ({ show, isUpdate, handleSubmitCategory, cancel, title }) => {
         <FormCategory
           handleSubmitCategory={handleSubmitCategory}
           cancel={cancel}
+          categoryDataToEdit={categoryDataToEdit}
         />
       </Dialog>
     </>
@@ -29,6 +37,7 @@ DialogCE.propTypes = {
   cancel: PropTypes.func,
   show: PropTypes.bool,
   title: PropTypes.string,
+  categoryDataToEdit: PropTypes.object,
 };
 
 export default DialogCE;

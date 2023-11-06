@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-const FormCategory = ({ handleSubmitCategory, cancel }) => {
+const FormCategory = ({ handleSubmitCategory, cancel, categoryDataToEdit }) => {
   const schema = yup
     .object({
       name: yup.string().required("Please enter category name"),
@@ -20,8 +20,11 @@ const FormCategory = ({ handleSubmitCategory, cancel }) => {
   } = useForm({
     resolver: yupResolver(schema),
     mode: "onChange",
+    defaultValues: {
+      name: categoryDataToEdit.name || "",
+      description: categoryDataToEdit.description || "",
+    },
   });
-
   const onSubmitHandler = (data) => {
     if (!isValid) return;
     handleSubmitCategory(data);
@@ -65,6 +68,7 @@ const FormCategory = ({ handleSubmitCategory, cancel }) => {
 FormCategory.propTypes = {
   handleSubmitCategory: PropTypes.func,
   cancel: PropTypes.func,
+  categoryDataToEdit: PropTypes.object,
 };
 
 export default FormCategory;

@@ -30,18 +30,19 @@ const CategoryManage = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [categoryData]);
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
   const handleCreateTrue = () => {
-    setShowDialogCE({
+    setShowDialogCE((prevState) => ({
+      ...prevState,
       show: true,
       id: null,
-      isUpdate: false,
+      isUpdate: true,
       action: handleCreate,
       categoryDataToEdit: {},
-    });
+    }));
   };
 
   const handleCreate = async (categoryDto) => {
@@ -49,8 +50,8 @@ const CategoryManage = () => {
       if (showDialogCERef.current.show) {
         const response = await axios.post("/category/create", categoryDto);
         console.log(response);
-        handleCloseDialogCE();
         fetchData();
+        handleCloseDialogCE();
         toast.success("Create category successfully!", {
           position: "top-right",
           autoClose: 3000,
@@ -69,13 +70,14 @@ const CategoryManage = () => {
   const handleUpdateTrue = (id) => {
     console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
     const dataEdit = categoryData.find((item) => item.id === id);
-    setShowDialogCE({
+    setShowDialogCE((prevState) => ({
+      ...prevState,
       show: true,
       id: id,
       isUpdate: true,
       action: handleUpdate,
       categoryDataToEdit: dataEdit,
-    });
+    }));
   };
   const handleUpdate = async (categoryDto) => {
     console.log("In ra id in handleUpdate:", showDialogCERef.current.id);
@@ -86,8 +88,8 @@ const CategoryManage = () => {
           categoryDto
         );
         console.log(response);
-        handleCloseDialogCE();
         fetchData();
+        handleCloseDialogCE();
         toast.success("Update category successfully!", {
           position: "top-right",
           autoClose: 3000,
@@ -105,10 +107,11 @@ const CategoryManage = () => {
   };
 
   const handleDeleteTrue = (id) => {
-    setShowDialog({
+    setShowDialog((prevState) => ({
+      ...prevState,
       show: true,
       id: id,
-    });
+    }));
   };
   const handleDelete = async () => {
     try {
@@ -135,19 +138,22 @@ const CategoryManage = () => {
   };
 
   const handleCloseDialogCE = () => {
-    setShowDialogCE({
+    setShowDialogCE((prevState) => ({
+      ...prevState,
       show: false,
       id: null,
       isUpdate: false,
       action: null,
-    });
+      categoryDataToEdit: {},
+    }));
   };
 
   const handleCloseDialog = () => {
-    setShowDialog({
-      show: false,
+    setShowDialog((prevState) => ({
+      ...prevState,
+      show: true,
       id: null,
-    });
+    }));
   };
   return (
     <>

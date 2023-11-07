@@ -1,18 +1,24 @@
+import { Dialog } from "@material-tailwind/react";
 import Heading from "../../components/heading/Heading";
+import PropTypes from "prop-types";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import Label from "../../components/label/Label";
-import Input from "../../components/input/Input";
 import Button from "../../components/button/Button";
+import Textarea from "../../components/textarea/Textarea";
+import Input from "../../components/input/Input";
 import ImageUpload from "../../components/imageUpload/ImageUpload";
 import { useForm } from "react-hook-form";
-import Textarea from "../../components/textarea/Textarea";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import axios from "../../config/axios.js";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
-const AddNewBrand = () => {
-  const navigate = useNavigate();
+const DialogCEBrand = ({
+  show,
+  isUpdate,
+  handleSubmitBrand,
+  cancel,
+  title,
+  brandDataToEdit,
+}) => {
   const schema = yup
     .object({
       image: yup
@@ -39,57 +45,41 @@ const AddNewBrand = () => {
     .required();
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
     control,
     reset,
   } = useForm({
     resolver: yupResolver(schema),
-    // mode: "onChange",
   });
-
-  const onSubmitHandler = async (values) => {
+  useEffect(() => {
+    reset(brandDataToEdit);
+  }, [brandDataToEdit, reset]);
+  const onSubmitHandler = (data) => {
     if (!isValid) return;
-    const formData = new FormData();
-    formData.append("imageFile", values.image);
-    const brand = {
-      name: values.name,
-      description: values.description,
-    };
-    formData.append("brandDto", JSON.stringify(brand));
-    console.log(formData);
-    try {
-      const response = await axios.post("/brand/create", formData);
-      console.log(response);
-      reset({
-        image: "",
-        name: "",
-        description: "",
-      });
-      navigate("/admin/brand");
-      toast.success("🦄 Add new brand successfully", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } catch (err) {
-      console.log(err.response.data.message);
-    }
+    handleSubmitBrand(data);
+    reset({
+      image: "",
+      name: "",
+      description: "",
+    });
   };
   return (
     <>
-      <div className="w-full h-full">
-        <Heading className="my-10 text-lg text-center">Add New Brand</Heading>
+      <Dialog open={show}>
+        {isUpdate ? (
+          <Heading className="my-10 text-lg text-center">Edit {title}</Heading>
+        ) : (
+          <Heading className="my-10 text-lg text-center">
+            Add New {title}
+          </Heading>
+        )}
         <form onSubmit={handleSubmit(onSubmitHandler)}>
           <div className="flex flex-col items-center justify-center w-full">
             <div className="flex flex-col mb-5 w-[300px]">
               <ImageUpload
                 name="image"
                 control={control}
+                isUpdate={isUpdate}
                 errors={errors}
               ></ImageUpload>
             </div>
@@ -112,12 +102,26 @@ const AddNewBrand = () => {
                 control={control}
               />
             </div>
-            <Button type="submit">Submit</Button>
+            <div className="flex items-center justify-center gap-2">
+              <Button onClick={cancel}>Cancle</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                Submit
+              </Button>
+            </div>
           </div>
         </form>
-      </div>
+      </Dialog>
     </>
   );
 };
 
-export default AddNewBrand;
+DialogCEBrand.propTypes = {
+  isUpdate: PropTypes.bool,
+  handleSubmitBrand: PropTypes.func,
+  cancel: PropTypes.func,
+  show: PropTypes.bool,
+  title: PropTypes.string,
+  brandDataToEdit: PropTypes.object,
+};
+
+export default DialogCEBrand;

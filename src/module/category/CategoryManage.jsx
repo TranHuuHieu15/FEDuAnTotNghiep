@@ -3,7 +3,7 @@ import Button from "../../components/button/Button";
 import axios from "../../config/axios.js";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import { toast } from "react-toastify";
-import DialogCE from "../../components/dialog/DialogCE";
+import DialogCECategory from "./DialogCECategory";
 
 const CategoryManage = () => {
   console.log("re-render");
@@ -30,7 +30,7 @@ const CategoryManage = () => {
   };
   useEffect(() => {
     fetchData();
-  }, [categoryData]);
+  }, []);
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
@@ -39,7 +39,7 @@ const CategoryManage = () => {
       ...prevState,
       show: true,
       id: null,
-      isUpdate: true,
+      isUpdate: false,
       action: handleCreate,
       categoryDataToEdit: {},
     }));
@@ -151,7 +151,7 @@ const CategoryManage = () => {
   const handleCloseDialog = () => {
     setShowDialog((prevState) => ({
       ...prevState,
-      show: true,
+      show: false,
       id: null,
     }));
   };
@@ -190,7 +190,7 @@ const CategoryManage = () => {
         confirm={handleDelete}
         cancel={handleCloseDialog}
       />
-      <DialogCE
+      <DialogCECategory
         show={showDialogCE.show}
         isUpdate={showDialogCE.isUpdate}
         handleSubmitCategory={showDialogCE.action}

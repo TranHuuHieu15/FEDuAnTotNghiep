@@ -5,9 +5,9 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import Label from "../../components/label/Label";
-import { Input } from "postcss";
 import Button from "../../components/button/Button";
 import Textarea from "../../components/textarea/Textarea";
+import Input from "../../components/input/Input";
 
 const DialogCECategory = ({
   show,

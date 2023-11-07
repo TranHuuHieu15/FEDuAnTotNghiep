@@ -164,9 +164,9 @@ const BrandManage = () => {
   };
   return (
     <div className="">
-      <Button onClick={handleCreateTrue}>Add</Button>
+      <Button className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500" onClick={handleCreateTrue}>Add</Button>
       <table className="w-full text-center table-auto">
-        <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
+        <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-400">
           <tr>
             <th className="px-6 py-4 font-medium text-gray-900">Name</th>
             <th className="px-6 py-4 font-medium text-gray-900">Image</th>
@@ -174,7 +174,7 @@ const BrandManage = () => {
             <th className="px-6 py-4 font-medium text-gray-900">Action</th>
           </tr>
         </thead>
-        <tbody className="text-sm divide-y divide-gray-100">
+        <tbody className="divide-y divide-gray-100 text-sm">
           {brandData.map((item) => (
             <tr key={item.id} className="">
               <td className="p-2 font-medium text-gray-800">{item.name}</td>

@@ -4,6 +4,8 @@ import axios from "../../config/axios.js";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import { toast } from "react-toastify";
 import DialogCECategory from "./DialogCECategory";
+import { CiEdit } from "react-icons/ci";
+import { BsTrash3 } from "react-icons/bs";
 
 const CategoryManage = () => {
   const [categoryData, setCategoryData] = useState([]);
@@ -156,28 +158,32 @@ const CategoryManage = () => {
   };
   return (
     <>
-      <Button onClick={() => handleCreateTrue()}>Add new Category</Button>
-      <table>
-        <thead>
+      <Button className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500" onClick={() => handleCreateTrue()}>Add new Category</Button>
+      <table className="w-full table-auto text-center">
+        <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-400">
           <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Action</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Name</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Description</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-gray-100 text-sm">
           {categoryData.length > 0 &&
             categoryData.map((item) => (
               <tr key={item.id}>
-                <td>{item.name}</td>
-                <td>{item.description}</td>
-                <td>
-                  <Button onClick={() => handleUpdateTrue(item.id)}>
-                    Edit
-                  </Button>
-                  <Button onClick={() => handleDeleteTrue(item.id)}>
-                    Delete
-                  </Button>
+                <td className="p-2 font-medium text-gray-800">{item.name}</td>
+                <td className="p-2">{item.description}</td>
+                <td className="p-2">
+                  <span className="flex items-center justify-center gap-3">
+                    <a className="p-3 text-2xl hover:text-blue-500 cursor-pointer"
+                      onClick={() => handleUpdateTrue(item.id)}>
+                      <CiEdit />
+                    </a>
+                    <a className="ml-2 p-2 text-2xl  hover:text-blue-500 cursor-pointer"
+                      onClick={() => handleDeleteTrue(item.id)}>
+                      <BsTrash3 />
+                    </a>
+                  </span>
                 </td>
               </tr>
             ))}

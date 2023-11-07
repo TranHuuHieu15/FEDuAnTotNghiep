@@ -8,6 +8,7 @@ import Label from "../../components/label/Label";
 import Button from "../../components/button/Button";
 import Textarea from "../../components/textarea/Textarea";
 import Input from "../../components/input/Input";
+import { useEffect } from "react";
 
 const DialogCECategory = ({
   show,
@@ -26,17 +27,20 @@ const DialogCECategory = ({
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
     control,
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
-    mode: "onChange",
-    defaultValues: {
-      name: categoryDataToEdit.name || "",
-      description: categoryDataToEdit.description || "",
-    },
   });
+  useEffect(() => {
+    reset(categoryDataToEdit);
+  }, [categoryDataToEdit, reset]);
   const onSubmitHandler = (data) => {
     if (!isValid) return;
     handleSubmitCategory(data);
+    reset({
+      name: "",
+      description: "",
+    });
   };
   return (
     <>

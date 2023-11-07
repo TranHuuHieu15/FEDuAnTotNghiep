@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import DialogCECategory from "./DialogCECategory";
 
 const CategoryManage = () => {
-  console.log("re-render");
   const [categoryData, setCategoryData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,

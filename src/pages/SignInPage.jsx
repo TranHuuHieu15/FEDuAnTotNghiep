@@ -2,9 +2,20 @@ import { BsFacebook } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import Button from "../components/button/Button";
 import Input from "../components/input/Input";
-import logo from "../assets/images/logo-removebg.png"
+import logo from "../assets/images/logo-removebg.png";
+// import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
 
 const SignInPage = () => {
+  const {
+    handleSubmit,
+    formState: { errors, isValid, isSubmitting },
+    control,
+    reset,
+  } = useForm({
+    // resolver: yupResolver(schema),
+  });
   return (
     <>
       <div className="absolute top-0 bottom-0 left-0 w-full h-full overflow-hidden leading-5 bg-[#F7C59F] bg-gradient-to-b"></div>
@@ -42,12 +53,18 @@ const SignInPage = () => {
                   type="text"
                   label="Enter your username"
                   className="w-[355px] my-4"
+                  name="username"
+                  control={control}
+                  errors={errors}
                 />
 
                 <Input
                   type="password"
                   label="Enter your password"
                   className="w-[355px]"
+                  name="password"
+                  control={control}
+                  errors={errors}
                 />
               </form>
               <div className="flex items-center justify-between">

@@ -4,8 +4,19 @@ import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
 import RadioButton from "../components/radioButton/RadioButton";
 import Checkbox from "../components/checkbox/Checkbox";
+// import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
 
 const SignUpPage = () => {
+  const {
+    handleSubmit,
+    formState: { errors, isValid, isSubmitting },
+    control,
+    reset,
+  } = useForm({
+    // resolver: yupResolver(schema),
+  });
   return (
     <>
       <div className="absolute top-0 bottom-0 left-0 w-full h-full overflow-hidden leading-5 bg-[#F7C59F] bg-gradient-to-b"></div>
@@ -30,28 +41,52 @@ const SignUpPage = () => {
                   type="text"
                   label="Enter your username"
                   className="w-[455px] my-4"
+                  name="username"
+                  control={control}
+                  errors={errors}
                 />
                 <Input
                   type="text"
                   label="Enter your fullname"
                   className="w-[455px] my-4"
+                  name="fullname"
+                  control={control}
+                  errors={errors}
                 />
                 <Input
                   type="password"
                   label="Enter your password"
                   className="w-[455px] my-4"
+                  name="password"
+                  control={control}
+                  errors={errors}
                 />
                 <Input
                   type="email"
                   label="Enter your email"
                   className="w-[455px] my-4"
+                  name="email"
+                  control={control}
+                  errors={errors}
                 />
                 <div className="flex items-center gap-4">
                   <p className="text-gray-600">Gender</p>
-                  <RadioButton label="Nam" name="gender" ripple={true} checked={true}></RadioButton>
-                  <RadioButton label="Nữ" name="gender" ripple={true}></RadioButton>
+                  <RadioButton
+                    label="Nam"
+                    name="gender"
+                    ripple={true}
+                    checked={true}
+                  ></RadioButton>
+                  <RadioButton
+                    label="Nữ"
+                    name="gender"
+                    ripple={true}
+                  ></RadioButton>
                 </div>
-                <Checkbox label="I agree to the Terms and Conditions of Shop" className="font-eculid"></Checkbox>
+                <Checkbox
+                  label="I agree to the Terms and Conditions of Shop"
+                  className="font-eculid"
+                ></Checkbox>
               </form>
               <div>
                 <Button className="w-[455px] bg-[#F7C59F]">Sign in</Button>

@@ -1,4 +1,9 @@
-import { Dialog, DialogBody, DialogFooter, DialogHeader } from "@material-tailwind/react";
+import {
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+} from "@material-tailwind/react";
 // import Heading from "../../components/heading/Heading";
 import PropTypes from "prop-types";
 import * as yup from "yup";
@@ -46,7 +51,9 @@ const DialogCECategory = ({
     <>
       <Dialog open={show}>
         {isUpdate ? (
-          <DialogHeader className="text-lg text-center">Edit {title}</DialogHeader>
+          <DialogHeader className="text-lg text-center">
+            Edit {title}
+          </DialogHeader>
         ) : (
           <DialogHeader className="text-lg text-center">
             Add New {title}
@@ -65,7 +72,7 @@ const DialogCECategory = ({
               />
               <div className="w-full mt-2">
                 <Textarea
-                  // name="description"
+                  name="description"
                   label="Description"
                   placeholder="Enter description"
                   control={control}
@@ -74,8 +81,14 @@ const DialogCECategory = ({
             </div>
             <DialogFooter className="float-right">
               <div className="flex items-center justify-center gap-2">
-                <Button className="bg-red-500" onClick={cancel}>Cancle</Button>
-                <Button className="bg-green-500" type="submit" disabled={isSubmitting}>
+                <Button className="bg-red-500" onClick={cancel}>
+                  Cancle
+                </Button>
+                <Button
+                  className="bg-green-500"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
                   Submit
                 </Button>
               </div>

@@ -1,10 +1,15 @@
-import { Dialog } from "@material-tailwind/react";
-import Heading from "../../components/heading/Heading";
+import {
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+} from "@material-tailwind/react";
+// import Heading from "../../components/heading/Heading";
 import PropTypes from "prop-types";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import Label from "../../components/label/Label";
+// import Label from "../../components/label/Label";
 import Button from "../../components/button/Button";
 import Textarea from "../../components/textarea/Textarea";
 import Input from "../../components/input/Input";
@@ -46,41 +51,50 @@ const DialogCECategory = ({
     <>
       <Dialog open={show}>
         {isUpdate ? (
-          <Heading className="my-10 text-lg text-center">Edit {title}</Heading>
+          <DialogHeader className="text-lg text-center">
+            Edit {title}
+          </DialogHeader>
         ) : (
-          <Heading className="my-10 text-lg text-center">
+          <DialogHeader className="text-lg text-center">
             Add New {title}
-          </Heading>
+          </DialogHeader>
         )}
-        <form onSubmit={handleSubmit(onSubmitHandler)}>
-          <div className="flex flex-col items-center justify-center w-full">
+        <DialogBody>
+          <form onSubmit={handleSubmit(onSubmitHandler)}>
             <div className="flex flex-col items-center justify-center">
-              <Label>Name</Label>
               <Input
                 name="name"
+                label="Name"
                 placeholder="Enter name category"
-                className="w-[300px]"
+                className="w-full"
                 control={control}
                 errors={errors}
               />
+              <div className="w-full mt-2">
+                <Textarea
+                  name="description"
+                  label="Description"
+                  placeholder="Enter description"
+                  control={control}
+                />
+              </div>
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <Label>Description</Label>
-              <Textarea
-                name="description"
-                placeholder="Enter description"
-                className="w-[300px] px-2 py-2 text-start my-2 border rounded-md"
-                control={control}
-              />
-            </div>
-            <div className="flex items-center justify-center gap-2">
-              <Button onClick={cancel}>Cancle</Button>
-              <Button type="submit" disabled={isSubmitting}>
-                Submit
-              </Button>
-            </div>
-          </div>
-        </form>
+            <DialogFooter className="float-right">
+              <div className="flex items-center justify-center gap-2">
+                <Button className="bg-red-500" onClick={cancel}>
+                  Cancle
+                </Button>
+                <Button
+                  className="bg-green-500"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  Submit
+                </Button>
+              </div>
+            </DialogFooter>
+          </form>
+        </DialogBody>
       </Dialog>
     </>
   );

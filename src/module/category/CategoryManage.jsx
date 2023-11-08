@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import Button from "../../components/button/Button";
 import axios from "../../config/axios.js";
-import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import { toast } from "react-toastify";
 import DialogCECategory from "./DialogCECategory";
+import { CiEdit } from "react-icons/ci";
+import { BsTrash3 } from "react-icons/bs";
+import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 
 const CategoryManage = () => {
   const [categoryData, setCategoryData] = useState([]);
@@ -34,14 +36,13 @@ const CategoryManage = () => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
   const handleCreateTrue = () => {
-    setShowDialogCE((prevState) => ({
-      ...prevState,
+    setShowDialogCE({
       show: true,
       id: null,
       isUpdate: false,
       action: handleCreate,
       categoryDataToEdit: {},
-    }));
+    });
   };
 
   const handleCreate = async (categoryDto) => {
@@ -69,14 +70,13 @@ const CategoryManage = () => {
   const handleUpdateTrue = (id) => {
     console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
     const dataEdit = categoryData.find((item) => item.id === id);
-    setShowDialogCE((prevState) => ({
-      ...prevState,
+    setShowDialogCE({
       show: true,
       id: id,
       isUpdate: true,
       action: handleUpdate,
       categoryDataToEdit: dataEdit,
-    }));
+    });
   };
   const handleUpdate = async (categoryDto) => {
     console.log("In ra id in handleUpdate:", showDialogCERef.current.id);
@@ -106,11 +106,10 @@ const CategoryManage = () => {
   };
 
   const handleDeleteTrue = (id) => {
-    setShowDialog((prevState) => ({
-      ...prevState,
+    setShowDialog({
       show: true,
       id: id,
-    }));
+    });
   };
   const handleDelete = async () => {
     try {
@@ -137,47 +136,58 @@ const CategoryManage = () => {
   };
 
   const handleCloseDialogCE = () => {
-    setShowDialogCE((prevState) => ({
-      ...prevState,
+    setShowDialogCE({
       show: false,
       id: null,
       isUpdate: false,
       action: null,
       categoryDataToEdit: {},
-    }));
+    });
   };
 
   const handleCloseDialog = () => {
-    setShowDialog((prevState) => ({
-      ...prevState,
+    setShowDialog({
       show: false,
       id: null,
-    }));
+    });
   };
   return (
     <>
-      <Button onClick={() => handleCreateTrue()}>Add new Category</Button>
-      <table>
-        <thead>
+      <Button
+        className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
+        onClick={handleCreateTrue}
+      >
+        Add new Category
+      </Button>
+      <table className="w-full table-auto text-center">
+        <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-400">
           <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Action</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Name</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Description</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-gray-100 text-sm">
           {categoryData.length > 0 &&
             categoryData.map((item) => (
               <tr key={item.id}>
-                <td>{item.name}</td>
-                <td>{item.description}</td>
-                <td>
-                  <Button onClick={() => handleUpdateTrue(item.id)}>
-                    Edit
-                  </Button>
-                  <Button onClick={() => handleDeleteTrue(item.id)}>
-                    Delete
-                  </Button>
+                <td className="p-2 font-medium text-gray-800">{item.name}</td>
+                <td className="p-2">{item.description}</td>
+                <td className="p-2">
+                  <span className="flex items-center justify-center gap-3">
+                    <a
+                      className="p-3 text-2xl hover:text-blue-500 cursor-pointer"
+                      onClick={() => handleUpdateTrue(item.id)}
+                    >
+                      <CiEdit />
+                    </a>
+                    <a
+                      className="ml-2 p-2 text-2xl  hover:text-blue-500 cursor-pointer"
+                      onClick={() => handleDeleteTrue(item.id)}
+                    >
+                      <BsTrash3 />
+                    </a>
+                  </span>
                 </td>
               </tr>
             ))}

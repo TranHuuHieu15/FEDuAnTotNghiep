@@ -1,20 +1,27 @@
 import PropTypes from "prop-types";
 import { useController } from "react-hook-form";
+import { Textarea as TestArea } from "@material-tailwind/react";
 
-const Textarea = ({ className, control, name }) => {
+const Textarea = ({ className, label, control, ...props }) => {
   const { field } = useController({
     control,
-    name,
+    name: props.name,
     defaultValue: "",
   });
   return (
-    <div>
-      <textarea className={className} {...field}></textarea>
-    </div>
+    <>
+      <TestArea
+        className={className}
+        label={label}
+        {...field}
+        {...props}
+      ></TestArea>
+    </>
   );
 };
 
 Textarea.propTypes = {
+  label: PropTypes.string,
   name: PropTypes.string.isRequired,
   control: PropTypes.any.isRequired,
   className: PropTypes.string,

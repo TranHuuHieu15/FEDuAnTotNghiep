@@ -163,8 +163,13 @@ const BrandManage = () => {
     });
   };
   return (
-    <div className="">
-      <Button onClick={handleCreateTrue}>Add</Button>
+    <>
+      <Button
+        className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
+        onClick={handleCreateTrue}
+      >
+        Add new Category
+      </Button>
       <table className="w-full text-center table-auto">
         <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
           <tr>
@@ -225,7 +230,7 @@ const BrandManage = () => {
         title="Category"
         brandDataToEdit={showDialogCE.brandDataToEdit}
       />
-    </div>
+    </>
   );
 };
 

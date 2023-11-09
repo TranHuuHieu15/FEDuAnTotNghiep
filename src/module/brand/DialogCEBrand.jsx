@@ -52,8 +52,15 @@ const DialogCEBrand = ({
     resolver: yupResolver(schema),
   });
   useEffect(() => {
-    reset(brandDataToEdit);
-  }, [brandDataToEdit, reset]);
+    if (!show) {
+      reset({
+        name: "",
+        description: "",
+      });
+    } else {
+      reset(brandDataToEdit);
+    }
+  }, [brandDataToEdit, reset, show]);
   const onSubmitHandler = (data) => {
     if (!isValid) return;
     handleSubmitBrand(data);

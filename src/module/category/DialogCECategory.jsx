@@ -37,8 +37,15 @@ const DialogCECategory = ({
     resolver: yupResolver(schema),
   });
   useEffect(() => {
-    reset(categoryDataToEdit);
-  }, [categoryDataToEdit, reset]);
+    if (!show) {
+      reset({
+        name: "",
+        description: "",
+      });
+    } else {
+      reset(categoryDataToEdit);
+    }
+  }, [categoryDataToEdit, show, reset]);
   const onSubmitHandler = (data) => {
     if (!isValid) return;
     handleSubmitCategory(data);

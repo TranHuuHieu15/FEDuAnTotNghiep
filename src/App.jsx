@@ -3,6 +3,7 @@ import "./App.css";
 import { ToastContainer } from "react-toastify";
 import { Suspense, lazy } from "react";
 import PaymentManage from "./module/payment/PaymentManage";
+import ProblemManage from "./module/problem/ProblemManage";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
@@ -63,6 +64,10 @@ function App() {
             <Route
               path="/admin/payment"
               element={<PaymentManage></PaymentManage>}
+            ></Route>
+            <Route
+              path="/admin/problem"
+              element={<ProblemManage></ProblemManage>}
             ></Route>
           </Route>
           <Route path="*" element={<PageNotFound></PageNotFound>}></Route>

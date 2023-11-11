@@ -18,6 +18,7 @@ const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 const AdminLayout = lazy(() => import("./layout/AdminLayout"));
 const CategoryManage = lazy(() => import("./module/category/CategoryManage"));
 const BrandManage = lazy(() => import("./module/brand/BrandManage"));
+const VoucherManage = lazy(() => import("./module/voucher/VoucherManage"));
 
 function App() {
   return (
@@ -54,6 +55,10 @@ function App() {
             <Route
               path="/admin/brand"
               element={<BrandManage></BrandManage>}
+            ></Route>
+            <Route
+              path="/admin/voucher"
+              element={<VoucherManage></VoucherManage>}
             ></Route>
             <Route
               path="/admin/payment"

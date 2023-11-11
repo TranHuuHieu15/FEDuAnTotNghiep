@@ -1,65 +1,75 @@
-import { useEffect, useRef, useState } from "react";
 import axios from "../../config/axios.js";
-import DialogDelete from "../../components/dialog/DialogDelete.jsx";
-import { toast } from "react-toastify";
-import { BsTrash3 } from "react-icons/bs";
+import { useEffect, useRef, useState } from "react";
+import DialogDelete from "../../components/dialog/DialogDelete";
+import Button from "../../components/button/Button";
 import { CiEdit } from "react-icons/ci";
-import DialogCEBrand from "./DialogCEBrand.jsx";
-import Button from "../../components/button/Button.jsx";
+import { BsTrash3 } from "react-icons/bs";
+import DiaLogCEPayment from "./DiaLogCEPayment";
+import { toast } from "react-toastify";
 
-const BrandManage = () => {
+const PaymentManage = () => {
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
     isUpdate: false,
     action: null,
-    brandDataToEdit: {},
+    paymentDataToEdit: {},
   });
+
   const showDialogCERef = useRef(null);
+
   const [showDialog, setShowDialog] = useState({
     show: false,
     id: null,
   });
-  const [brandData, setBrandData] = useState([]);
+
+  const [paymentData, setPaymentData] = useState([]);
+
+  //Call api
   const fetchData = async () => {
     try {
-      const response = await axios.get("/brand");
-      setBrandData(response.data);
+      const response = await axios.get("/payment");
+      setPaymentData(response.data);
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
+
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
+
   const handleCreateTrue = () => {
     setShowDialogCE({
       show: true,
       id: null,
       isUpdate: false,
       action: handleCreate,
-      brandDataToEdit: {},
+      paymentDataToEdit: {},
     });
   };
   const handleCreate = async (data) => {
     if (!showDialogCERef.current.show) return;
     const formData = new FormData();
     formData.append("imageFile", data.image);
-    const brand = {
-      name: data.name,
-      description: data.description,
-    };
-    formData.append("brandDto", JSON.stringify(brand));
-    console.log(formData);
+    formData.append("name", data.name);
+    formData.append("description", data.description);
+    // const payment = {
+    //   // name: data.name,
+    //   description: data.description,
+    // };
+    // formData.append("paymentDto", JSON.stringify(payment));
+    //*Tạo mới payment
     try {
-      const response = await axios.post("/brand/create", formData);
+      const response = await axios.post("/payment/create", formData);
       console.log(response);
       fetchData();
       handleCloseDialogCE();
-      toast.success("🦄 Add new brand successfully", {
+      toast.success("🦄 Add new payment successfully", {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -73,39 +83,45 @@ const BrandManage = () => {
       console.log(err.response.data.message);
     }
   };
+
+  //update payment
   const handleUpdateTrue = (id) => {
     console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
-    const dataEdit = brandData.find((item) => item.id === id);
+    const dataEdit = paymentData.find((item) => item.id === id);
     console.log(dataEdit);
     setShowDialogCE({
       show: true,
       id: id,
       isUpdate: true,
       action: handleUpdate,
-      brandDataToEdit: dataEdit,
+      paymentDataToEdit: dataEdit,
     });
   };
+
   const handleUpdate = async (data) => {
     if (!showDialogCERef.current.show && !showDialogCERef.current.id) return;
     const formData = new FormData();
     typeof data.image === "string"
       ? formData.append("image", data.image)
       : formData.append("imageFile", data.image);
-    const brand = {
-      id: showDialogCERef.current.id,
-      name: data.name,
-      description: data.description,
-    };
-    formData.append("brandDto", JSON.stringify(brand));
+    formData.append("id", showDialogCERef.current.id);
+    formData.append("name", data.name);
+    formData.append("description", data.description);
+    // const payment = {
+    //   id: showDialogCERef.current.id,
+    //   name: data.name,
+    //   description: data.description,
+    // };
+    // formData.append("paymentDto", JSON.stringify(payment));
     try {
       const response = await axios.put(
-        `/brand/update/${showDialogCERef.current.id}`,
+        `/payment/update/${showDialogCERef.current.id}`,
         formData
       );
-      console.log(response.data);
+      console.log("Dữ liệu được hiển thị: ", response.data);
       fetchData();
       handleCloseDialogCE();
-      toast.success("🦄 Edit brand successfully", {
+      toast.success("🦄 Edit payment successfully", {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -119,6 +135,7 @@ const BrandManage = () => {
       console.log(err.response.data.message);
     }
   };
+  //delete payment
   const handleDeleteTrue = (id) => {
     setShowDialog({
       show: true,
@@ -128,11 +145,11 @@ const BrandManage = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        await axios.delete(`/brand/delete/${showDialog.id}`);
-        setBrandData(brandData.filter((item) => item.id !== showDialog.id));
+        await axios.delete(`/payment/delete/${showDialog.id}`);
+        setPaymentData(paymentData.filter((item) => item.id !== showDialog.id));
         fetchData();
         handleCloseDialog();
-        toast.success("🦄 Delete brand successfully!", {
+        toast.success("🦄 Delete payment successfully!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -147,16 +164,16 @@ const BrandManage = () => {
       console.log(error);
     }
   };
+  // close dialog
   const handleCloseDialogCE = () => {
     setShowDialogCE({
       show: false,
       id: null,
       isUpdate: false,
       action: null,
-      brandDataToEdit: {},
+      paymentDataToEdit: {},
     });
   };
-
   const handleCloseDialog = () => {
     setShowDialog({
       show: false,
@@ -169,7 +186,7 @@ const BrandManage = () => {
         className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
         onClick={handleCreateTrue}
       >
-        Add new Category
+        Add new Payment
       </Button>
       <table className="w-full text-center table-auto">
         <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
@@ -181,7 +198,7 @@ const BrandManage = () => {
           </tr>
         </thead>
         <tbody className="text-sm divide-y divide-gray-100">
-          {brandData.map((item) => (
+          {paymentData.map((item) => (
             <tr key={item.id} className="">
               <td className="p-2 font-medium text-gray-800">{item.name}</td>
               <td className="flex items-center justify-center p-2">
@@ -197,19 +214,15 @@ const BrandManage = () => {
                 <span className="flex items-center justify-center gap-3">
                   <a
                     className="p-3 text-2xl cursor-pointer hover:text-blue-500"
-                    // outline="text"
                     onClick={() => handleUpdateTrue(item.id)}
                   >
-                    <CiEdit></CiEdit>
-                    {/* Edit */}
+                    <CiEdit />
                   </a>
                   <a
                     className="p-2 ml-2 text-2xl cursor-pointer hover:text-blue-500"
-                    // outline="text"
                     onClick={() => handleDeleteTrue(item.id)}
                   >
                     <BsTrash3 />
-                    {/* Delete */}
                   </a>
                 </span>
               </td>
@@ -219,20 +232,20 @@ const BrandManage = () => {
       </table>
       <DialogDelete
         show={showDialog.show}
-        title="Brand"
+        title="payment"
         confirm={handleDelete}
         cancel={handleCloseDialog}
       />
-      <DialogCEBrand
+      <DiaLogCEPayment
         show={showDialogCE.show}
         isUpdate={showDialogCE.isUpdate}
-        handleSubmitBrand={showDialogCE.action}
+        handleSubmitPayment={showDialogCE.action}
         cancel={handleCloseDialogCE}
-        title="Brand"
-        brandDataToEdit={showDialogCE.brandDataToEdit}
+        title="Payment"
+        paymentDataToEdit={showDialogCE.paymentDataToEdit}
       />
     </>
   );
 };
 
-export default BrandManage;
+export default PaymentManage;

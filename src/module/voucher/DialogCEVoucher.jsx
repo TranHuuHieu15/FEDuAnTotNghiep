@@ -23,6 +23,16 @@ const DialogCEVoucher = ({
   title,
   dataToEdit,
 }) => {
+  const typeDiscount = [
+    {
+      id: 1,
+      name: "PERCENT",
+    },
+    {
+      id: 2,
+      name: "FIXED",
+    },
+  ];
   const schema = yup
     .object({
       name: yup.string().required("Please enter voucher name"),
@@ -136,10 +146,12 @@ const DialogCEVoucher = ({
                 control={control}
                 errors={errors}
               />
-              <Select title="Type Voucher">
-                <option value="PERCENT">PERCENT</option>
-                <option value="FIXED">FIXED</option>
-              </Select>
+              <Select
+                title="Type Voucher"
+                name="typeVoucher"
+                options={typeDiscount}
+                control={control}
+              />
             </div>
             <DialogFooter className="float-right">
               <div className="flex items-center justify-center gap-2">

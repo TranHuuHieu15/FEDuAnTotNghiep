@@ -27,7 +27,11 @@ const Input = ({
           icon={icon}
           {...field}
         />
-        {errors.name && <p>{errors.name.message}</p>}
+        {errors.name && (
+          <p className="text-red-500 text-xs mt-2 ml-1">
+            {errors.name.message}
+          </p>
+        )}
       </div>
     </>
   );

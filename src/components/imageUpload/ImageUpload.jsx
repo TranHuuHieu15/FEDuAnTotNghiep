@@ -27,7 +27,7 @@ const ImageUpload = ({
   };
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col items-center justify-center gap-1">
       <div className="">
         {value ? (
           <img
@@ -47,7 +47,7 @@ const ImageUpload = ({
           />
         )}
       </div>
-      <Label className="text-gray-500 mt-6">Choose the photo</Label>
+      <Label className="mt-6 text-gray-500">Choose the photo</Label>
 
       <input
         type="file"
@@ -56,7 +56,7 @@ const ImageUpload = ({
         {...fieldProps}
       />
       {errors.image && (
-        <p className="text-red-500 mt-1 text-xs ml-1">{errors.image.message}</p>
+        <p className="mt-1 ml-1 text-xs text-red-500">{errors.image.message}</p>
       )}
     </div>
   );

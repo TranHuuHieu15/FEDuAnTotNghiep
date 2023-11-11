@@ -14,13 +14,13 @@ import ImageUpload from "../../components/imageUpload/ImageUpload";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 
-const DialogCEBrand = ({
+const DialogCEPayment = ({
   show,
   isUpdate,
-  handleSubmitBrand,
+  handleSubmitPayment,
   cancel,
   title,
-  brandDataToEdit,
+  paymentDataToEdit,
 }) => {
   const schema = yup
     .object({
@@ -37,7 +37,7 @@ const DialogCEBrand = ({
         }
         return false; // Trường hợp khác không hợp lệ
       }),
-      name: yup.string().required("Please enter brand name"),
+      name: yup.string().required("Please enter payment name"),
     })
     .required();
   const {
@@ -55,21 +55,21 @@ const DialogCEBrand = ({
         description: "",
       });
     } else {
-      reset(brandDataToEdit);
+      reset(paymentDataToEdit);
     }
-  }, [brandDataToEdit, reset, show]);
+  }, [paymentDataToEdit, reset, show]);
   const onSubmitHandler = (data) => {
     if (!isValid) return;
-    handleSubmitBrand(data);
+    handleSubmitPayment(data);
     reset({
-      image: "",
       name: "",
       description: "",
+      image: "",
     });
   };
   return (
     <>
-      <Dialog open={show}>
+      <Dialog open={show} className="">
         {isUpdate ? (
           <DialogHeader className="text-lg">Edit {title}</DialogHeader>
         ) : (
@@ -91,7 +91,7 @@ const DialogCEBrand = ({
                 <Input
                   label="Name"
                   name="name"
-                  placeholder="Enter name brand"
+                  placeholder="Enter name payment"
                   className="w-full"
                   control={control}
                   errors={errors}
@@ -105,8 +105,8 @@ const DialogCEBrand = ({
                 </div>
               </div>
             </div>
-            <DialogFooter>
-              <Button className="bg-red-500" onClick={cancel}>
+            <DialogFooter className="">
+              <Button className="bg-deep-orange-600" onClick={cancel}>
                 Cancle
               </Button>
               <Button
@@ -124,13 +124,13 @@ const DialogCEBrand = ({
   );
 };
 
-DialogCEBrand.propTypes = {
+DialogCEPayment.propTypes = {
   isUpdate: PropTypes.bool,
-  handleSubmitBrand: PropTypes.func,
+  handleSubmitPayment: PropTypes.func,
   cancel: PropTypes.func,
   show: PropTypes.bool,
   title: PropTypes.string,
-  brandDataToEdit: PropTypes.object,
+  paymentDataToEdit: PropTypes.object,
 };
 
-export default DialogCEBrand;
+export default DialogCEPayment;

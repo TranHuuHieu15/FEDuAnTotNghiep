@@ -3,7 +3,13 @@ import imageAvail from "../../assets/images/imageAvail.jpg";
 import PropTypes from "prop-types";
 import { useController } from "react-hook-form";
 
-const ImageUpload = ({ control, name, errors, isUpdate }) => {
+const ImageUpload = ({
+  control,
+  name,
+  errors,
+  isUpdate,
+  size = "w-[200px] h-[150px]",
+}) => {
   const {
     field: { onChange, value, ...fieldProps },
   } = useController({
@@ -21,8 +27,8 @@ const ImageUpload = ({ control, name, errors, isUpdate }) => {
   };
 
   return (
-    <>
-      <div className="mx-auto w-[150px] h-[150px]">
+    <div className="flex flex-col gap-1">
+      <div className="">
         {value ? (
           <img
             src={
@@ -31,21 +37,28 @@ const ImageUpload = ({ control, name, errors, isUpdate }) => {
                 : URL.createObjectURL(value)
             }
             alt=""
-            className="object-cover w-full h-full"
+            className={`object-cover rounded-md ${size}`}
           />
         ) : (
-          <img src={imageAvail} alt="Image available" />
+          <img
+            src={imageAvail}
+            alt="Image available"
+            className="object-cover w-[200px] h-[150px] rounded-md"
+          />
         )}
       </div>
-      <Label>Choose the photo</Label>
+      <Label className="text-gray-500 mt-6">Choose the photo</Label>
+
       <input
         type="file"
         className="max-w-[100px]"
         onChange={handleImage}
         {...fieldProps}
       />
-      {errors.image && <p className="text-red-500">{errors.image.message}</p>}
-    </>
+      {errors.image && (
+        <p className="text-red-500 mt-1 text-xs ml-1">{errors.image.message}</p>
+      )}
+    </div>
   );
 };
 
@@ -54,6 +67,7 @@ ImageUpload.propTypes = {
   control: PropTypes.any.isRequired,
   errors: PropTypes.object,
   isUpdate: PropTypes.bool,
+  size: PropTypes.string,
 };
 
 export default ImageUpload;

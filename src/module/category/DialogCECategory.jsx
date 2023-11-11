@@ -81,7 +81,6 @@ const DialogCECategory = ({
                 <Textarea
                   name="description"
                   label="Description"
-                  placeholder="Enter description"
                   control={control}
                 />
               </div>

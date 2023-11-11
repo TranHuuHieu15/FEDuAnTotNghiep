@@ -7,7 +7,6 @@ const Select = ({ className, title, options, className2, control, name }) => {
   const { field } = useController({
     control,
     name,
-    defaultValue: "",
   });
   return (
     <>

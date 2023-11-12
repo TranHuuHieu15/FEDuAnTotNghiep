@@ -18,6 +18,7 @@ module.exports = withMT({
       "image-grid-two": "url('/src/assets/images/hl2.png')",
       "image-grid-three": "url('/src/assets/images/hl3.png')",
       "image-grid-four": "url('/src/assets/images/hl4.png')",
+      "image-five": "url('/src/assets/images/bg-01.jpg')",
     },
     boxShadow: {
       "3xl":

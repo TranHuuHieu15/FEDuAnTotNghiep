@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useController } from "react-hook-form";
 
 const Select = ({ className, title, options, className2, control, name }) => {
-  const selectClasses = `border rounded-md ${className}`;
+  const selectClasses = `border ${className}`;
 
   const { field } = useController({
     control,

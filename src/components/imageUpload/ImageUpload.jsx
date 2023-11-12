@@ -43,7 +43,7 @@ const ImageUpload = ({
           <img
             src={imageAvail}
             alt="Image available"
-            className="object-cover w-[200px] h-[150px] rounded-md"
+            className={`object-cover ${size} rounded-md`}
           />
         )}
       </div>

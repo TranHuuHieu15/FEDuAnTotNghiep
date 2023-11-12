@@ -158,6 +158,14 @@ const SideBar = () => {
                       Payment
                     </ListItem>
                   </Link>
+                  <Link to="/admin/problem">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Problem
+                    </ListItem>
+                  </Link>
                   <Link to="/admin/voucher">
                     <ListItem>
                       <ListItemPrefix>
@@ -180,6 +188,14 @@ const SideBar = () => {
                         <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
                       </ListItemPrefix>
                       Evaluate
+                    </ListItem>
+                  </Link>
+                  <Link to="/admin/feedback">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Feedback
                     </ListItem>
                   </Link>
                 </List>

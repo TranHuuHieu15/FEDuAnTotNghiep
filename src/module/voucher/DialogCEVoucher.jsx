@@ -80,7 +80,7 @@ const DialogCEVoucher = ({
         <DialogBody>
           <form onSubmit={handleSubmit(onSubmitHandler)}>
             <div className="grid items-center justify-center grid-cols-2 gap-3">
-              <div className="grid gap-1">
+              <div className="grid gap-2">
                 <ImageUpload
                   name="image"
                   control={control}

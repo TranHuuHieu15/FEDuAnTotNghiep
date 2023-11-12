@@ -55,10 +55,11 @@ const DialogCEDiscount = ({
         }
         return false; // Trường hợp khác không hợp lệ
       }),
-      discount: yup.number().required("Please enter discount name"),
-      registerDate: yup.date().required("Please enter Register Date"),
-      expirationDate: yup.date().required("Please enter Expiration Date"),
-      quantity: yup.number().required("Please enter quantity"),
+      name: yup.string().required("Not empty name"),
+      // discount: yup.number().required("Please enter discount name"),
+      // registerDate: yup.date().required("Please enter Register Date"),
+      // expirationDate: yup.date().required("Please enter Expiration Date"),
+      // quantity: yup.number().required("Please enter quantity"),
     })
     .required();
   const {

@@ -4,12 +4,10 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@material-tailwind/react";
-// import Heading from "../../components/heading/Heading";
 import PropTypes from "prop-types";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-// import Label from "../../components/label/Label";
 import Button from "../../components/button/Button";
 import Textarea from "../../components/textarea/Textarea";
 import Input from "../../components/input/Input";
@@ -56,7 +54,7 @@ const DialogCECategory = ({
   };
   return (
     <>
-      <Dialog open={show}>
+      <Dialog open={show} size="xs">
         {isUpdate ? (
           <DialogHeader className="text-lg text-center">
             Edit {title}
@@ -68,7 +66,7 @@ const DialogCECategory = ({
         )}
         <DialogBody>
           <form onSubmit={handleSubmit(onSubmitHandler)}>
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center gap-3">
               <Input
                 name="name"
                 label="Name"
@@ -77,13 +75,11 @@ const DialogCECategory = ({
                 control={control}
                 errors={errors}
               />
-              <div className="w-full mt-2">
-                <Textarea
-                  name="description"
-                  label="Description"
-                  control={control}
-                />
-              </div>
+              <Textarea
+                name="description"
+                label="Description"
+                control={control}
+              />
             </div>
             <DialogFooter className="float-right">
               <div className="flex items-center justify-center gap-2">

@@ -69,7 +69,7 @@ const DialogCEBrand = ({
   };
   return (
     <>
-      <Dialog open={show}>
+      <Dialog open={show} size="sm">
         {isUpdate ? (
           <DialogHeader className="text-lg">Edit {title}</DialogHeader>
         ) : (
@@ -77,8 +77,8 @@ const DialogCEBrand = ({
         )}
         <DialogBody>
           <form onSubmit={handleSubmit(onSubmitHandler)}>
-            <div className="flex flex-row gap-2">
-              <div className="flex-1">
+            <div className="grid items-center justify-center grid-cols-2 gap-4">
+              <div className="grid gap-1">
                 <ImageUpload
                   name="image"
                   className="w-full"
@@ -87,7 +87,7 @@ const DialogCEBrand = ({
                   errors={errors}
                 ></ImageUpload>
               </div>
-              <div className="flex-auto -m-px">
+              <div className="grid gap-2">
                 <Input
                   label="Name"
                   name="name"

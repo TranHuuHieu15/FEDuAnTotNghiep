@@ -111,71 +111,73 @@ const DialogCEDiscount = ({
         )}
         <DialogBody>
           <form onSubmit={handleSubmit(onSubmitHandler)}>
-            <div className="flex flex-col items-center justify-center">
-              <ImageUpload
-                name="image"
-                className="w-full"
-                control={control}
-                isUpdate={isUpdate}
-                errors={errors}
-              ></ImageUpload>
-              <Input
-                type="number"
-                name="discount"
-                label="Discount"
-                placeholder="Enter name discount"
-                className="w-full"
-                control={control}
-                errors={errors}
-              />
-              <Input
-                type="date"
-                name="registerDate"
-                label="Register Date"
-                placeholder="Enter Register Date"
-                className="w-full"
-                control={control}
-                errors={errors}
-              />
-              <Input
-                type="date"
-                name="expirationDate"
-                label="Expiration Date"
-                placeholder="Enter Expiration Date"
-                className="w-full"
-                control={control}
-                errors={errors}
-              />
-              <Input
-                type="number"
-                name="quantity"
-                label="Quantity"
-                placeholder="Enter quantity"
-                className="w-full"
-                control={control}
-                errors={errors}
-              />
-              <Textarea
-                type="string"
-                name="description"
-                label="Description"
-                className="w-full"
-                control={control}
-                errors={errors}
-              />
-              <Select
-                label="Category"
-                name="categoryId"
-                control={control}
-                errors={errors}
-                options={categories}
-              >
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </Select>
+            <div className="grid items-center justify-center grid-cols-2 gap-3">
+              <div className="grid gap-1">
+                <ImageUpload
+                  name="image"
+                  control={control}
+                  isUpdate={isUpdate}
+                  errors={errors}
+                ></ImageUpload>
+                <Input
+                  type="number"
+                  name="discount"
+                  label="Discount"
+                  placeholder="Enter name discount"
+                  className="w-full"
+                  control={control}
+                  errors={errors}
+                />
+                <Input
+                  type="number"
+                  name="quantity"
+                  label="Quantity"
+                  className="w-full"
+                  control={control}
+                  errors={errors}
+                />
+              </div>
+              <div className="grid gap-3">
+                <Input
+                  type="date"
+                  name="registerDate"
+                  label="Register Date"
+                  className="w-full"
+                  control={control}
+                  errors={errors}
+                />
+                <Input
+                  type="date"
+                  name="expirationDate"
+                  label="Expiration Date"
+                  className="w-full"
+                  control={control}
+                  errors={errors}
+                />
+
+                <Select
+                  className2="text-sm ml-1 font-normal"
+                  className="p-[10px] rounded-lg border-blue-gray-300"
+                  title="Category :"
+                  name="categoryId"
+                  control={control}
+                  errors={errors}
+                  options={categories}
+                >
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </Select>
+                <Textarea
+                  name="description"
+                  label="Description"
+                  className="w-full"
+                  control={control}
+                  errors={errors}
+                />
+              </div>
             </div>
             <DialogFooter className="float-right">
               <div className="flex items-center justify-center gap-2">

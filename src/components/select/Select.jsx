@@ -13,11 +13,12 @@ const Select = ({ className, title, options, className2, control, name }) => {
     <>
       {title && <label className={className2}>{title}</label>}
       <select className={selectClasses} {...field}>
-        {options.map((item) => (
-          <option value={item.name} key={item.id}>
-            {item.name}
-          </option>
-        ))}
+        {options &&
+          options.map((item) => (
+            <option value={item.id} key={item.id}>
+              {item.name}
+            </option>
+          ))}
       </select>
     </>
   );

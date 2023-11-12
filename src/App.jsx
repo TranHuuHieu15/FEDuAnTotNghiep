@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import { Suspense, lazy } from "react";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
+const AboutUsPage = lazy(() => import("./pages/AboutUsPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const ProductPage = lazy(() => import("./pages/ProductPage"));
 const CartPage = lazy(() => import("./pages/CartPage"));
@@ -29,6 +30,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage></HomePage>}></Route>
           <Route path="/contact" element={<ContactPage></ContactPage>}></Route>
+          <Route path="/about" element={<AboutUsPage></AboutUsPage>}></Route>
           <Route path="/product" element={<ProductPage></ProductPage>}></Route>
           <Route path="/cart" element={<CartPage></CartPage>}></Route>
           <Route

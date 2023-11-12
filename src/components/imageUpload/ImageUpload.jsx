@@ -2,6 +2,7 @@ import Label from "../label/Label";
 import imageAvail from "../../assets/images/imageAvail.jpg";
 import PropTypes from "prop-types";
 import { useController } from "react-hook-form";
+import { useRef } from "react";
 
 const ImageUpload = ({
   control,
@@ -10,6 +11,7 @@ const ImageUpload = ({
   isUpdate,
   size = "w-[200px] h-[150px]",
 }) => {
+  const inputRef = useRef(null);
   const {
     field: { onChange, value, ...fieldProps },
   } = useController({
@@ -24,6 +26,9 @@ const ImageUpload = ({
       console.log(file);
       onChange(file);
     }
+  };
+  const handleChoosePhoto = () => {
+    inputRef.current.click();
   };
 
   return (
@@ -47,13 +52,18 @@ const ImageUpload = ({
           />
         )}
       </div>
-      <Label className="mt-6 text-gray-500">Choose the photo</Label>
-
+      <Label
+        className="mt-4 text-base font-medium cursor-pointer"
+        onClick={handleChoosePhoto}
+      >
+        Choose the photo
+      </Label>
       <input
         type="file"
-        className="max-w-[100px]"
+        className="max-w-[100px] hidden"
         onChange={handleImage}
         {...fieldProps}
+        ref={inputRef}
       />
       {errors.image && (
         <p className="mt-1 ml-1 text-xs text-red-500">{errors.image.message}</p>

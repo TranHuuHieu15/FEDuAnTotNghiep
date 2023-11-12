@@ -1,20 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import Button from "../../components/button/Button";
-import axios from "../../config/axios.js";
-import { toast } from "react-toastify";
-import DialogCECategory from "./DialogCECategory";
 import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
+import { toast } from "react-toastify";
+import axios from "../../config/axios.js";
+import DialogCEVoucher from "./DialogCEVoucher";
 
-const CategoryManage = () => {
-  const [categoryData, setCategoryData] = useState([]);
+const VoucherManage = () => {
+  const [voucherData, setVoucherData] = useState([]);
+  console.log(voucherData);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
     isUpdate: false,
     action: null,
-    categoryDataToEdit: {},
+    dataToEdit: {},
   });
   const showDialogCERef = useRef(null);
   const [showDialog, setShowDialog] = useState({
@@ -23,8 +24,8 @@ const CategoryManage = () => {
   });
   const fetchData = async () => {
     try {
-      const response = await axios.get("/category");
-      setCategoryData(response.data);
+      const response = await axios.get("/voucher");
+      setVoucherData(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -41,14 +42,14 @@ const CategoryManage = () => {
       id: null,
       isUpdate: false,
       action: handleCreate,
-      categoryDataToEdit: {},
+      dataToEdit: {},
     });
   };
 
-  const handleCreate = async (categoryDto) => {
+  const handleCreate = async (voucherDto) => {
     try {
       if (showDialogCERef.current.show) {
-        const response = await axios.post("/category/create", categoryDto);
+        const response = await axios.post("/voucher/create", voucherDto);
         console.log(response);
         fetchData();
         handleCloseDialogCE();
@@ -67,24 +68,25 @@ const CategoryManage = () => {
       console.log(error);
     }
   };
+
   const handleUpdateTrue = (id) => {
     console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
-    const dataEdit = categoryData.find((item) => item.id === id);
+    const dataEdit = voucherData.find((item) => item.id === id);
     setShowDialogCE({
       show: true,
       id: id,
       isUpdate: true,
       action: handleUpdate,
-      categoryDataToEdit: dataEdit,
+      dataToEdit: dataEdit,
     });
   };
-  const handleUpdate = async (categoryDto) => {
+  const handleUpdate = async (voucherDto) => {
     console.log("In ra id in handleUpdate:", showDialogCERef.current.id);
     try {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         const response = await axios.put(
-          `/category/update/${showDialogCERef.current.id}`,
-          categoryDto
+          `/voucher/update/${showDialogCERef.current.id}`,
+          voucherDto
         );
         console.log(response);
         fetchData();
@@ -114,10 +116,8 @@ const CategoryManage = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        await axios.delete(`/category/delete/${showDialog.id}`);
-        setCategoryData(
-          categoryData.filter((item) => item.id !== showDialog.id)
-        );
+        await axios.delete(`/voucher/delete/${showDialog.id}`);
+        setVoucherData(voucherData.filter((item) => item.id !== showDialog.id));
         handleCloseDialog();
         toast.success("Delete category successfully!", {
           position: "top-right",
@@ -134,14 +134,13 @@ const CategoryManage = () => {
       console.log(error);
     }
   };
-
   const handleCloseDialogCE = () => {
     setShowDialogCE({
       show: false,
       id: null,
       isUpdate: false,
       action: null,
-      categoryDataToEdit: {},
+      dataToEdit: {},
     });
   };
 
@@ -154,35 +153,58 @@ const CategoryManage = () => {
   return (
     <>
       <Button
-        className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
+        className="float-right mb-2 mr-2 cursor-pointer bg-light-green-500"
         onClick={handleCreateTrue}
       >
-        Add new Category
+        Add new voucher
       </Button>
-      <table className="w-full table-auto text-center">
-        <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-400">
+      <table className="w-full text-center table-auto">
+        <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
           <tr>
+            <th className="px-6 py-4 font-medium text-gray-900">Image</th>
             <th className="px-6 py-4 font-medium text-gray-900">Name</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Discount</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Quantity</th>
             <th className="px-6 py-4 font-medium text-gray-900">Description</th>
-            <th className="px-6 py-4 font-medium text-gray-900">Action</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Min Total</th>
+            <th className="px-6 py-4 font-medium text-gray-900">
+              Max Discount
+            </th>
+            <th className="px-6 py-4 font-medium text-gray-900">
+              Register Date
+            </th>
+            <th className="px-6 py-4 font-medium text-gray-900">
+              Expiration Date
+            </th>
+            <th className="px-6 py-4 font-medium text-gray-900">
+              Type Discount
+            </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100 text-sm">
-          {categoryData.length > 0 &&
-            categoryData.map((item) => (
+        <tbody className="text-sm divide-y divide-gray-100">
+          {voucherData.length > 0 &&
+            voucherData.map((item) => (
               <tr key={item.id}>
-                <td className="p-2 font-medium text-gray-800">{item.name}</td>
+                <td className="p-2 font-medium text-gray-800">{item.image}</td>
+                <td className="p-2">{item.name}</td>
+                <td className="p-2">{item.discount}</td>
+                <td className="p-2">{item.quantity}</td>
                 <td className="p-2">{item.description}</td>
+                <td className="p-2">{item.minTotal}</td>
+                <td className="p-2">{item.maxDiscount}</td>
+                <td className="p-2">{item.registerDate}</td>
+                <td className="p-2">{item.expirationDate}</td>
+                <td className="p-2">{item.typeDiscount}</td>
                 <td className="p-2">
                   <span className="flex items-center justify-center gap-3">
                     <a
-                      className="p-3 text-2xl hover:text-blue-500 cursor-pointer"
+                      className="p-3 text-2xl cursor-pointer hover:text-blue-500"
                       onClick={() => handleUpdateTrue(item.id)}
                     >
                       <CiEdit />
                     </a>
                     <a
-                      className="ml-2 p-2 text-2xl  hover:text-blue-500 cursor-pointer"
+                      className="p-2 ml-2 text-2xl cursor-pointer hover:text-blue-500"
                       onClick={() => handleDeleteTrue(item.id)}
                     >
                       <BsTrash3 />
@@ -195,20 +217,20 @@ const CategoryManage = () => {
       </table>
       <DialogDelete
         show={showDialog.show}
-        title="category"
+        title="voucher"
         confirm={handleDelete}
         cancel={handleCloseDialog}
       />
-      <DialogCECategory
+      <DialogCEVoucher
         show={showDialogCE.show}
         isUpdate={showDialogCE.isUpdate}
-        handleSubmitCategory={showDialogCE.action}
+        handleSubmitVoucher={showDialogCE.action}
         cancel={handleCloseDialogCE}
-        title="Category"
-        categoryDataToEdit={showDialogCE.categoryDataToEdit}
+        title="Voucher"
+        dataToEdit={showDialogCE.dataToEdit}
       />
     </>
   );
 };
 
-export default CategoryManage;
+export default VoucherManage;

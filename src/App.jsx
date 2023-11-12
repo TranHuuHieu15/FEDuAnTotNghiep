@@ -2,6 +2,9 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { ToastContainer } from "react-toastify";
 import { Suspense, lazy } from "react";
+import PaymentManage from "./module/payment/PaymentManage";
+import ProblemManage from "./module/problem/ProblemManage";
+import DiscountManage from "./module/discount/DiscountManage";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
@@ -17,6 +20,7 @@ const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 const AdminLayout = lazy(() => import("./layout/AdminLayout"));
 const CategoryManage = lazy(() => import("./module/category/CategoryManage"));
 const BrandManage = lazy(() => import("./module/brand/BrandManage"));
+const VoucherManage = lazy(() => import("./module/voucher/VoucherManage"));
 
 function App() {
   return (
@@ -53,6 +57,22 @@ function App() {
             <Route
               path="/admin/brand"
               element={<BrandManage></BrandManage>}
+            ></Route>
+            <Route
+              path="/admin/voucher"
+              element={<VoucherManage></VoucherManage>}
+            ></Route>
+            <Route
+              path="/admin/payment"
+              element={<PaymentManage></PaymentManage>}
+            ></Route>
+            <Route
+              path="/admin/problem"
+              element={<ProblemManage></ProblemManage>}
+            ></Route>
+            <Route
+              path="/admin/discount"
+              element={<DiscountManage></DiscountManage>}
             ></Route>
           </Route>
           <Route path="*" element={<PageNotFound></PageNotFound>}></Route>

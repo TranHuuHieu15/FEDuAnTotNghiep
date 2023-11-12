@@ -4,26 +4,27 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@material-tailwind/react";
+// import Heading from "../../components/heading/Heading";
 import PropTypes from "prop-types";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+// import Label from "../../components/label/Label";
 import Button from "../../components/button/Button";
-import Textarea from "../../components/textarea/Textarea";
 import Input from "../../components/input/Input";
 import { useEffect } from "react";
 
-const DialogCECategory = ({
+const DialogCEProblem = ({
   show,
   isUpdate,
-  handleSubmitCategory,
+  handleSubmitProblem,
   cancel,
   title,
-  categoryDataToEdit,
+  dataToEdit,
 }) => {
   const schema = yup
     .object({
-      name: yup.string().required("Please enter category name"),
+      name: yup.string().required("Please enter problem name"),
     })
     .required();
   const {
@@ -38,23 +39,21 @@ const DialogCECategory = ({
     if (!show) {
       reset({
         name: "",
-        description: "",
       });
     } else {
-      reset(categoryDataToEdit);
+      reset(dataToEdit);
     }
-  }, [categoryDataToEdit, show, reset]);
+  }, [dataToEdit, show, reset]);
   const onSubmitHandler = (data) => {
     if (!isValid) return;
-    handleSubmitCategory(data);
+    handleSubmitProblem(data);
     reset({
       name: "",
-      description: "",
     });
   };
   return (
     <>
-      <Dialog open={show} size="xs">
+      <Dialog open={show}>
         {isUpdate ? (
           <DialogHeader className="text-lg text-center">
             Edit {title}
@@ -66,19 +65,14 @@ const DialogCECategory = ({
         )}
         <DialogBody>
           <form onSubmit={handleSubmit(onSubmitHandler)}>
-            <div className="flex flex-col items-center justify-center gap-3">
+            <div className="flex flex-col items-center justify-center">
               <Input
                 name="name"
                 label="Name"
-                placeholder="Enter name category"
+                placeholder="Enter name problem"
                 className="w-full"
                 control={control}
                 errors={errors}
-              />
-              <Textarea
-                name="description"
-                label="Description"
-                control={control}
               />
             </div>
             <DialogFooter className="float-right">
@@ -102,13 +96,13 @@ const DialogCECategory = ({
   );
 };
 
-DialogCECategory.propTypes = {
+DialogCEProblem.propTypes = {
   isUpdate: PropTypes.bool,
-  handleSubmitCategory: PropTypes.func,
+  handleSubmitProblem: PropTypes.func,
   cancel: PropTypes.func,
   show: PropTypes.bool,
   title: PropTypes.string,
-  categoryDataToEdit: PropTypes.object,
+  dataToEdit: PropTypes.object,
 };
 
-export default DialogCECategory;
+export default DialogCEProblem;

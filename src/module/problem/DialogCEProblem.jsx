@@ -53,7 +53,7 @@ const DialogCEProblem = ({
   };
   return (
     <>
-      <Dialog open={show}>
+      <Dialog open={show} size="xs">
         {isUpdate ? (
           <DialogHeader className="text-lg text-center">
             Edit {title}

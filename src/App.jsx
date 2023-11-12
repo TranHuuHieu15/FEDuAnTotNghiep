@@ -2,9 +2,6 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { ToastContainer } from "react-toastify";
 import { Suspense, lazy } from "react";
-import PaymentManage from "./module/payment/PaymentManage";
-import ProblemManage from "./module/problem/ProblemManage";
-import DiscountManage from "./module/discount/DiscountManage";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
@@ -21,6 +18,9 @@ const AdminLayout = lazy(() => import("./layout/AdminLayout"));
 const CategoryManage = lazy(() => import("./module/category/CategoryManage"));
 const BrandManage = lazy(() => import("./module/brand/BrandManage"));
 const VoucherManage = lazy(() => import("./module/voucher/VoucherManage"));
+const PaymentManage = lazy(() => import("./module/payment/PaymentManage"));
+const DiscountManage = lazy(() => import("./module/discount/DiscountManage"));
+const ProblemManage = lazy(() => import("./module/problem/ProblemManage"));
 
 function App() {
   return (

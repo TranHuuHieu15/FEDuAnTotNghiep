@@ -79,79 +79,83 @@ const DialogCEVoucher = ({
         )}
         <DialogBody>
           <form onSubmit={handleSubmit(onSubmitHandler)}>
-            <div className="flex flex-col items-center justify-center">
-              <ImageUpload
-                name="image"
-                control={control}
-                isUpdate={isUpdate}
-                errors={errors}
-              ></ImageUpload>
-              <Input
-                name="name"
-                label="Name"
-                placeholder="Enter name voucher"
-                className="w-full"
-                control={control}
-                errors={errors}
-              />
-              <Input
-                name="discount"
-                label="Discount"
-                placeholder="Enter discount"
-                className="w-full"
-                control={control}
-                errors={errors}
-              />
-              <Input
-                name="quantity"
-                label="Quantity"
-                placeholder="Enter quantity"
-                className="w-full"
-                control={control}
-                errors={errors}
-              />
-              <Textarea
-                name="description"
-                label="Description"
-                placeholder="Enter description"
-                control={control}
-              />
-              <Input
-                type="date"
-                name="registerDate"
-                label="Register Date"
-                className="w-full"
-                control={control}
-                errors={errors}
-              />
-              <Input
-                type="date"
-                name="expirationDate"
-                label="Expiration Date"
-                className="w-full"
-                control={control}
-                errors={errors}
-              />
-              <Input
-                name="minTotal"
-                label="Min Total"
-                className="w-full"
-                control={control}
-                errors={errors}
-              />
-              <Input
-                name="maxDiscount"
-                label="Max Discount"
-                className="w-full"
-                control={control}
-                errors={errors}
-              />
-              <Select
-                title="Type Voucher"
-                name="typeVoucher"
-                options={typeDiscount}
-                control={control}
-              />
+            <div className="grid items-center justify-center grid-cols-2 gap-3">
+              <div className="grid gap-1">
+                <ImageUpload
+                  name="image"
+                  control={control}
+                  isUpdate={isUpdate}
+                  errors={errors}
+                ></ImageUpload>
+                <Input
+                  name="name"
+                  label="Name"
+                  className="w-full"
+                  control={control}
+                  errors={errors}
+                />
+
+                <Input
+                  name="quantity"
+                  label="Quantity"
+                  className="w-full"
+                  control={control}
+                  errors={errors}
+                />
+                <Select
+                  className2="text-sm ml-1 font-normal"
+                  className="p-2 rounded-lg border-blue-gray-300"
+                  title="Type Voucher :"
+                  name="typeVoucher"
+                  options={typeDiscount}
+                  control={control}
+                />
+              </div>
+              <div className="grid gap-3">
+                <Input
+                  name="discount"
+                  label="Discount"
+                  className="w-full"
+                  control={control}
+                  errors={errors}
+                />
+                <Input
+                  type="date"
+                  name="registerDate"
+                  label="Register Date"
+                  className="w-full"
+                  control={control}
+                  errors={errors}
+                />
+                <Input
+                  type="date"
+                  name="expirationDate"
+                  label="Expiration Date"
+                  className="w-full"
+                  control={control}
+                  errors={errors}
+                />
+                <Input
+                  name="minTotal"
+                  label="Min Total"
+                  className="w-full"
+                  control={control}
+                  errors={errors}
+                />
+                <Input
+                  name="maxDiscount"
+                  label="Max Discount"
+                  className="w-full"
+                  control={control}
+                  errors={errors}
+                />
+
+                <Textarea
+                  name="description"
+                  label="Description"
+                  control={control}
+                />
+              </div>
             </div>
             <DialogFooter className="float-right">
               <div className="flex items-center justify-center gap-2">

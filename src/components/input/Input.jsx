@@ -28,9 +28,12 @@ const Input = ({
           icon={icon}
           variant={variant}
           {...field}
+          value={
+            type === "datetime-local" ? field.value.slice(0, 16) : field.value
+          }
         />
         {errors.name && (
-          <p className="text-red-500 text-xs mt-2 ml-1">
+          <p className="mt-2 ml-1 text-xs text-red-500">
             {errors.name.message}
           </p>
         )}

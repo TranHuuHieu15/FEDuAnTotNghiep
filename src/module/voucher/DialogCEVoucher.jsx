@@ -13,7 +13,7 @@ import Textarea from "../../components/textarea/Textarea";
 import Input from "../../components/input/Input";
 import { useEffect } from "react";
 import ImageUpload from "../../components/imageUpload/ImageUpload";
-import Select from "../../components/select/Select";
+import SelectDefault from "../../components/select/SelectDefault";
 
 const DialogCEVoucher = ({
   show,
@@ -35,7 +35,28 @@ const DialogCEVoucher = ({
   ];
   const schema = yup
     .object({
+      image: yup.mixed().test("file", "Please choose a image file", (value) => {
+        if (value instanceof File) {
+          const acceptedExtensions = [".jpg", ".jpeg", ".png"];
+          const fileExtension = value.name.split(".").pop().toLowerCase();
+          return acceptedExtensions.includes(`.${fileExtension}`);
+        } else if (typeof value === "string") {
+          const imageExtensions = [".jpg", ".jpeg", ".png"];
+          return imageExtensions.some((extension) =>
+            value.toLowerCase().endsWith(extension)
+          );
+        }
+        return false; // Trường hợp khác không hợp lệ
+      }),
       name: yup.string().required("Please enter voucher name"),
+      discount: yup.number().required("Please enter discount name"),
+      registerDate: yup.date().required("Please enter register date"),
+      expirationDate: yup.date().required("Please enter expiration date"),
+      quantity: yup.number().required("Please enter quantity"),
+      typeDiscount: yup
+        .string()
+        .oneOf(["PERCENT", "FIXED"])
+        .required("Please choose type discount"),
     })
     .required();
   const {
@@ -49,7 +70,15 @@ const DialogCEVoucher = ({
   useEffect(() => {
     if (!show) {
       reset({
+        image: "",
         name: "",
+        quantity: "",
+        typeDiscount: "PERCENT",
+        discount: "",
+        registerDate: "",
+        expirationDate: "",
+        minTotal: "",
+        maxDiscount: "",
         description: "",
       });
     } else {
@@ -59,12 +88,20 @@ const DialogCEVoucher = ({
   const onSubmitHandler = (data) => {
     if (!isValid) return;
     handleSubmitVoucher(data);
-    console.log(data);
     reset({
+      image: "",
       name: "",
+      quantity: "",
+      typeDiscount: "PERCENT",
+      discount: "",
+      registerDate: "",
+      expirationDate: "",
+      minTotal: "",
+      maxDiscount: "",
       description: "",
     });
   };
+
   return (
     <>
       <Dialog open={show}>
@@ -96,23 +133,26 @@ const DialogCEVoucher = ({
                 />
 
                 <Input
+                  type="number"
                   name="quantity"
                   label="Quantity"
                   className="w-full"
                   control={control}
                   errors={errors}
                 />
-                <Select
+                <SelectDefault
                   className2="text-sm ml-1 font-normal"
                   className="p-2 rounded-lg border-blue-gray-300"
                   title="Type Voucher :"
-                  name="typeVoucher"
+                  name="typeDiscount"
                   options={typeDiscount}
                   control={control}
+                  errors={errors}
                 />
               </div>
               <div className="grid gap-3">
                 <Input
+                  type="number"
                   name="discount"
                   label="Discount"
                   className="w-full"
@@ -120,7 +160,7 @@ const DialogCEVoucher = ({
                   errors={errors}
                 />
                 <Input
-                  type="date"
+                  type="datetime-local"
                   name="registerDate"
                   label="Register Date"
                   className="w-full"
@@ -128,7 +168,7 @@ const DialogCEVoucher = ({
                   errors={errors}
                 />
                 <Input
-                  type="date"
+                  type="datetime-local"
                   name="expirationDate"
                   label="Expiration Date"
                   className="w-full"
@@ -136,6 +176,7 @@ const DialogCEVoucher = ({
                   errors={errors}
                 />
                 <Input
+                  type="number"
                   name="minTotal"
                   label="Min Total"
                   className="w-full"
@@ -143,6 +184,7 @@ const DialogCEVoucher = ({
                   errors={errors}
                 />
                 <Input
+                  type="number"
                   name="maxDiscount"
                   label="Max Discount"
                   className="w-full"

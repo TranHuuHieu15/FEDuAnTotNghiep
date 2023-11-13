@@ -3,6 +3,7 @@ import { Input as InputTailWind } from "@material-tailwind/react";
 import { useController } from "react-hook-form";
 
 const Input = ({
+  variant = "outlined",
   control,
   className,
   icon = "",
@@ -25,6 +26,7 @@ const Input = ({
           color={color}
           label={label}
           icon={icon}
+          variant={variant}
           {...field}
         />
         {errors.name && (
@@ -37,6 +39,7 @@ const Input = ({
   );
 };
 Input.propTypes = {
+  variant: PropTypes.string,
   color: PropTypes.string,
   label: PropTypes.string,
   type: PropTypes.string,

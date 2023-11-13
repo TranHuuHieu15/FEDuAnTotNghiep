@@ -9,7 +9,6 @@ import DialogCEVoucher from "./DialogCEVoucher";
 
 const VoucherManage = () => {
   const [voucherData, setVoucherData] = useState([]);
-  console.log(voucherData);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -46,10 +45,23 @@ const VoucherManage = () => {
     });
   };
 
-  const handleCreate = async (voucherDto) => {
+  const handleCreate = async (data) => {
     try {
       if (showDialogCERef.current.show) {
-        const response = await axios.post("/voucher/create", voucherDto);
+        const formData = new FormData();
+        typeof data.image === "string"
+          ? formData.append("image", data.image)
+          : formData.append("imageFile", data.image);
+        formData.append("name", data.name);
+        formData.append("discount", data.discount);
+        formData.append("registerDate", data.registerDate);
+        formData.append("expirationDate", data.expirationDate);
+        formData.append("quantity", data.quantity);
+        formData.append("typeDiscount", data.typeDiscount);
+        formData.append("minTotal", data.minTotal);
+        formData.append("maxDiscount", data.maxDiscount);
+        formData.append("description", data.description);
+        const response = await axios.post("/voucher/create", formData);
         console.log(response);
         fetchData();
         handleCloseDialogCE();
@@ -70,7 +82,6 @@ const VoucherManage = () => {
   };
 
   const handleUpdateTrue = (id) => {
-    console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
     const dataEdit = voucherData.find((item) => item.id === id);
     setShowDialogCE({
       show: true,
@@ -80,13 +91,25 @@ const VoucherManage = () => {
       dataToEdit: dataEdit,
     });
   };
-  const handleUpdate = async (voucherDto) => {
-    console.log("In ra id in handleUpdate:", showDialogCERef.current.id);
+  const handleUpdate = async (data) => {
     try {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
+        const formData = new FormData();
+        typeof data.image === "string"
+          ? formData.append("image", data.image)
+          : formData.append("imageFile", data.image);
+        formData.append("name", data.name);
+        formData.append("discount", data.discount);
+        formData.append("registerDate", data.registerDate);
+        formData.append("expirationDate", data.expirationDate);
+        formData.append("quantity", data.quantity);
+        formData.append("typeDiscount", data.typeDiscount);
+        formData.append("minTotal", data.minTotal);
+        formData.append("maxDiscount", data.maxDiscount);
+        formData.append("description", data.description);
         const response = await axios.put(
           `/voucher/update/${showDialogCERef.current.id}`,
-          voucherDto
+          formData
         );
         console.log(response);
         fetchData();
@@ -185,7 +208,13 @@ const VoucherManage = () => {
           {voucherData.length > 0 &&
             voucherData.map((item) => (
               <tr key={item.id}>
-                <td className="p-2 font-medium text-gray-800">{item.image}</td>
+                <td className="p-2 font-medium text-gray-800">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    style={{ width: "70px" }}
+                  />
+                </td>
                 <td className="p-2">{item.name}</td>
                 <td className="p-2">{item.discount}</td>
                 <td className="p-2">{item.quantity}</td>

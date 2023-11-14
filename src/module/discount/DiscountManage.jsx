@@ -57,15 +57,6 @@ const DiscountManage = () => {
         formData.append("quantity", data.quantity);
         formData.append("categoryId", data.categoryId);
         formData.append("description", data.description);
-        // const discountDto = {
-        //   discount: data.discount,
-        //   registerDate: data.registerDate,
-        //   expirationDate: data.expirationDate,
-        //   quantity: data.quantity,
-        //   categoryId: data.categoryId,
-        //   description: data.description,
-        // };
-        // formData.append("discountDto", JSON.stringify(discountDto));
         const response = await axios.post("/discount/create", formData);
         console.log(response);
         fetchData();

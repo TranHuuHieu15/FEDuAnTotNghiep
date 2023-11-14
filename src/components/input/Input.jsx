@@ -32,9 +32,9 @@ const Input = ({
             type === "datetime-local" ? field.value.slice(0, 16) : field.value
           }
         />
-        {errors.name && (
+        {errors[props.name] && (
           <p className="mt-2 ml-1 text-xs text-red-500">
-            {errors.name.message}
+            {errors[props.name].message}
           </p>
         )}
       </div>

@@ -55,11 +55,37 @@ const DialogCEDiscount = ({
         }
         return false; // Trường hợp khác không hợp lệ
       }),
-      name: yup.string().required("Not empty name"),
-      // discount: yup.number().required("Please enter discount name"),
-      // registerDate: yup.date().required("Please enter Register Date"),
-      // expirationDate: yup.date().required("Please enter Expiration Date"),
-      // quantity: yup.number().required("Please enter quantity"),
+      discount: yup
+        .number()
+        .transform((originalValue) => {
+          const value = parseFloat(originalValue);
+          return isNaN(value) || originalValue === "" ? undefined : value;
+        })
+        .typeError("Please enter a valid number for discount")
+        .required("Please enter discount"),
+      quantity: yup
+        .number()
+        .transform((originalValue) => {
+          const value = parseFloat(originalValue);
+          return isNaN(value) || originalValue === "" ? undefined : value;
+        })
+        .typeError("Please enter a valid number for quantity")
+        .required("Please enter quantity"),
+
+      registerDate: yup
+        .date()
+        .transform((originalValue) => {
+          return isNaN(Date.parse(originalValue)) ? undefined : originalValue;
+        })
+        .typeError("Please enter a valid date for Register Date")
+        .required("Please enter Register Date"),
+      expirationDate: yup
+        .date()
+        .transform((originalValue) => {
+          return isNaN(Date.parse(originalValue)) ? undefined : originalValue;
+        })
+        .typeError("Please enter a valid date for Register Date")
+        .required("Please enter Expiration Date"),
     })
     .required();
   const {

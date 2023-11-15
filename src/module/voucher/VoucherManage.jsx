@@ -202,6 +202,7 @@ const VoucherManage = () => {
             <th className="px-6 py-4 font-medium text-gray-900">
               Type Discount
             </th>
+            <th className="px-6 py-4 font-medium text-gray-900">Action</th>
           </tr>
         </thead>
         <tbody className="text-sm divide-y divide-gray-100">

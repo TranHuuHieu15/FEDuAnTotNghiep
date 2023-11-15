@@ -14,7 +14,6 @@ import Input from "../../components/input/Input";
 import { useEffect } from "react";
 import ImageUpload from "../../components/imageUpload/ImageUpload";
 import SelectDefault from "../../components/select/SelectDefault";
-
 const DialogCEVoucher = ({
   show,
   isUpdate,
@@ -49,10 +48,48 @@ const DialogCEVoucher = ({
         return false; // Trường hợp khác không hợp lệ
       }),
       name: yup.string().required("Please enter voucher name"),
-      discount: yup.number().required("Please enter discount name"),
-      registerDate: yup.date().required("Please enter register date"),
-      expirationDate: yup.date().required("Please enter expiration date"),
-      quantity: yup.number().required("Please enter quantity"),
+      discount: yup
+        .number()
+        .transform((originalValue) => {
+          return isNaN(parseFloat(originalValue)) ? undefined : originalValue;
+        })
+        .typeError("Please enter a valid number for discount")
+        .required("Please enter discount"),
+      registerDate: yup
+        .date()
+        .transform((originalValue) => {
+          return isNaN(Date.parse(originalValue)) ? undefined : originalValue;
+        })
+        .typeError("Please enter a valid date for Register Date")
+        .required("Please enter Register Date"),
+      expirationDate: yup
+        .date()
+        .transform((originalValue) => {
+          return isNaN(Date.parse(originalValue)) ? undefined : originalValue;
+        })
+        .typeError("Please enter a valid date for Expiration Date")
+        .required("Please enter Expiration Date"),
+      quantity: yup
+        .number()
+        .transform((originalValue) => {
+          return isNaN(parseFloat(originalValue)) ? undefined : originalValue;
+        })
+        .typeError("Please enter a valid number for quantity")
+        .required("Please enter quantity"),
+      minTotal: yup
+        .number()
+        .transform((originalValue) => {
+          return isNaN(parseFloat(originalValue)) ? undefined : originalValue;
+        })
+        .typeError("Please enter a valid number for min total")
+        .required("Please enter min total"),
+      maxDiscount: yup
+        .number()
+        .transform((originalValue) => {
+          return isNaN(parseFloat(originalValue)) ? undefined : originalValue;
+        })
+        .typeError("Please enter a valid number for max discount")
+        .required("Please enter max discount"),
       typeDiscount: yup
         .string()
         .oneOf(["PERCENT", "FIXED"])

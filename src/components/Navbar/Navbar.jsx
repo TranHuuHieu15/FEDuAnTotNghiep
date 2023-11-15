@@ -134,18 +134,22 @@ const Navbar = () => {
         <div className="container mx-auto">
           {navList}
           <div className="flex flex-col gap-2 pb-4">
-            <Button
-              className="w-24 hover:bg-blue-gray-900 hover:text-gray-300"
-              outline="text"
-            >
-              Sign In
-            </Button>
-            <Button
-              className="w-24 hover:bg-gray-300 hover:text-blue-gray-900"
-              outline="outlined"
-            >
-              Sign Up
-            </Button>
+            <Link to="/login">
+              <Button
+                className="hidden bg-gray-200 text-blue-gray-800 hover:bg-blue-gray-900 hover:text-gray-300 lg:inline-block"
+                outline="text"
+              >
+                Sign In
+              </Button>
+            </Link>
+            <Link to="/signup">
+              <Button
+                className="hidden text-gray-200 bg-blue-gray-900 hover:bg-gray-300 hover:text-blue-gray-900 lg:inline-block"
+                outline="outlined"
+              >
+                Sign Up
+              </Button>
+            </Link>
           </div>
         </div>
       </Collapse>

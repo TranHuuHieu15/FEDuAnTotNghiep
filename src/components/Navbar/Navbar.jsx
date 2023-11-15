@@ -64,7 +64,7 @@ const Navbar = () => {
   );
 
   return (
-    <MenuNav className="max-w-full px-0 py-0 mx-auto">
+    <MenuNav className="sticky top-0 z-10 max-w-full mx-auto rounded-none h-max lg:px-4 lg:py-2">
       <div className="container flex items-center justify-between mx-auto text-blue-gray-900">
         <Link className="w-20" to="/">
           <img
@@ -75,18 +75,22 @@ const Navbar = () => {
         </Link>
         <div className="hidden lg:block">{navList}</div>
         <div className="flex gap-2">
-          <Button
-            className="hidden bg-gray-200 text-blue-gray-800 hover:bg-blue-gray-900 hover:text-gray-300 lg:inline-block"
-            outline="text"
-          >
-            Sign In
-          </Button>
-          <Button
-            className="hidden text-gray-200 bg-blue-gray-900 hover:bg-gray-300 hover:text-blue-gray-900 lg:inline-block"
-            outline="outlined"
-          >
-            Sign Up
-          </Button>
+          <Link to="/login">
+            <Button
+              className="hidden bg-gray-200 text-blue-gray-800 hover:bg-blue-gray-900 hover:text-gray-300 lg:inline-block"
+              outline="text"
+            >
+              Sign In
+            </Button>
+          </Link>
+          <Link to="/signup">
+            <Button
+              className="hidden text-gray-200 bg-blue-gray-900 hover:bg-gray-300 hover:text-blue-gray-900 lg:inline-block"
+              outline="outlined"
+            >
+              Sign Up
+            </Button>
+          </Link>
         </div>
         <IconButton
           variant="text"

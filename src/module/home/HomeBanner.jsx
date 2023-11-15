@@ -23,14 +23,14 @@ const HomeBanner = () => {
       </div>
       <div className="basis-2/5 bg-[#F7C59F] relative">
         <img
-          src={imgBanner}
-          alt="Img banner"
-          className="relative z-50 mx-auto mt-4"
-        />
-        <img
           src={eclipBanner}
           alt="eclipse"
           className="absolute inset-0 m-auto"
+        />
+        <img
+          src={imgBanner}
+          alt="Img banner"
+          className="relative z-0 mx-auto mt-4"
         />
       </div>
     </div>

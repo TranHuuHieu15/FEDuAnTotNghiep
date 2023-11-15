@@ -4,10 +4,21 @@ import Button from "../components/button/Button";
 import Input from "../components/input/Input";
 import logo from "../assets/images/logo-removebg.png";
 // import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+// import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../redux/api/authApi";
+import {
+  loginFailure,
+  loginStart,
+  loginSuccess,
+} from "../redux/features/authSlice";
 
 const SignInPage = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [loginMutation] = useLoginMutation();
   const {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
@@ -16,6 +27,29 @@ const SignInPage = () => {
   } = useForm({
     // resolver: yupResolver(schema),
   });
+  const handleLogin = async (data) => {
+    console.log(data); // đã log được data
+    if (!isValid) return;
+    dispatch(loginStart());
+    try {
+      const response = await loginMutation(data).unwrap();
+      console.log(response.data);
+      dispatch(
+        loginSuccess({
+          userInfo: response.data.userInfo,
+          userToken: response.data.userToken,
+        })
+      );
+      reset({
+        username: "",
+        password: "",
+      });
+      navigate("/");
+    } catch (error) {
+      dispatch(loginFailure(error.message));
+      console.log(error.message);
+    }
+  };
   return (
     <>
       <div className="absolute top-0 bottom-0 left-0 w-full h-full overflow-hidden leading-5 bg-[#F7C59F] bg-gradient-to-b"></div>
@@ -48,12 +82,12 @@ const SignInPage = () => {
               </p>
             </div>
             <div className="space-y-5">
-              <form>
+              <form onSubmit={handleSubmit(handleLogin)}>
                 <Input
                   type="text"
                   label="Enter your username"
                   className="w-[355px] my-4"
-                  name="username"
+                  name="usernameOrEmail"
                   control={control}
                   errors={errors}
                 />
@@ -66,34 +100,42 @@ const SignInPage = () => {
                   control={control}
                   errors={errors}
                 />
-              </form>
-              <div className="flex items-center justify-between">
-                <div className="ml-auto text-sm">
-                  <a href="#" className="text-purple-700 hover:text-purple-600">
-                    Forgot your password?
-                  </a>
+
+                <div className="flex items-center justify-between">
+                  <div className="ml-auto text-sm">
+                    <a
+                      href="#"
+                      className="text-purple-700 hover:text-purple-600"
+                    >
+                      Forgot your password?
+                    </a>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <Button className="w-[355px] bg-[#F7C59F] text-gray-800">
-                  Sign in
-                </Button>
-              </div>
-              <div className="flex items-center justify-center space-x-3">
-                <span className="w-16 h-px bg-gray-300"></span>
-                <span className="font-normal text-gray-600">or</span>
-                <span className="w-16 h-px bg-gray-300"></span>
-              </div>
-              <div className="flex justify-center w-full gap-7">
-                <Button className="flex justify-center w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900">
-                  <FcGoogle className="w-4 h-4" />
-                  <span>Google</span>
-                </Button>
-                <Button className="flex justify-center w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900">
-                  <BsFacebook color="blue" className="w-4 h-4" />
-                  <span>Facebook</span>
-                </Button>
-              </div>
+                <div>
+                  <Button
+                    type="submit"
+                    className="w-[355px] bg-[#F7C59F] text-gray-800"
+                    disabled={isSubmitting}
+                  >
+                    Sign in
+                  </Button>
+                </div>
+                <div className="flex items-center justify-center space-x-3">
+                  <span className="w-16 h-px bg-gray-300"></span>
+                  <span className="font-normal text-gray-600">or</span>
+                  <span className="w-16 h-px bg-gray-300"></span>
+                </div>
+                <div className="flex justify-center w-full gap-7">
+                  <Button className="flex justify-center w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900">
+                    <FcGoogle className="w-4 h-4" />
+                    <span>Google</span>
+                  </Button>
+                  <Button className="flex justify-center w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900">
+                    <BsFacebook color="blue" className="w-4 h-4" />
+                    <span>Facebook</span>
+                  </Button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

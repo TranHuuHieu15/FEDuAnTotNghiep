@@ -1,8 +1,17 @@
 import Input from "../components/input/Input";
 import Button from "../components/button/Button";
 import logo from "../assets/images/logo-removebg.png";
+import { useForm } from "react-hook-form";
 
 const ForgotPWPage = () => {
+  const {
+    handleSubmit,
+    formState: { errors, isValid, isSubmitting },
+    control,
+    reset,
+  } = useForm({
+    // resolver: yupResolver(schema),
+  });
   return (
     <>
       <div className="absolute top-0 bottom-0 left-0 w-full h-full overflow-hidden leading-5 bg-[#F7C59F] bg-gradient-to-b"></div>
@@ -38,9 +47,12 @@ const ForgotPWPage = () => {
             <div className="flex flex-col items-center w-full gap-5 mb-4">
               <form>
                 <Input
+                  name="email"
                   type="email"
                   label="Enter your email"
                   className="w-[455px] my-4"
+                  control={control}
+                  errors={errors}
                 />
               </form>
               <div>

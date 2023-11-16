@@ -1,10 +1,11 @@
 import ProductCard from "../components/card/ProductCard";
-import Pagination from "../components/pagination/Pagination";
+// import Pagination from "../components/pagination/Pagination";
 import SiteLayout from "../layout/SiteLayout";
-import { Checkbox } from "@material-tailwind/react";
+// import { Checkbox } from "@material-tailwind/react";
 import InputSearch from "../components/input/InputSearch";
 import Select from "../components/select/Select";
 import RadioButton from "../components/radioButton/RadioButton";
+import { useForm } from "react-hook-form";
 
 const productData = [
   {
@@ -73,6 +74,32 @@ const productData = [
 ];
 
 const ProductPage = () => {
+  const {
+    handleSubmit,
+    formState: { errors, isValid, isSubmitting },
+    control,
+    reset,
+  } = useForm({
+    // resolver: yupResolver(schema),
+  });
+  const options = [
+    {
+      id: 1,
+      name: "PRICE",
+    },
+    {
+      id: 2,
+      name: "LOW",
+    },
+    {
+      id: 3,
+      name: "MEDIUM",
+    },
+    {
+      id: 4,
+      name: "HIGHT",
+    },
+  ];
   return (
     <>
       <SiteLayout>
@@ -114,16 +141,20 @@ const ProductPage = () => {
           </div>
           <div className="flex flex-col">
             <div className="flex justify-end w-full pr-[58px] font-eculid">
-              <Select
+              {/* <Select
                 title="Sort by price:"
                 className="px-1 py-1"
                 className2="p-2"
+                control={control}
+                options={options}
+                errors={errors}
               >
-                <option value="">price</option>
+               <option value="">price</option>
                 <option value="low">low</option>
                 <option value="medium">medium</option>
                 <option value="hight">high</option>
-              </Select>
+              </Select> 
+              */}
             </div>
             <div className="flex flex-wrap gap-3">
               {productData.length > 0 &&
@@ -137,7 +168,7 @@ const ProductPage = () => {
             </div>
           </div>
         </div>
-        <Pagination></Pagination>
+        {/* <Pagination></Pagination> */}
       </SiteLayout>
     </>
   );

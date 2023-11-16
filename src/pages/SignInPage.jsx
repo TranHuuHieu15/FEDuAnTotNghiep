@@ -7,7 +7,7 @@ import logo from "../assets/images/logo-removebg.png";
 // import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../redux/api/authApi";
 import {
   loginFailure,
@@ -16,9 +16,13 @@ import {
 } from "../redux/features/authSlice";
 
 const SignInPage = () => {
+  const { search } = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loginMutation] = useLoginMutation();
+  const urlParams = new URLSearchParams(search);
+  const tokenUrl = urlParams.get("token");
+  console.log(tokenUrl);
   const {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
@@ -28,11 +32,13 @@ const SignInPage = () => {
     // resolver: yupResolver(schema),
   });
   const handleLogin = async (data) => {
-    console.log(data); // đã log được data
     if (!isValid) return;
     dispatch(loginStart());
     try {
-      const response = await loginMutation(data).unwrap();
+      const response = await loginMutation({
+        ...data,
+        token: tokenUrl,
+      }).unwrap();
       console.log(response.data);
       dispatch(
         loginSuccess({

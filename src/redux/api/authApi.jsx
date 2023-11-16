@@ -15,7 +15,7 @@ export const authApi = createApi({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (data) => ({
-        url: "/auth/login",
+        url: data?.token ? `/auth/login?token=${data.token}` : "auth/login",
         method: "POST",
         body: data,
       }),

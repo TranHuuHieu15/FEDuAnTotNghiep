@@ -4,19 +4,80 @@ import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
 import RadioButton from "../components/radioButton/RadioButton";
 import Checkbox from "../components/checkbox/Checkbox";
-// import * as yup from "yup";
+import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { useRegisterMutation } from "../redux/api/authApi";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+  registerFailure,
+  registerStart,
+  registerSuccess,
+} from "../redux/features/authSlice";
 
 const SignUpPage = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [registerMutation] = useRegisterMutation();
+  const schema = yup.object().shape({
+    username: yup.string().required("Username is required"),
+    fullName: yup.string().required("Full name is required"),
+    birthday: yup
+      .date()
+      .transform((originalValue) => {
+        return isNaN(Date.parse(originalValue)) ? undefined : originalValue;
+      })
+      .required("Please choose your birth day"),
+    password: yup
+      .string()
+      .required("Password is required")
+      .min(6, "Password must be at least 6 characters"),
+    email: yup.string().email("Invalid email").required("Email is required"),
+    sex: yup.boolean().required("Gender is required"),
+    term: yup
+      .boolean()
+      .oneOf([true], "You must agree to the Terms and Conditions"),
+  });
   const {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
     control,
     reset,
   } = useForm({
-    // resolver: yupResolver(schema),
+    resolver: yupResolver(schema),
   });
+  const handleRegister = async (data) => {
+    if (!isValid) return;
+    dispatch(registerStart());
+    try {
+      const response = await registerMutation(data).unwrap();
+      console.log(response.data);
+      dispatch(
+        registerSuccess({
+          userInfo: response.data.userInfo,
+          userToken: response.data.userToken,
+        })
+      );
+      reset({
+        username: "",
+        password: "",
+      });
+      navigate("/");
+    } catch (error) {
+      dispatch(registerFailure(error.message));
+      console.log(error.message);
+    }
+    reset({
+      username: "",
+      fullName: "",
+      birthday: "",
+      password: "",
+      email: "",
+      gender: "",
+      term: false,
+    });
+  };
   return (
     <>
       <div className="absolute top-0 bottom-0 left-0 w-full h-full overflow-hidden leading-5 bg-[#F7C59F] bg-gradient-to-b"></div>
@@ -36,7 +97,7 @@ const SignUpPage = () => {
               </p>
             </div>
             <div className="space-y-4">
-              <form>
+              <form onSubmit={handleSubmit(handleRegister)}>
                 <Input
                   type="text"
                   label="Enter your username"
@@ -46,18 +107,26 @@ const SignUpPage = () => {
                   errors={errors}
                 />
                 <Input
-                  type="text"
-                  label="Enter your fullname"
-                  className="w-[455px] my-4"
-                  name="fullname"
-                  control={control}
-                  errors={errors}
-                />
-                <Input
                   type="password"
                   label="Enter your password"
                   className="w-[455px] my-4"
                   name="password"
+                  control={control}
+                  errors={errors}
+                />
+                <Input
+                  type="text"
+                  label="Enter your fullname"
+                  className="w-[455px] my-4"
+                  name="fullName"
+                  control={control}
+                  errors={errors}
+                />
+                <Input
+                  label="Choose your birth day"
+                  type="date"
+                  className="w-[455px] my-4"
+                  name="birthday"
                   control={control}
                   errors={errors}
                 />
@@ -72,25 +141,40 @@ const SignUpPage = () => {
                 <div className="flex items-center gap-4">
                   <p className="text-gray-600">Gender</p>
                   <RadioButton
-                    label="Nam"
-                    name="gender"
+                    label="Male"
+                    name="sex"
                     ripple={true}
-                    checked={true}
+                    // checked={true}
+                    value={true}
+                    control={control}
+                    errors={errors}
                   ></RadioButton>
                   <RadioButton
-                    label="Nữ"
-                    name="gender"
+                    label="Female"
+                    name="sex"
                     ripple={true}
+                    value={false}
+                    control={control}
+                    errors={errors}
                   ></RadioButton>
                 </div>
                 <Checkbox
                   label="I agree to the Terms and Conditions of Shop"
                   className="font-eculid"
+                  name="term"
+                  control={control}
+                  errors={errors}
                 ></Checkbox>
+                <div>
+                  <Button
+                    type="submit"
+                    className="w-[455px] bg-[#F7C59F]"
+                    disabled={isSubmitting}
+                  >
+                    Sign in
+                  </Button>
+                </div>
               </form>
-              <div>
-                <Button className="w-[455px] bg-[#F7C59F]">Sign in</Button>
-              </div>
               <div className="flex items-center justify-center space-x-3">
                 <span className="w-16 h-px bg-gray-300"></span>
                 <span className="font-normal text-gray-600">or</span>

@@ -1,8 +1,30 @@
 import Input from "../components/input/Input";
 import Button from "../components/button/Button";
 import logo from "../assets/images/logo-removebg.png";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const ForgotPWPage = () => {
+  const schema = yup
+    .object({
+      email: yup.string().email().required("Please enter your email"),
+    })
+    .required();
+  const {
+    handleSubmit,
+    formState: { errors, isValid, isSubmitting },
+    control,
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+  const onSubmitHandler = () => {
+    if (!isValid) return;
+    reset({
+      email: "",
+    });
+  };
   return (
     <>
       <div className="absolute top-0 bottom-0 left-0 w-full h-full overflow-hidden leading-5 bg-[#F7C59F] bg-gradient-to-b"></div>
@@ -36,18 +58,23 @@ const ForgotPWPage = () => {
               </p>
             </div>
             <div className="flex flex-col items-center w-full gap-5 mb-4">
-              <form>
+              <form onSubmit={handleSubmit(onSubmitHandler)}>
                 <Input
+                  name="email"
                   type="email"
                   label="Enter your email"
                   className="w-[455px] my-4"
+                  control={control}
+                  errors={errors}
                 />
-              </form>
-              <div>
-                <Button className="w-[455px] bg-[#F7C59F]">
+                <Button
+                  type="submit"
+                  className="w-[455px] bg-[#F7C59F]"
+                  disabled={isSubmitting}
+                >
                   Get new password
                 </Button>
-              </div>
+              </form>
             </div>
           </div>
         </div>

@@ -3,8 +3,8 @@ import { FcGoogle } from "react-icons/fc";
 import Button from "../components/button/Button";
 import Input from "../components/input/Input";
 import logo from "../assets/images/logo-removebg.png";
-// import * as yup from "yup";
-// import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -23,13 +23,17 @@ const SignInPage = () => {
   const urlParams = new URLSearchParams(search);
   const tokenUrl = urlParams.get("token");
   console.log(tokenUrl);
+  const schema = yup.object().shape({
+    usernameOrEmail: yup.string().required("Username or email is required"),
+    password: yup.string().required("Password is required"),
+  });
   const {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
     control,
     reset,
   } = useForm({
-    // resolver: yupResolver(schema),
+    resolver: yupResolver(schema),
   });
   const handleLogin = async (data) => {
     if (!isValid) return;
@@ -42,8 +46,8 @@ const SignInPage = () => {
       console.log(response.data);
       dispatch(
         loginSuccess({
-          userInfo: response.data.userInfo,
-          userToken: response.data.userToken,
+          userInfo: response?.data,
+          userToken: response?.data.accessToken,
         })
       );
       reset({

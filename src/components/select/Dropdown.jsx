@@ -7,7 +7,10 @@ import {
 } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 
-const Dropdown = () => {
+const Dropdown = (handleLogout) => {
+  const handleLogoutDropdown = () => {
+    handleLogout();
+  };
   return (
     <>
       <Menu>
@@ -27,7 +30,7 @@ const Dropdown = () => {
           <Link>
             <MenuItem>Help</MenuItem>
           </Link>
-          <Link>
+          <Link onClick={handleLogoutDropdown}>
             <MenuItem>Log out</MenuItem>
           </Link>
         </MenuList>

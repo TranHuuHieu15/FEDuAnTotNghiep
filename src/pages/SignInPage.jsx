@@ -14,6 +14,7 @@ import {
   loginStart,
   loginSuccess,
 } from "../redux/features/authSlice";
+import { toast } from "react-toastify";
 
 const SignInPage = () => {
   const { search } = useLocation();
@@ -55,6 +56,16 @@ const SignInPage = () => {
         password: "",
       });
       navigate("/");
+      toast.success("Login successfully!", {
+        position: "top-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (error) {
       dispatch(loginFailure(error.message));
       console.log(error.message);

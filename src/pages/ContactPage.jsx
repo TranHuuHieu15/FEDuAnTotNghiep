@@ -1,4 +1,3 @@
-import React from "react";
 import SiteLayout from "../layout/SiteLayout";
 import Input from "../components/input/Input";
 import { useForm } from "react-hook-form";
@@ -7,16 +6,79 @@ import Button from "../components/button/Button";
 import { MdOutlinePlace } from "react-icons/md";
 import { BsTelephone } from "react-icons/bs";
 import { AiOutlineMail } from "react-icons/ai";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Select from "../components/select/Select";
+import { useEffect, useState } from "react";
+import axios from "../config/axios.js";
+import { toast } from "react-toastify";
 
 const ContactPage = () => {
+  //! Lấy dữ liệu từ problem
+  const [problems, setProblems] = useState([]);
+  useEffect(() => {
+    // Gọi API để lấy danh sách problem
+    const fetchProblems = async () => {
+      try {
+        const response = await axios.get("/problem");
+        setProblems(response.data);
+      } catch (error) {
+        console.error("Error fetching problem:", error);
+      }
+    };
+    fetchProblems();
+  }, []);
+
+  const schema = yup
+    .object({
+      email: yup.string().required("Please enter your email"),
+      phoneNumber: yup.string().required("Please enter your phone number"),
+      description: yup.string().required("Please enter description"),
+    })
+    .required();
+
   const {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
     control,
     reset,
   } = useForm({
-    // resolver: yupResolver(schema),
+    resolver: yupResolver(schema),
   });
+
+  const onSubmitHandler = async (data) => {
+    if (!isValid) return;
+    await handleCreateData(data);
+    // reset form
+    reset({
+      phoneNumber: "",
+      email: "",
+      problemId: "",
+      description: "",
+    });
+  };
+
+  const handleCreateData = async (data) => {
+    try {
+      const response = await axios.post("/feedback/create", data);
+      console.log(response);
+      toast.success("Create feedback successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Thực hiện các hành động khác sau khi tạo dữ liệu thành công
+    } catch (error) {
+      console.error("Error creating feedback:", error);
+    }
+  };
+
   return (
     <SiteLayout>
       <div className="flex flex-col gap-10">
@@ -30,26 +92,46 @@ const ContactPage = () => {
             <h1 className="text-center text-2xl text-blue-gray-700">
               Send Us A Message
             </h1>
-            <form>
+            <form onSubmit={handleSubmit(onSubmitHandler)}>
               <div className="flex flex-col gap-5">
                 <Input
+                  name="email"
                   label="Email"
                   control={control}
                   errors={errors}
-                  name="Email"
                 ></Input>
                 <Input
+                  name="phoneNumber"
                   label="Phone Number"
                   control={control}
                   errors={errors}
-                  name="phoneNumber"
                 ></Input>
+                <Select
+                  className="p-[10px] rounded-lg border-blue-gray-300"
+                  title="Category :"
+                  name="problemId"
+                  control={control}
+                  errors={errors}
+                  options={problems}
+                >
+                  {problems.map((problem) => (
+                    <option key={problem.id} value={problem.id}>
+                      {problem.name}
+                    </option>
+                  ))}
+                </Select>
                 <Textarea
                   name="description"
-                  control={control}
                   label="Content"
+                  control={control}
                 ></Textarea>
-                <Button className="w-full rounded-full">Submit</Button>
+                <Button
+                  className="w-full rounded-full"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  Submit
+                </Button>
               </div>
             </form>
           </div>

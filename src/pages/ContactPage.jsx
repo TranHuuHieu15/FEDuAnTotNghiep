@@ -107,8 +107,8 @@ const ContactPage = () => {
                   errors={errors}
                 ></Input>
                 <Select
-                  className="p-[10px] rounded-lg border-blue-gray-300"
-                  title="Category :"
+                  className="p-[10px] rounded-lg border-blue-gray-300 text-blue-gray-500"
+                  title="Problem"
                   name="problemId"
                   control={control}
                   errors={errors}

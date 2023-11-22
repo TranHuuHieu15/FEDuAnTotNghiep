@@ -23,6 +23,7 @@ const PaymentManage = lazy(() => import("./module/payment/PaymentManage"));
 const DiscountManage = lazy(() => import("./module/discount/DiscountManage"));
 const ProblemManage = lazy(() => import("./module/problem/ProblemManage"));
 const EvalueateManage = lazy(() => import("./module/evaluate/EvalueateManage"));
+const ColorManage = lazy(() => import("./module/color/ColorManage"));
 
 function App() {
   return (
@@ -80,6 +81,10 @@ function App() {
             <Route
               path="/admin/evaluate"
               element={<EvalueateManage></EvalueateManage>}
+            ></Route>
+            <Route
+              path="/admin/color"
+              element={<ColorManage></ColorManage>}
             ></Route>
           </Route>
           <Route path="*" element={<PageNotFound></PageNotFound>}></Route>

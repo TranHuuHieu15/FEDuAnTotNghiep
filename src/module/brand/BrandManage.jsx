@@ -48,15 +48,10 @@ const BrandManage = () => {
     if (!showDialogCERef.current.show) return;
     const formData = new FormData();
     formData.append("imageFile", data.image);
-    const brand = {
-      name: data.name,
-      description: data.description,
-    };
-    formData.append("brandDto", JSON.stringify(brand));
-    console.log(formData);
+    formData.append("name", data.name);
+    formData.append("description", data.description);
     try {
-      const response = await axios.post("/brand/create", formData);
-      console.log(response);
+      await axios.post("/brand/create", formData);
       fetchData();
       handleCloseDialogCE();
       toast.success("🦄 Add new brand successfully", {
@@ -74,9 +69,7 @@ const BrandManage = () => {
     }
   };
   const handleUpdateTrue = (id) => {
-    console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
     const dataEdit = brandData.find((item) => item.id === id);
-    console.log(dataEdit);
     setShowDialogCE({
       show: true,
       id: id,
@@ -91,18 +84,10 @@ const BrandManage = () => {
     typeof data.image === "string"
       ? formData.append("image", data.image)
       : formData.append("imageFile", data.image);
-    const brand = {
-      id: showDialogCERef.current.id,
-      name: data.name,
-      description: data.description,
-    };
-    formData.append("brandDto", JSON.stringify(brand));
+    formData.append("name", data.name);
+    formData.append("description", data.description);
     try {
-      const response = await axios.put(
-        `/brand/update/${showDialogCERef.current.id}`,
-        formData
-      );
-      console.log(response.data);
+      await axios.put(`/brand/update/${showDialogCERef.current.id}`, formData);
       fetchData();
       handleCloseDialogCE();
       toast.success("🦄 Edit brand successfully", {
@@ -166,13 +151,13 @@ const BrandManage = () => {
   return (
     <>
       <Button
-        className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
+        className="float-right mb-2 mr-2 cursor-pointer bg-light-green-500"
         onClick={handleCreateTrue}
       >
         Add new Category
       </Button>
       <table className="w-full text-center table-auto">
-        <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-400">
+        <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
           <tr>
             <th className="px-6 py-4 font-medium text-gray-900">Name</th>
             <th className="px-6 py-4 font-medium text-gray-900">Image</th>
@@ -180,7 +165,7 @@ const BrandManage = () => {
             <th className="px-6 py-4 font-medium text-gray-900">Action</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100 text-sm">
+        <tbody className="text-sm divide-y divide-gray-100">
           {brandData.map((item) => (
             <tr key={item.id} className="">
               <td className="p-2 font-medium text-gray-800">{item.name}</td>
@@ -197,19 +182,15 @@ const BrandManage = () => {
                 <span className="flex items-center justify-center gap-3">
                   <a
                     className="p-3 text-2xl cursor-pointer hover:text-blue-500"
-                    // outline="text"
                     onClick={() => handleUpdateTrue(item.id)}
                   >
                     <CiEdit></CiEdit>
-                    {/* Edit */}
                   </a>
                   <a
                     className="p-2 ml-2 text-2xl cursor-pointer hover:text-blue-500"
-                    // outline="text"
                     onClick={() => handleDeleteTrue(item.id)}
                   >
                     <BsTrash3 />
-                    {/* Delete */}
                   </a>
                 </span>
               </td>

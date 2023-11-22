@@ -23,7 +23,7 @@ const SelectDefault = ({
       <select className={selectClasses} {...field}>
         {options &&
           options.map((item) => (
-            <option value={item.name} key={item.id}>
+            <option value={item.value} key={item.id}>
               {item.name}
             </option>
           ))}
@@ -42,6 +42,7 @@ SelectDefault.propTypes = {
   className2: PropTypes.string,
   control: PropTypes.any.isRequired,
   name: PropTypes.string,
+  value: PropTypes.bool,
   title: PropTypes.string,
   options: PropTypes.array,
   errors: PropTypes.object,

@@ -11,22 +11,15 @@ import axios from "../config/axios";
 
 const ProductPage = () => {
   const [productData, setProductData] = useState([]);
-  const fetchData = async () => {
-    const response = await axios.get("/product");
-    console.log(response.data);
-    setProductData(response.data);
-  };
+
   useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get("/product");
+      console.log(response.data);
+      setProductData(response.data);
+    };
     fetchData();
   }, []);
-  const {
-    handleSubmit,
-    formState: { errors, isValid, isSubmitting },
-    control,
-    reset,
-  } = useForm({
-    // resolver: yupResolver(schema),
-  });
   return (
     <>
       <SiteLayout>

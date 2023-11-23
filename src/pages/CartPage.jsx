@@ -2,13 +2,20 @@ import React from "react";
 import { Stepper, Step } from "@material-tailwind/react";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { MdPayment } from "react-icons/md";
-import CartCard from "../components/card/CartCard";
 import Button from "../components/button/Button";
 import SiteLayout from "../layout/SiteLayout";
 import { FaShippingFast } from "react-icons/fa";
+import CartList from "../components/list/CartList";
+import { useSelector } from "react-redux";
 const CartPage = () => {
   const [activeStep, setActiveStep] = React.useState(0);
-
+  const cartData = useSelector((state) => state.cart.products);
+  const totalAmount = cartData.reduce((acc, item) => {
+    return acc + item.price * item.quantity;
+  }, 0);
+  const shippingFee = 0;
+  const taxes = 0.2;
+  const total = totalAmount + shippingFee + taxes;
   return (
     <>
       <SiteLayout>
@@ -28,11 +35,7 @@ const CartPage = () => {
           </div>
           <div className="flex gap-20">
             <div className="flex flex-col items-center justify-center">
-              <CartCard></CartCard>
-              <CartCard></CartCard>
-              <CartCard></CartCard>
-              <CartCard></CartCard>
-              <CartCard></CartCard>
+              <CartList></CartList>
             </div>
             <div className="flex flex-col gap-5">
               <div className="flex gap-20 bg-[#F3F4F6] px-5 py-5">
@@ -42,15 +45,15 @@ const CartPage = () => {
                   <p>Taxes:</p>
                 </div>
                 <div className="flex flex-col not-italic font-bold font-eculid">
-                  <span>$274.97</span>
-                  <span>NIL</span>
-                  <span>$0.2</span>
+                  <span>${totalAmount}</span>
+                  <span>${shippingFee}</span>
+                  <span>${taxes}</span>
                 </div>
               </div>
 
               <div className="flex gap-36 bg-[#F3F4F6] px-5 py-3 font-bold">
                 <p>Total:</p>
-                <span>$283.17</span>
+                <span>${total}</span>
               </div>
 
               <Button className="w-[462px] shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">

@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import { useState } from "react";
 import Color from "../components/color/Color";
 import Size from "../components/size/Size";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/features/cartSlice";
 const ProductDetailPage = () => {
   const [productDetail, setProductDetail] = useState([]);
   const { createProductVariant, productDto } = productDetail;
@@ -22,6 +24,7 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const toggleOpen = () => setOpen((cur) => !cur);
   const { productId } = useParams();
+  const dispatch = useDispatch();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,6 +52,20 @@ const ProductDetailPage = () => {
 
   const handleIncrease = () => {
     setQuantity(quantity + 1);
+  };
+  const handleAddToCart = () => {
+    if (selectedVariant) {
+      dispatch(
+        addToCart({
+          id: selectedVariant.id,
+          name: productDto.name,
+          price: selectedVariant.price,
+          quantity,
+          color: selectedColor,
+          size: selectedSize,
+        })
+      );
+    }
   };
   const selectedVariant =
     createProductVariant &&
@@ -129,7 +146,10 @@ const ProductDetailPage = () => {
               </div>
             </div>
             <div className="flex w-[560px] gap-4">
-              <Button className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
+              <Button
+                onClick={handleAddToCart}
+                className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+              >
                 Add to Cart
               </Button>
               <Button className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">

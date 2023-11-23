@@ -58,6 +58,7 @@ const ProductDetailPage = () => {
       dispatch(
         addToCart({
           id: selectedVariant.id,
+          image: productDto.imageProductDto.url,
           name: productDto.name,
           price: selectedVariant.price,
           quantity,

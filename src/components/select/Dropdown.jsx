@@ -24,7 +24,7 @@ const Dropdown = (handleLogout) => {
           />
         </MenuHandler>
         <MenuList>
-          <Link to="/">
+          <Link to="/user">
             <MenuItem>My Profile</MenuItem>
           </Link>
           <Link>

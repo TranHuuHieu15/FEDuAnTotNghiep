@@ -3,91 +3,134 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { MdSecurity } from "react-icons/md";
 import Button from "../components/button/Button";
 import { Collapse, Typography } from "@material-tailwind/react";
-import React from "react";
 import SiteLayout from "../layout/SiteLayout";
 import Comment from "../components/comment/Comment";
+import { useParams } from "react-router";
+import axios from "../config/axios";
+import { useEffect } from "react";
+import { useState } from "react";
+import Color from "../components/color/Color";
+import Size from "../components/size/Size";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/features/cartSlice";
 const ProductDetailPage = () => {
-  const [open, setOpen] = React.useState(false);
-
+  const [productDetail, setProductDetail] = useState([]);
+  const { createProductVariant, productDto } = productDetail;
+  const [open, setOpen] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("S");
+  const [selectedColor, setSelectedColor] = useState(
+    createProductVariant?.length > 0 ? createProductVariant[0].colorId : null
+  );
+  const [quantity, setQuantity] = useState(1);
   const toggleOpen = () => setOpen((cur) => !cur);
+  const { productId } = useParams();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`/product/id/${productId}`);
+        setProductDetail(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [productId]);
+  const handleSizeChange = (size) => {
+    setSelectedSize(size);
+  };
+
+  const handleColorChange = (color) => {
+    setSelectedColor(color);
+  };
+
+  const handleDecrease = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
+  const handleIncrease = () => {
+    setQuantity(quantity + 1);
+  };
+  const handleAddToCart = () => {
+    if (selectedVariant) {
+      dispatch(
+        addToCart({
+          id: selectedVariant.id,
+          image: productDto.imageProductDto.url,
+          name: productDto.name,
+          price: selectedVariant.price,
+          quantity,
+          color: selectedColor,
+          size: selectedSize,
+        })
+      );
+    }
+  };
+  const selectedVariant =
+    createProductVariant &&
+    createProductVariant.find(
+      (variant) =>
+        variant.size === selectedSize && variant.colorId === selectedColor
+    );
   return (
     <SiteLayout>
       <div className="flex gap-3 mx-32 mt-5">
         <div className="flex w-[630px] flex-col gap-5 mt-2">
           <img
-            src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGNsb3RoZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+            src={productDto?.imageProductDto?.url}
             alt=""
             className="w-full max-w-[600px] h-[540px] object-fill hover:scale-105 hover:duration-500"
           />
           <div className="flex flex-row gap-3 mt-2">
-            <img
-              src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGNsb3RoZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
-              alt=""
-              className="w-[140px] h-[154px] object-fill"
-            />
-            <img
-              src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGNsb3RoZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
-              alt=""
-              className="w-[140px] h-[154px] object-fill"
-            />
-            <img
-              src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGNsb3RoZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
-              alt=""
-              className="w-[140px] h-[154px] object-fill"
-            />
-            <img
-              src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGNsb3RoZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
-              alt=""
-              className="w-[146px] h-[154px] object-fill"
-            />
+            {createProductVariant?.length > 0 &&
+              createProductVariant.map((variant) => (
+                <img
+                  key={variant.id}
+                  src={variant.imageProductDto.url}
+                  alt="Image"
+                  className="w-[140px] h-[154px] object-fill"
+                />
+              ))}
           </div>
         </div>
         <div className="flex flex-col items-start gap-8 mt-2">
           <div className="flex flex-col items-start w-full gap-4">
             <div className="gap-3">
               <p className="text-2xl not-italic font-normal font-eculid">
-                Floral Print Notched Neckline Dress
+                {productDto?.name}
               </p>
               <span className="text-3xl not-italic font-bold leading-normal font-eculid">
-                $100.00
+                ${selectedVariant?.price || "12"}
               </span>
             </div>
             <div className="inline-flex flex-col items-start gap-2">
               <h5 className="text-lg not-italic font-semibold font-eculid">
                 Size:
               </h5>
-              <div className="flex gap-2">
-                <button className="w-8 h-8 bg-gray-300 border-none rounded-full outline-none opacity-50 cursor-pointer hover:opacity-100">
-                  S
-                </button>
-                <button className="w-8 h-8 bg-gray-300 border-none rounded-full outline-none opacity-50 cursor-pointer hover:opacity-100">
-                  M
-                </button>
-                <button className="w-8 h-8 bg-gray-300 border-none rounded-full outline-none opacity-50 cursor-pointer hover:opacity-100">
-                  L
-                </button>
-                <button className="w-8 h-8 bg-gray-300 border-none rounded-full outline-none opacity-50 cursor-pointer hover:opacity-100">
-                  XL
-                </button>
-              </div>
+              <Size
+                size={createProductVariant || []}
+                onSizeChange={handleSizeChange}
+                selectedSize={selectedSize}
+              />
             </div>
             <div className="inline-flex flex-col items-start gap-2">
               <h5 className="text-lg not-italic font-semibold font-eculid">
                 Color:
               </h5>
-              <div className="flex gap-2">
-                <button className="w-8 h-8 bg-black border-none rounded-full outline-none cursor-pointer hover:opacity-100"></button>
-                <button className="w-8 h-8 bg-red-500 border-none rounded-full outline-none cursor-pointer hover:opacity-100"></button>
-                <button className="w-8 h-8 bg-yellow-500 border-none rounded-full outline-none cursor-pointer hover:opacity-100"></button>
-                <button className="w-8 h-8 bg-green-500 border-none rounded-full outline-none cursor-pointer hover:opacity-100"></button>
-              </div>
+              <Color
+                color={createProductVariant || []}
+                onColorChange={handleColorChange}
+                selectedColor={selectedColor}
+              />
             </div>
             <div className="inline-flex flex-col items-start gap-2">
               <h5 className="text-lg not-italic font-semibold font-eculid">
                 Quantity:
               </h5>
               <div className="flex items-center justify-center gap-2 p-2 h-9 outline outline-offset-2 outline-2 w-28">
-                <button>
+                <button onClick={handleDecrease}>
                   <FaMinusCircle />
                 </button>
                 <span
@@ -96,15 +139,18 @@ const ProductDetailPage = () => {
                   value="1"
                   className="w-20 text-center"
                 >
-                  1
+                  {quantity}
                 </span>
-                <button>
+                <button onClick={handleIncrease}>
                   <FaPlusCircle />
                 </button>
               </div>
             </div>
             <div className="flex w-[560px] gap-4">
-              <Button className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
+              <Button
+                onClick={handleAddToCart}
+                className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+              >
                 Add to Cart
               </Button>
               <Button className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
@@ -147,10 +193,12 @@ const ProductDetailPage = () => {
                   </button>
                 </div>
                 <div>
-                  <Collapse open={open} className="flex flex-col">
-                    <Typography className="w-[480px] mx-auto my-2">
-                      Use our Tailwind CSS collapse for your website. You can
-                      use if for accordion, collapsible items and much more.
+                  <Collapse
+                    open={open}
+                    className="flex flex-col items-center justify-center"
+                  >
+                    <Typography className="w-[480px]">
+                      {productDto?.description || "It's perfect"}
                     </Typography>
                   </Collapse>
                 </div>

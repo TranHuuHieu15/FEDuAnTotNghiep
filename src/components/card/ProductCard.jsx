@@ -23,17 +23,17 @@ const ProductCard = ({ item, className }) => {
       <CardBody>
         <Typography
           variant="small"
-          color="gray"
+          color="black"
           className="w-full text-xl font-medium"
         >
           {name}
         </Typography>
-        <Typography
-          color="blue-gray"
-          className="flex items-center justify-start gap-2 py-2 text-xl font-medium"
-        >
-          <span>${minPrice} ~</span>
-          <span>${maxPrice}</span>
+        <Typography color="blue-gray" className="flex items-center justify-start gap-2 py-2 text-xl font-medium">
+          {minPrice !== maxPrice ? (<>
+            <span>${minPrice} ~ </span>
+            <span>${maxPrice}</span>
+          </>) : (<span>${minPrice}</span>
+          )}
         </Typography>
         <Typography
           color="blue-gray"
@@ -42,7 +42,7 @@ const ProductCard = ({ item, className }) => {
           <span className="flex items-center gap-1">
             <Rating
               name="half-rating-read"
-              value={rate}
+              value={4}
               precision={0.1}
               readOnly
               size="small"

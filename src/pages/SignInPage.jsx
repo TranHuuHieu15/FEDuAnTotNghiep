@@ -50,7 +50,6 @@ const SignInPage = () => {
           userToken: response?.data.accessToken,
         })
       );
-      localStorage.setItem("userToken", response.data.accessToken);
       reset({
         username: "",
         password: "",

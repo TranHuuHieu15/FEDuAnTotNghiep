@@ -8,13 +8,12 @@ import React from "react";
 import logo from "/src/assets/images/logo.jpg";
 import Button from "../button/Button";
 import { Link, NavLink } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Dropdown from "../select/Dropdown";
-import { logout, selectCurrentUser } from "../../redux/features/authSlice";
+import { selectCurrentUser } from "../../redux/features/authSlice";
 
 const Navbar = () => {
   const user = useSelector(selectCurrentUser);
-  const dispatch = useDispatch();
   const [openNav, setOpenNav] = React.useState(false);
 
   React.useEffect(() => {
@@ -23,9 +22,6 @@ const Navbar = () => {
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
   }, []);
-  const handleLogout = () => {
-    dispatch(logout());
-  };
   const navList = (
     <ul className="flex flex-col gap-2 mt-2 mb-4 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
       <Typography
@@ -83,7 +79,7 @@ const Navbar = () => {
         </Link>
         <div className="hidden lg:block">{navList}</div>
         {user && user.id ? (
-          <Dropdown handleLogout={handleLogout}></Dropdown>
+          <Dropdown></Dropdown>
         ) : (
           <div className="flex gap-2">
             <Link to="/login">

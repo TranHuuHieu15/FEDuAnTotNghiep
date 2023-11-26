@@ -5,11 +5,17 @@ import {
   MenuItem,
   MenuList,
 } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/features/authSlice";
 
-const Dropdown = (handleLogout) => {
-  const handleLogoutDropdown = () => {
-    handleLogout();
+const Dropdown = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    console.log("logout");
+    dispatch(logout());
+    navigate("/");
   };
   return (
     <>
@@ -24,15 +30,15 @@ const Dropdown = (handleLogout) => {
           />
         </MenuHandler>
         <MenuList>
-          <Link to="/">
-            <MenuItem>My Profile</MenuItem>
-          </Link>
-          <Link>
-            <MenuItem>Help</MenuItem>
-          </Link>
-          <Link onClick={handleLogoutDropdown}>
-            <MenuItem>Log out</MenuItem>
-          </Link>
+          <MenuItem>
+            <Link to="/">My Profile</Link>
+          </MenuItem>
+          <MenuItem>
+            <Link to="/help">Help</Link>
+          </MenuItem>
+          <MenuItem>
+            <span onClick={handleLogout}>Log out</span>
+          </MenuItem>
         </MenuList>
       </Menu>
     </>

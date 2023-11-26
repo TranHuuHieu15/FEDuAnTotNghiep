@@ -148,14 +148,9 @@ const ProductDetailPage = () => {
   };
   return (
     <SiteLayout>
-      <div className="flex gap-3 mx-32 mt-5">
-        <div className="flex w-[630px] flex-col gap-5 mt-2">
-          <img
-            src={productDto?.imageProductDto?.url}
-            alt=""
-            className="w-full max-w-[600px] h-[540px] object-fill hover:scale-105 hover:duration-500"
-          />
-          <div className="flex flex-row gap-3 mt-2">
+      <div className="flex justify-center gap-5">
+        <div className="inline-flex items-start gap-5 p-6">
+          <div className="flex flex-col gap-3">
             {createProductVariant
               ?.filter((variant, index, self) =>
                 index < 4
@@ -167,15 +162,20 @@ const ProductDetailPage = () => {
                   key={variant.id}
                   src={variant.imageProductDto.url}
                   alt="Image"
-                  className="w-[140px] h-[154px] object-fill"
+                  className="w-[146px] h-[130px] object-fill flex-shrink-0"
                 />
               ))}
           </div>
+          <img
+            src={productDto?.imageProductDto?.url}
+            alt=""
+            className="w-[476px] h-[567px] object-fill hover:scale-105 hover:duration-500 flex-shrink-0"
+          />
         </div>
 
-        <div className="flex flex-col items-start gap-8 mt-2">
-          <div className="flex flex-col items-start w-full gap-4">
-            <div className="gap-3">
+        <div className="inline-flex flex-col items-start gap-8 p-6">
+          <div className="flex flex-col items-start gap-7">
+            <div className="flex flex-col items-start gap-3">
               <p className="text-2xl not-italic font-normal font-eculid">
                 {productDto?.name}
               </p>
@@ -228,70 +228,68 @@ const ProductDetailPage = () => {
               </div>
               {selectedVariant && selectedVariant.quantity < 0 && <p>Hi</p>}
             </div>
-            <div className="flex w-[560px] gap-4">
-              <Button
-                onClick={handleAddToCart}
-                className={`w-full shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}
-              >
-                Add to Cart
-              </Button>
-              <Button
-                className={`w-full shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}
-              >
-                Buy Now
-              </Button>
-            </div>
-            <div className="flex flex-col items-start gap-14">
-              <div className="flex gap-3 px-4 py-8 bg-[#F3F4F6] w-[560px]">
-                <div className="flex flex-col gap-2">
-                  <div className="flex flex-row gap-6">
-                    <div className="flex items-center justify-center">
-                      <FaShippingFast />
-                    </div>
-                    <div className="flex flex-col">
-                      <h5 className="font-medium">Free shipping</h5>
-                      <p className="text-sm">
-                        Free standard shipping on orders over 9,00€ Estimated to
-                        be delivered on 28/02/2022 - 03/03/2022.
-                      </p>
-                    </div>
+          </div>
+          <div className="flex gap-4">
+            <Button
+              onClick={handleAddToCart}
+              className={`w-[264px] shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}
+            >
+              Add to Cart
+            </Button>
+            <Button
+              className={`w-[264px] shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}
+            >
+              Buy Now
+            </Button>
+          </div>
+          <div className="flex flex-col items-start gap-14">
+            <div className="flex gap-3 px-4 py-8 bg-[#F3F4F6] w-[560px]">
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-row gap-6">
+                  <div className="flex items-center justify-center">
+                    <FaShippingFast />
                   </div>
-                  <div className="flex flex-row gap-6">
-                    <div className="flex items-center justify-center">
-                      <MdSecurity />
-                    </div>
-                    <div className="flex flex-col">
-                      <h5 className="font-medium">Return Policy</h5>
-                      <p className="text-sm">Learn More</p>
-                    </div>
+                  <div className="flex flex-col">
+                    <h5 className="font-medium">Free shipping</h5>
+                    <p className="text-sm">
+                      Free standard shipping on orders over 9,00€ Estimated to
+                      be delivered on 28/02/2022 - 03/03/2022.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-row gap-6">
+                  <div className="flex items-center justify-center">
+                    <MdSecurity />
+                  </div>
+                  <div className="flex flex-col">
+                    <h5 className="font-medium">Return Policy</h5>
+                    <p className="text-sm">Learn More</p>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col items-start gap-10">
-                <div className="flex items-center justify-center gap-[465px]">
-                  <p className="text-lg font-semibold font-eculid">
-                    Description
-                  </p>
-                  <button onClick={toggleOpen}>
-                    <AiOutlinePlus />
-                  </button>
-                </div>
-                <div>
-                  <Collapse
-                    open={open}
-                    className="flex flex-col items-center justify-center"
-                  >
-                    <Typography className="w-[480px]">
-                      {productDto?.description || "It's perfect"}
-                    </Typography>
-                  </Collapse>
-                </div>
+            </div>
+            <div className="flex flex-col items-start gap-10">
+              <div className="flex items-center justify-center gap-[465px]">
+                <p className="text-lg font-semibold font-eculid">Description</p>
+                <button onClick={toggleOpen}>
+                  <AiOutlinePlus />
+                </button>
+              </div>
+              <div>
+                <Collapse
+                  open={open}
+                  className="flex flex-col items-center justify-center"
+                >
+                  <Typography className="w-[480px]">
+                    {productDto?.description || "It's perfect"}
+                  </Typography>
+                </Collapse>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="mx-32">
+      <div className="flex flex-col justify-center mx-40">
         <h3 className="text-2xl font-semibold font-eculid">Customer Reviews</h3>
         <Comment></Comment>
         <Comment></Comment>

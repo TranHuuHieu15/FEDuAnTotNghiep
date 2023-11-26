@@ -30,12 +30,14 @@ const ProductDetailPage = () => {
       try {
         const response = await axios.get(`/product/id/${productId}`);
         setProductDetail(response.data);
+
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
   }, [productId]);
+
   const handleSizeChange = (size) => {
     setSelectedSize(size);
   };
@@ -54,20 +56,30 @@ const ProductDetailPage = () => {
     setQuantity(quantity + 1);
   };
   const handleAddToCart = () => {
+    const cartItem = {
+      productVariantId: selectedVariant?.id,
+      quantity,
+    };
     if (selectedVariant) {
-      dispatch(
-        addToCart({
-          id: selectedVariant.id,
-          image: productDto.imageProductDto.url,
-          name: productDto.name,
-          price: selectedVariant.price,
-          quantity,
-          color: selectedColor,
-          size: selectedSize,
-        })
-      );
+      if (userInfo) {
+        saveCart(cartItem);
+      }
+      else {
+        dispatch(
+          addToCart({
+            id: selectedVariant.id,
+            image: productDto.imageProductDto.url,
+            name: productDto.name,
+            price: selectedVariant.price,
+            quantity,
+            color: selectedColor,
+            size: selectedSize,
+          })
+        );
+      }
     }
   };
+
   const selectedVariant =
     createProductVariant &&
     createProductVariant.find(
@@ -95,6 +107,7 @@ const ProductDetailPage = () => {
               ))}
           </div>
         </div>
+
         <div className="flex flex-col items-start gap-8 mt-2">
           <div className="flex flex-col items-start w-full gap-4">
             <div className="gap-3">
@@ -129,31 +142,33 @@ const ProductDetailPage = () => {
               <h5 className="text-lg not-italic font-semibold font-eculid">
                 Quantity:
               </h5>
-              <div className="flex items-center justify-center gap-2 p-2 h-9 outline outline-offset-2 outline-2 w-28">
-                <button onClick={handleDecrease}>
-                  <FaMinusCircle />
-                </button>
-                <span
-                  type="number"
-                  min="0"
-                  value="1"
-                  className="w-20 text-center"
-                >
-                  {quantity}
-                </span>
-                <button onClick={handleIncrease}>
-                  <FaPlusCircle />
-                </button>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-2 p-2 h-9">
+                  <button onClick={handleDecrease}>
+                    <FaMinusCircle />
+                  </button>
+                  <span
+                    type="number"
+                    min="0"
+                    value="1"
+                    className="w-20 text-center"
+                  >
+                    {quantity}
+                  </span>
+                  <button onClick={handleIncrease}>
+                    <FaPlusCircle />
+                  </button>
+                </div>
               </div>
             </div>
             <div className="flex w-[560px] gap-4">
               <Button
                 onClick={handleAddToCart}
-                className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
-              >
+                className={`w-full shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}>
                 Add to Cart
               </Button>
-              <Button className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
+              <Button
+                className={`w-full shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}>
                 Buy Now
               </Button>
             </div>

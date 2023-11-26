@@ -11,33 +11,92 @@ import { useEffect } from "react";
 import { useState } from "react";
 import Color from "../components/color/Color";
 import Size from "../components/size/Size";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/features/cartSlice";
+import { useSaveCartMutation } from "../redux/api/cartApi";
+import { toast } from "react-toastify";
 const ProductDetailPage = () => {
   const [productDetail, setProductDetail] = useState([]);
   const { createProductVariant, productDto } = productDetail;
   const [open, setOpen] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("S");
-  const [selectedColor, setSelectedColor] = useState(
-    createProductVariant?.length > 0 ? createProductVariant[0].colorId : null
-  );
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedColors, setSelectedColors] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const toggleOpen = () => setOpen((cur) => !cur);
   const { productId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [saveCart] = useSaveCartMutation();
+  const userToken = useSelector((state) => state.auth.userToken);
+  const findDarkestColor = (colors) => {
+    // Hàm để chuyển màu sang giá trị số để so sánh
+    const calculateBrightness = (color) => {
+      const hex = color.slice(1); // Loại bỏ ký tự '#' từ mã màu hex
+      const r = parseInt(hex.slice(0, 2), 16);
+      const g = parseInt(hex.slice(2, 4), 16);
+      const b = parseInt(hex.slice(4, 6), 16);
+
+      // Sử dụng giá trị trung bình của các thành phần màu để đánh giá sáng tối
+      return (r + g + b) / 3;
+    };
+
+    // Tìm màu tối nhất trong danh sách
+    return colors.reduce((darkestColor, currentColor) => {
+      return calculateBrightness(currentColor) <
+        calculateBrightness(darkestColor)
+        ? currentColor
+        : darkestColor;
+    }, colors[0]);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/product/id/${productId}`);
         setProductDetail(response.data);
+        if (response.data.createProductVariant?.length > 0) {
+          const firstSize = response.data.createProductVariant[0].size;
+          setSelectedSize(firstSize);
+
+          const colorsForFirstSize = response.data.createProductVariant
+            .filter((variant) => variant.size === firstSize)
+            .map((variant) => variant.colorId);
+
+          // Chọn màu tối nhất từ danh sách màu sắc của size đầu tiên
+          const darkestColorForFirstSize = findDarkestColor(colorsForFirstSize);
+
+          setSelectedColors(colorsForFirstSize);
+          setSelectedColor(darkestColorForFirstSize);
+        }
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
   }, [productId]);
+  const selectedVariant =
+    createProductVariant &&
+    createProductVariant.find(
+      (variant) =>
+        variant.size === selectedSize && variant.colorId === selectedColor
+    );
   const handleSizeChange = (size) => {
     setSelectedSize(size);
+
+    const colorsForSelectedSize = createProductVariant
+      .filter((variant) => variant.size === size)
+      .map((variant) => variant.colorId);
+
+    // Chọn màu tối nhất từ danh sách màu sắc của size đó
+    const darkestColorForSelectedSize = findDarkestColor(colorsForSelectedSize);
+
+    const firstColorForSelectedSize =
+      colorsForSelectedSize.length > 0 ? darkestColorForSelectedSize : null;
+
+    setSelectedColors(colorsForSelectedSize);
+    setSelectedColor(firstColorForSelectedSize || null);
   };
 
   const handleColorChange = (color) => {
@@ -54,50 +113,69 @@ const ProductDetailPage = () => {
     setQuantity(quantity + 1);
   };
   const handleAddToCart = () => {
+    const cartItem = {
+      productVariantId: selectedVariant?.id,
+      quantity,
+    };
     if (selectedVariant) {
-      dispatch(
-        addToCart({
-          id: selectedVariant.id,
-          image: productDto.imageProductDto.url,
-          name: productDto.name,
-          price: selectedVariant.price,
-          quantity,
-          color: selectedColor,
-          size: selectedSize,
-        })
-      );
+      if (userToken) {
+        saveCart(cartItem);
+      } else {
+        dispatch(
+          addToCart({
+            id: selectedVariant.id,
+            image: productDto.imageProductDto.url,
+            name: productDto.name,
+            price: selectedVariant.price,
+            quantity,
+            color: selectedColor,
+            size: selectedSize,
+          })
+        );
+      }
     }
+    navigate("/cart");
+    toast.success("Add to cart successfully!", {
+      position: "top-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
   };
-  const selectedVariant =
-    createProductVariant &&
-    createProductVariant.find(
-      (variant) =>
-        variant.size === selectedSize && variant.colorId === selectedColor
-    );
   return (
     <SiteLayout>
-      <div className="flex gap-3 mx-32 mt-5">
-        <div className="flex w-[630px] flex-col gap-5 mt-2">
-          <img
-            src={productDto?.imageProductDto?.url}
-            alt=""
-            className="w-full max-w-[600px] h-[540px] object-fill hover:scale-105 hover:duration-500"
-          />
-          <div className="flex flex-row gap-3 mt-2">
-            {createProductVariant?.length > 0 &&
-              createProductVariant.map((variant) => (
+      <div className="flex justify-center gap-5">
+        <div className="inline-flex items-start gap-5 p-6">
+          <div className="flex flex-col gap-3">
+            {createProductVariant
+              ?.filter((variant, index, self) =>
+                index < 4
+                  ? self.findIndex((v) => v.id === variant.id) === index
+                  : false
+              )
+              .map((variant) => (
                 <img
                   key={variant.id}
                   src={variant.imageProductDto.url}
                   alt="Image"
-                  className="w-[140px] h-[154px] object-fill"
+                  className="w-[146px] h-[130px] object-fill flex-shrink-0"
                 />
               ))}
           </div>
+          <img
+            src={productDto?.imageProductDto?.url}
+            alt=""
+            className="w-[476px] h-[567px] object-fill hover:scale-105 hover:duration-500 flex-shrink-0"
+          />
         </div>
-        <div className="flex flex-col items-start gap-8 mt-2">
-          <div className="flex flex-col items-start w-full gap-4">
-            <div className="gap-3">
+
+        <div className="inline-flex flex-col items-start gap-8 p-6">
+          <div className="flex flex-col items-start gap-7">
+            <div className="flex flex-col items-start gap-3">
               <p className="text-2xl not-italic font-normal font-eculid">
                 {productDto?.name}
               </p>
@@ -123,91 +201,95 @@ const ProductDetailPage = () => {
                 color={createProductVariant || []}
                 onColorChange={handleColorChange}
                 selectedColor={selectedColor}
+                availableColors={selectedColors} // Truyền danh sách màu sắc có sẵn
               />
             </div>
             <div className="inline-flex flex-col items-start gap-2">
               <h5 className="text-lg not-italic font-semibold font-eculid">
                 Quantity:
               </h5>
-              <div className="flex items-center justify-center gap-2 p-2 h-9 outline outline-offset-2 outline-2 w-28">
-                <button onClick={handleDecrease}>
-                  <FaMinusCircle />
-                </button>
-                <span
-                  type="number"
-                  min="0"
-                  value="1"
-                  className="w-20 text-center"
-                >
-                  {quantity}
-                </span>
-                <button onClick={handleIncrease}>
-                  <FaPlusCircle />
-                </button>
-              </div>
-            </div>
-            <div className="flex w-[560px] gap-4">
-              <Button
-                onClick={handleAddToCart}
-                className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
-              >
-                Add to Cart
-              </Button>
-              <Button className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
-                Buy Now
-              </Button>
-            </div>
-            <div className="flex flex-col items-start gap-14">
-              <div className="flex gap-3 px-4 py-8 bg-[#F3F4F6] w-[560px]">
-                <div className="flex flex-col gap-2">
-                  <div className="flex flex-row gap-6">
-                    <div className="flex items-center justify-center">
-                      <FaShippingFast />
-                    </div>
-                    <div className="flex flex-col">
-                      <h5 className="font-medium">Free shipping</h5>
-                      <p className="text-sm">
-                        Free standard shipping on orders over 9,00€ Estimated to
-                        be delivered on 28/02/2022 - 03/03/2022.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-row gap-6">
-                    <div className="flex items-center justify-center">
-                      <MdSecurity />
-                    </div>
-                    <div className="flex flex-col">
-                      <h5 className="font-medium">Return Policy</h5>
-                      <p className="text-sm">Learn More</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col items-start gap-10">
-                <div className="flex items-center justify-center gap-[465px]">
-                  <p className="text-lg font-semibold font-eculid">
-                    Description
-                  </p>
-                  <button onClick={toggleOpen}>
-                    <AiOutlinePlus />
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-2 p-2 h-9">
+                  <button onClick={handleDecrease}>
+                    <FaMinusCircle />
+                  </button>
+                  <span
+                    type="number"
+                    min="0"
+                    value="1"
+                    className="w-20 text-center"
+                  >
+                    {quantity}
+                  </span>
+                  <button onClick={handleIncrease}>
+                    <FaPlusCircle />
                   </button>
                 </div>
-                <div>
-                  <Collapse
-                    open={open}
-                    className="flex flex-col items-center justify-center"
-                  >
-                    <Typography className="w-[480px]">
-                      {productDto?.description || "It's perfect"}
-                    </Typography>
-                  </Collapse>
+              </div>
+              {selectedVariant && selectedVariant.quantity < 0 && <p>Hi</p>}
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <Button
+              onClick={handleAddToCart}
+              className={`w-[264px] shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}
+            >
+              Add to Cart
+            </Button>
+            <Button
+              className={`w-[264px] shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}
+            >
+              Buy Now
+            </Button>
+          </div>
+          <div className="flex flex-col items-start gap-14">
+            <div className="flex gap-3 px-4 py-8 bg-[#F3F4F6] w-[560px]">
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-row gap-6">
+                  <div className="flex items-center justify-center">
+                    <FaShippingFast />
+                  </div>
+                  <div className="flex flex-col">
+                    <h5 className="font-medium">Free shipping</h5>
+                    <p className="text-sm">
+                      Free standard shipping on orders over 9,00€ Estimated to
+                      be delivered on 28/02/2022 - 03/03/2022.
+                    </p>
+                  </div>
                 </div>
+                <div className="flex flex-row gap-6">
+                  <div className="flex items-center justify-center">
+                    <MdSecurity />
+                  </div>
+                  <div className="flex flex-col">
+                    <h5 className="font-medium">Return Policy</h5>
+                    <p className="text-sm">Learn More</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col items-start gap-10">
+              <div className="flex items-center justify-center gap-[465px]">
+                <p className="text-lg font-semibold font-eculid">Description</p>
+                <button onClick={toggleOpen}>
+                  <AiOutlinePlus />
+                </button>
+              </div>
+              <div>
+                <Collapse
+                  open={open}
+                  className="flex flex-col items-center justify-center"
+                >
+                  <Typography className="w-[480px]">
+                    {productDto?.description || "It's perfect"}
+                  </Typography>
+                </Collapse>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="mx-32">
+      <div className="flex flex-col justify-center mx-40">
         <h3 className="text-2xl font-semibold font-eculid">Customer Reviews</h3>
         <Comment></Comment>
         <Comment></Comment>

@@ -15,27 +15,60 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/features/cartSlice";
 import { useSaveCartMutation } from "../redux/api/cartApi";
+import { toast } from "react-toastify";
 const ProductDetailPage = () => {
   const [productDetail, setProductDetail] = useState([]);
   const { createProductVariant, productDto } = productDetail;
   const [open, setOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedColors, setSelectedColors] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const toggleOpen = () => setOpen((cur) => !cur);
   const { productId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [saveCart] = useSaveCartMutation();
-  const userInfo = useSelector((state) => state.auth.userInfo);
+  const userToken = useSelector((state) => state.auth.userToken);
+  const findDarkestColor = (colors) => {
+    // Hàm để chuyển màu sang giá trị số để so sánh
+    const calculateBrightness = (color) => {
+      const hex = color.slice(1); // Loại bỏ ký tự '#' từ mã màu hex
+      const r = parseInt(hex.slice(0, 2), 16);
+      const g = parseInt(hex.slice(2, 4), 16);
+      const b = parseInt(hex.slice(4, 6), 16);
+
+      // Sử dụng giá trị trung bình của các thành phần màu để đánh giá sáng tối
+      return (r + g + b) / 3;
+    };
+
+    // Tìm màu tối nhất trong danh sách
+    return colors.reduce((darkestColor, currentColor) => {
+      return calculateBrightness(currentColor) <
+        calculateBrightness(darkestColor)
+        ? currentColor
+        : darkestColor;
+    }, colors[0]);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/product/id/${productId}`);
         setProductDetail(response.data);
         if (response.data.createProductVariant?.length > 0) {
-          setSelectedSize(response.data.createProductVariant[0].size)
-          setSelectedColor(response.data.createProductVariant[0].colorId);
+          const firstSize = response.data.createProductVariant[0].size;
+          setSelectedSize(firstSize);
+
+          const colorsForFirstSize = response.data.createProductVariant
+            .filter((variant) => variant.size === firstSize)
+            .map((variant) => variant.colorId);
+
+          // Chọn màu tối nhất từ danh sách màu sắc của size đầu tiên
+          const darkestColorForFirstSize = findDarkestColor(colorsForFirstSize);
+
+          setSelectedColors(colorsForFirstSize);
+          setSelectedColor(darkestColorForFirstSize);
         }
       } catch (error) {
         console.log(error);
@@ -43,9 +76,27 @@ const ProductDetailPage = () => {
     };
     fetchData();
   }, [productId]);
-
+  const selectedVariant =
+    createProductVariant &&
+    createProductVariant.find(
+      (variant) =>
+        variant.size === selectedSize && variant.colorId === selectedColor
+    );
   const handleSizeChange = (size) => {
     setSelectedSize(size);
+
+    const colorsForSelectedSize = createProductVariant
+      .filter((variant) => variant.size === size)
+      .map((variant) => variant.colorId);
+
+    // Chọn màu tối nhất từ danh sách màu sắc của size đó
+    const darkestColorForSelectedSize = findDarkestColor(colorsForSelectedSize);
+
+    const firstColorForSelectedSize =
+      colorsForSelectedSize.length > 0 ? darkestColorForSelectedSize : null;
+
+    setSelectedColors(colorsForSelectedSize);
+    setSelectedColor(firstColorForSelectedSize || null);
   };
 
   const handleColorChange = (color) => {
@@ -67,10 +118,9 @@ const ProductDetailPage = () => {
       quantity,
     };
     if (selectedVariant) {
-      if (userInfo) {
+      if (userToken) {
         saveCart(cartItem);
-      }
-      else {
+      } else {
         dispatch(
           addToCart({
             id: selectedVariant.id,
@@ -85,14 +135,17 @@ const ProductDetailPage = () => {
       }
     }
     navigate("/cart");
+    toast.success("Add to cart successfully!", {
+      position: "top-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
   };
-
-  const selectedVariant =
-    createProductVariant &&
-    createProductVariant.find(
-      (variant) =>
-        variant.size === selectedSize && variant.colorId === selectedColor
-    );
   return (
     <SiteLayout>
       <div className="flex gap-3 mx-32 mt-5">
@@ -103,8 +156,13 @@ const ProductDetailPage = () => {
             className="w-full max-w-[600px] h-[540px] object-fill hover:scale-105 hover:duration-500"
           />
           <div className="flex flex-row gap-3 mt-2">
-            {createProductVariant?.length > 0 &&
-              createProductVariant.map((variant) => (
+            {createProductVariant
+              ?.filter((variant, index, self) =>
+                index < 4
+                  ? self.findIndex((v) => v.id === variant.id) === index
+                  : false
+              )
+              .map((variant) => (
                 <img
                   key={variant.id}
                   src={variant.imageProductDto.url}
@@ -143,6 +201,7 @@ const ProductDetailPage = () => {
                 color={createProductVariant || []}
                 onColorChange={handleColorChange}
                 selectedColor={selectedColor}
+                availableColors={selectedColors} // Truyền danh sách màu sắc có sẵn
               />
             </div>
             <div className="inline-flex flex-col items-start gap-2">
@@ -172,11 +231,13 @@ const ProductDetailPage = () => {
             <div className="flex w-[560px] gap-4">
               <Button
                 onClick={handleAddToCart}
-                className={`w-full shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}>
+                className={`w-full shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}
+              >
                 Add to Cart
               </Button>
               <Button
-                className={`w-full shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}>
+                className={`w-full shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}
+              >
                 Buy Now
               </Button>
             </div>

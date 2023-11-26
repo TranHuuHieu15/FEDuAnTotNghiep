@@ -11,7 +11,7 @@ import {
   InboxIcon,
   PowerIcon,
 } from "@heroicons/react/24/solid";
-import logo from "../../assets/images/hieu.png";
+import logo from "../../assets/images/about-02.jpg";
 import { BiSolidCartAdd } from "react-icons/bi";
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 import { MdOutlinePlace } from "react-icons/md";
@@ -26,7 +26,7 @@ const SideBarAccount = () => {
           <img
             src={logo}
             alt=""
-            className="h-28 w-28 rounded-full object-cover object-center"
+            className="object-cover object-center rounded-full h-28 w-28"
           />
         </div>
         <div className="overflow-auto scrollbar scrollbar-thin scrollbar-thumb-blue-gray-100 max-h-[calc(100vh-72px">

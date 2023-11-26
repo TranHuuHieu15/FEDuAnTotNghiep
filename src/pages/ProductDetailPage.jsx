@@ -19,10 +19,8 @@ const ProductDetailPage = () => {
   const [productDetail, setProductDetail] = useState([]);
   const { createProductVariant, productDto } = productDetail;
   const [open, setOpen] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("S");
-  const [selectedColor, setSelectedColor] = useState(
-    createProductVariant?.length > 0 ? createProductVariant[0].colorId : null
-  );
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const toggleOpen = () => setOpen((cur) => !cur);
   const { productId } = useParams();
@@ -35,7 +33,10 @@ const ProductDetailPage = () => {
       try {
         const response = await axios.get(`/product/id/${productId}`);
         setProductDetail(response.data);
-
+        if (response.data.createProductVariant?.length > 0) {
+          setSelectedSize(response.data.createProductVariant[0].size)
+          setSelectedColor(response.data.createProductVariant[0].colorId);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -166,6 +167,7 @@ const ProductDetailPage = () => {
                   </button>
                 </div>
               </div>
+              {selectedVariant && selectedVariant.quantity < 0 && <p>Hi</p>}
             </div>
             <div className="flex w-[560px] gap-4">
               <Button

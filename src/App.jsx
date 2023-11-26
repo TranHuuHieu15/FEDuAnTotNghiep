@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { ToastContainer } from "react-toastify";
 import { Suspense, lazy } from "react";
+import AccountLayout from "./layout/AccountLayout";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutUsPage = lazy(() => import("./pages/AboutUsPage"));
@@ -95,6 +96,32 @@ function App() {
             <Route
               path="/admin/color"
               element={<ColorManage></ColorManage>}
+            ></Route>
+          </Route>
+          <Route element={<AccountLayout></AccountLayout>}>
+            <Route
+              path="/user"
+              element={<DashboardPage></DashboardPage>}
+            ></Route>
+            <Route
+              path="/user/address"
+              element={<VoucherManage></VoucherManage>}
+            ></Route>
+            <Route
+              path="/user/info"
+              element={<ProblemManage></ProblemManage>}
+            ></Route>
+            <Route
+              path="/user/feedback"
+              element={<FeedbackManage></FeedbackManage>}
+            ></Route>
+            <Route
+              path="/user/discount"
+              element={<DiscountManage></DiscountManage>}
+            ></Route>
+            <Route
+              path="/user/evaluate"
+              element={<EvalueateManage></EvalueateManage>}
             ></Route>
           </Route>
           <Route path="*" element={<PageNotFound></PageNotFound>}></Route>

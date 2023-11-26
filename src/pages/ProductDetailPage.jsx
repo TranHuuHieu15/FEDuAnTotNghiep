@@ -11,8 +11,10 @@ import { useEffect } from "react";
 import { useState } from "react";
 import Color from "../components/color/Color";
 import Size from "../components/size/Size";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/features/cartSlice";
+import { useSaveCartMutation } from "../redux/api/cartApi";
 const ProductDetailPage = () => {
   const [productDetail, setProductDetail] = useState([]);
   const { createProductVariant, productDto } = productDetail;
@@ -25,6 +27,9 @@ const ProductDetailPage = () => {
   const toggleOpen = () => setOpen((cur) => !cur);
   const { productId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [saveCart] = useSaveCartMutation();
+  const userInfo = useSelector((state) => state.auth.userInfo);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -78,6 +83,7 @@ const ProductDetailPage = () => {
         );
       }
     }
+    navigate("/cart");
   };
 
   const selectedVariant =

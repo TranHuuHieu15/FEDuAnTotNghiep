@@ -23,7 +23,6 @@ const SignInPage = () => {
   const [loginMutation] = useLoginMutation();
   const urlParams = new URLSearchParams(search);
   const tokenUrl = urlParams.get("token");
-  console.log(tokenUrl);
   const schema = yup.object().shape({
     usernameOrEmail: yup.string().required("Username or email is required"),
     password: yup.string().required("Password is required"),

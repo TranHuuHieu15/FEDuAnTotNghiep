@@ -15,7 +15,7 @@ const RadioButton = ({
   const { field } = useController({
     control,
     name,
-    defaultValue: "",
+    defaultValue: value,
   });
   return (
     <div className={className}>
@@ -27,6 +27,7 @@ const RadioButton = ({
         ripple={ripple}
         {...field}
         value={value}
+        defaultChecked={value}
       ></Radio>
       {errors.name && (
         <p className="mt-2 ml-1 text-xs text-red-500">{errors.name.message}</p>

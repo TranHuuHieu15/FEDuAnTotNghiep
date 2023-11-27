@@ -1,16 +1,5 @@
-import {
-  Card,
-  List,
-  ListItem,
-  ListItemPrefix,
-  ListItemSuffix,
-  Chip,
-} from "@material-tailwind/react";
-import {
-  UserCircleIcon,
-  InboxIcon,
-  PowerIcon,
-} from "@heroicons/react/24/solid";
+import { Card, List, ListItem, ListItemPrefix } from "@material-tailwind/react";
+import { UserCircleIcon, PowerIcon } from "@heroicons/react/24/solid";
 import logo from "../../assets/images/hieu.png";
 import { BiSolidCartAdd } from "react-icons/bi";
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
@@ -47,7 +36,7 @@ const SideBarAccount = () => {
                 My Order
               </ListItem>
             </Link>
-            <Link>
+            <Link to="/user/changePassword">
               <ListItem>
                 <ListItemPrefix>
                   <MdLockOutline className="w-5 h-5" />
@@ -55,7 +44,7 @@ const SideBarAccount = () => {
                 Change Password
               </ListItem>
             </Link>
-            <Link>
+            <Link to="/user/address">
               <ListItem>
                 <ListItemPrefix>
                   <MdOutlinePlace className="w-5 h-5" />

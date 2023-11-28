@@ -3,6 +3,7 @@ import Button from "../../components/button/Button";
 import { toast } from "react-toastify";
 import axios from "../../config/axios.js";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
+import DialogCEDeliveryAddress from "./DialogCEDeliveryAddress.jsx";
 
 const AccountAddress = () => {
   const [showDialogCE, setShowDialogCE] = useState({
@@ -77,17 +78,9 @@ const AccountAddress = () => {
   };
   const handleUpdate = async (data) => {
     if (!showDialogCERef.current.show && !showDialogCERef.current.id) return;
-    const formData = new FormData();
-    typeof data.image === "string"
-      ? formData.append("image", data.image)
-      : formData.append("imageFile", data.image);
-    formData.append("name", data.name);
-    formData.append("description", data.description);
+
     try {
-      await axios.put(
-        `/deliveryAddress/update/${showDialogCERef.current.id}`,
-        formData
-      );
+      await axios.put(`/deliveryAddress/update/${showDialogCERef.current.id}`);
       fetchData();
       handleCloseDialogCE();
       toast.success("🦄 Edit deliveryAddress successfully", {
@@ -114,7 +107,7 @@ const AccountAddress = () => {
     try {
       if (showDialog.show && showDialog.id) {
         await axios.delete(`/deliveryAddress/delete/${showDialog.id}`);
-        setdeliveryAddressData(
+        setDeliveryAddressData(
           deliveryAddressData.filter((item) => item.id !== showDialog.id)
         );
         fetchData();
@@ -161,7 +154,7 @@ const AccountAddress = () => {
           <div>
             <Button
               className="float-right mb-2 mr-2 cursor-pointer bg-light-green-500"
-              // onClick={handleCreateTrue}
+              onClick={handleCreateTrue}
             >
               Add New Address
             </Button>
@@ -208,7 +201,7 @@ const AccountAddress = () => {
               </div>
               <div className="h-px bg-gray-200 mt-5"></div>
             </li>
-            <li className="mt-5">
+            {/* <li className="mt-5">
               <div className="flex justify-between items-center">
                 <div className="flex">
                   <p className="text-sm">Hieu Tran Huu</p>
@@ -297,7 +290,7 @@ const AccountAddress = () => {
                 </div>
               </div>
               <div className="h-px bg-gray-200 mt-5"></div>
-            </li>
+            </li> */}
           </ul>
         </div>
         <DialogDelete
@@ -305,6 +298,14 @@ const AccountAddress = () => {
           title="Delivery Address"
           confirm={handleDelete}
           cancel={handleCloseDialog}
+        />
+        <DialogCEDeliveryAddress
+          show={showDialogCE.show}
+          isUpdate={showDialogCE.isUpdate}
+          handleSubmitAddress={showDialogCE.action}
+          cancel={handleCloseDialogCE}
+          title="Delivery Address"
+          deliveryAddressDataToEdit={showDialogCE.deliveryAddressDataToEdit}
         />
       </div>
     </>

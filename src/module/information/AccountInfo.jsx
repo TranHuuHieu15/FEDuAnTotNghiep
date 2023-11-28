@@ -44,7 +44,7 @@ const AccountInfo = () => {
 
   const {
     handleSubmit,
-    formState: { errors, isValid, isSubmitting },
+    formState: { errors, isValid },
     control,
     reset,
   } = useForm({
@@ -105,13 +105,13 @@ const AccountInfo = () => {
 
   return (
     <>
-      <div className="flex-initial shadow-md border-2 w-full rounded-2xl">
-        <div className="pl-10 pt-5">
+      <div className="flex-initial w-full border-2 shadow-md rounded-2xl">
+        <div className="pt-5 pl-10">
           <p className="text-2xl text-blue-gray-600">Information</p>
           <p className="text-gray-600">Manage and protect your account</p>
         </div>
         <div className="flex items-center justify-center space-x-3">
-          <span className="w-full px-3 h-px bg-gray-200 mt-3"></span>
+          <span className="w-full h-px px-3 mt-3 bg-gray-200"></span>
         </div>
 
         <form

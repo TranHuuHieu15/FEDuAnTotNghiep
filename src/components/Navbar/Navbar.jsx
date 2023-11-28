@@ -78,7 +78,7 @@ const Navbar = () => {
           />
         </Link>
         <div className="hidden lg:block">{navList}</div>
-        {user && user.id ? (
+        {user && user.username ? (
           <Dropdown></Dropdown>
         ) : (
           <div className="flex gap-2">

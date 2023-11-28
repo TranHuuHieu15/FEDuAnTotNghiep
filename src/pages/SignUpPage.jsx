@@ -171,7 +171,7 @@ const SignUpPage = () => {
                     className="w-[455px] bg-[#F7C59F]"
                     disabled={isSubmitting}
                   >
-                    Sign in
+                    Sign up
                   </Button>
                 </div>
               </form>

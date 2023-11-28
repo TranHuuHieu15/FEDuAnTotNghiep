@@ -8,18 +8,35 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "../config/axios";
+import Pagination from "../components/pagination/Pagination";
+
 
 const ProductPage = () => {
   const [productData, setProductData] = useState([]);
 
+  const [currentPage, setCurrentPage] = useState([]); // Thêm state trang hiện tại
+
+  const [totalPages, setTotalPages] = useState(0); // Thêm state tổng số trang
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get("/product");
-      console.log(response.data);
+      const page = currentPage === 0
+      const response = await axios.get(`/product?page=${currentPage}`);
+      console.log(currentPage);
       setProductData(response.data);
+
+      const totalPages = Math.ceil(response['all-item'] / response.size);
+
+      setTotalPages(totalPages); // Cập nhật tổng số trang
     };
     fetchData();
-  }, []);
+  }, [currentPage]);
+
+  // Hàm để thay đổi trang
+
+  const handleChangePage = (page) => {
+    console.log(page);
+    setCurrentPage(page);
+  };
   return (
     <>
       <SiteLayout>
@@ -88,7 +105,18 @@ const ProductPage = () => {
             </div>
           </div>
         </div>
-        {/* <Pagination></Pagination> */}
+        <div className="flex justify-center  gap-3">
+          <Pagination
+
+            currentPage={currentPage}
+
+            totalPages={totalPages}
+
+            onChange={handleChangePage}
+
+          ></Pagination>
+        </div>
+
       </SiteLayout>
     </>
   );

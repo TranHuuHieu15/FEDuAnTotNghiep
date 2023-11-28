@@ -1,7 +1,24 @@
 import PropTypes from "prop-types";
 import { BsTrash } from "react-icons/bs";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { deleteItem } from "../../redux/features/cartSlice";
 
 const CheckoutCard = ({ cartData }) => {
+  const dispatch = useDispatch();
+  const handleRemove = () => {
+    dispatch(deleteItem(cartData.id));
+    toast.success("🦄 Delete successfully", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
   return (
     <div className="flex gap-4">
       <img src={cartData.image} alt="image" className="w-48 h-48" />
@@ -23,9 +40,12 @@ const CheckoutCard = ({ cartData }) => {
           Quantity: {cartData.quantity}
         </p>
       </div>
-      <div className="flex w-[150px] gap-2 items-stretch hover:cursor-pointer">
+      <div
+        className="flex w-[150px] gap-2 items-center justify-center hover:cursor-pointer"
+        onClick={handleRemove}
+      >
         <BsTrash className="w-5 h-5" size={"100px"} />
-        <p className="text-sm not-italic font-normal cursor-pointer font-eculid">
+        <p className="text-sm not-italic font-normal font-eculid">
           Remove Item
         </p>
       </div>

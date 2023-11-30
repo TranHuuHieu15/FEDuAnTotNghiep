@@ -3,9 +3,16 @@ import Button from "../../components/button/Button";
 import { toast } from "react-toastify";
 import axios from "../../config/axios.js";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
-import DialogCEDeliveryAddress from "./DialogCEDeliveryAddress.jsx";
+import DialogCEDeliveryAddress from "../../components/dialog/DialogCEDeliveryAddress.jsx";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
+import { BsTrash3 } from "react-icons/bs";
+import { CiEdit } from "react-icons/ci";
 
 const AccountAddress = () => {
+  //gọi thằng user trong userSelector ra
+  const user = useSelector(selectCurrentUser);
+  const [deliveryAddressData, setDeliveryAddressData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -18,15 +25,21 @@ const AccountAddress = () => {
     show: false,
     id: null,
   });
-  const [deliveryAddressData, setDeliveryAddressData] = useState([]);
   const fetchData = async () => {
     try {
-      const response = await axios.get("/deliveryAddress");
+      const response = await axios.get("/deliveryAddress/account", {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      });
+
+      console.log(response.data);
       setDeliveryAddressData(response.data);
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -43,31 +56,41 @@ const AccountAddress = () => {
     });
   };
   const handleCreate = async (data) => {
-    if (!showDialogCERef.current.show) return;
-    const formData = new FormData();
-    formData.append("imageFile", data.image);
-    formData.append("name", data.name);
-    formData.append("description", data.description);
+    console.log(data);
+    const deliveryAddress = {
+      phoneNumber: data.phoneNumber,
+      apartmentNumber: data.apartmentNumber,
+      city: data.selectedCity,
+      district: data.selectedDistrict,
+      ward: data.selectedWard,
+    };
     try {
-      await axios.post("/deliveryAddress/create", formData);
-      fetchData();
-      handleCloseDialogCE();
-      toast.success("🦄 Add new deliveryAddress successfully", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      if (showDialogCERef.current.show) {
+        await axios.post("/deliveryAddress/create", deliveryAddress, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
+        fetchData();
+        handleCloseDialogCE();
+        toast.success("🦄 Add new delivery address successfully", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
     } catch (err) {
       console.log(err.response.data.message);
     }
   };
   const handleUpdateTrue = (id) => {
     const dataEdit = deliveryAddressData.find((item) => item.id === id);
+    console.log(dataEdit);
     setShowDialogCE({
       show: true,
       id: id,
@@ -77,22 +100,30 @@ const AccountAddress = () => {
     });
   };
   const handleUpdate = async (data) => {
-    if (!showDialogCERef.current.show && !showDialogCERef.current.id) return;
-
     try {
-      await axios.put(`/deliveryAddress/update/${showDialogCERef.current.id}`);
-      fetchData();
-      handleCloseDialogCE();
-      toast.success("🦄 Edit deliveryAddress successfully", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      if (showDialogCERef.current.show && showDialogCERef.current.id) {
+        await axios.put(
+          `/deliveryAddress/update/${showDialogCERef.current.id}`,
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+            },
+          }
+        );
+        fetchData();
+        handleCloseDialogCE();
+        toast.success("🦄 Edit deliveryAddress successfully", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
     } catch (err) {
       console.log(err.response.data.message);
     }
@@ -106,6 +137,7 @@ const AccountAddress = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
+        console.log(showDialog.id);
         await axios.delete(`/deliveryAddress/delete/${showDialog.id}`);
         setDeliveryAddressData(
           deliveryAddressData.filter((item) => item.id !== showDialog.id)
@@ -156,7 +188,7 @@ const AccountAddress = () => {
               className="float-right mb-2 mr-2 cursor-pointer bg-light-green-500"
               onClick={handleCreateTrue}
             >
-              Add New Address
+              Add New Delivery Address
             </Button>
           </div>
         </div>
@@ -166,131 +198,52 @@ const AccountAddress = () => {
 
         <div className="px-10 mt-5">
           <ul className="mt-3">
-            <li className="">
-              <div className="flex justify-between items-center">
-                <div className="flex">
-                  <p className="text-sm">Hieu Tran Huu</p>
-                  <p className="ml-2 text-gray-500 text-sm">(+84) 0768757110</p>
-                </div>
-                <div className="button">
-                  <a href="#">Edit</a>
-                  <a href="#" className="ml-2">
-                    Delete
-                  </a>
-                </div>
-              </div>
-              <div className="mt-2 flex justify-between items-center">
-                <div>
-                  <p className="text-gray-500 text-sm">
-                    K19/11 Nguyễn Lương Băng Hoà Khánh Bắc
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    Phường Hòa Khánh Bắc, Quận Liên Chiểu, Đà Nẵng
-                  </p>
-                </div>
-                <div>
-                  <Button outline="outlined" className="w-120px rounded-none">
-                    Set as default
-                  </Button>
-                </div>
-              </div>
-              <div className="mt-2">
-                <Button outline="outlined" className="rounded-none" size="sm">
-                  Default
-                </Button>
-              </div>
-              <div className="h-px bg-gray-200 mt-5"></div>
-            </li>
-            {/* <li className="mt-5">
-              <div className="flex justify-between items-center">
-                <div className="flex">
-                  <p className="text-sm">Hieu Tran Huu</p>
-                  <p className="ml-2 text-gray-500 text-sm">(+84) 0768757110</p>
-                </div>
-                <div className="button">
-                  <a href="#">Edit</a>
-                  <a href="#" className="ml-2">
-                    Delete
-                  </a>
-                </div>
-              </div>
-              <div className="mt-2 flex justify-between items-center">
-                <div>
-                  <p className="text-gray-500 text-sm">
-                    K19/11 Nguyễn Lương Băng Hoà Khánh Bắc
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    Phường Hòa Khánh Bắc, Quận Liên Chiểu, Đà Nẵng
-                  </p>
-                </div>
-                <div>
-                  <Button outline="outlined" className="w-120px rounded-none">
-                    Set as default
-                  </Button>
-                </div>
-              </div>
-              <div className="h-px bg-gray-200 mt-5"></div>
-            </li>
-            <li className="mt-5">
-              <div className="flex justify-between items-center">
-                <div className="flex">
-                  <p className="text-sm">Hieu Tran Huu</p>
-                  <p className="ml-2 text-gray-500 text-sm">(+84) 0768757110</p>
-                </div>
-                <div className="button">
-                  <a href="#">Edit</a>
-                  <a href="#" className="ml-2">
-                    Delete
-                  </a>
-                </div>
-              </div>
-              <div className="mt-2 flex justify-between items-center">
-                <div>
-                  <p className="text-gray-500 text-sm">
-                    K19/11 Nguyễn Lương Băng Hoà Khánh Bắc
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    Phường Hòa Khánh Bắc, Quận Liên Chiểu, Đà Nẵng
-                  </p>
-                </div>
-                <div>
-                  <Button outline="outlined" className="w-120px rounded-none">
-                    Set as default
-                  </Button>
-                </div>
-              </div>
-              <div className="h-px bg-gray-200 mt-5"></div>
-            </li>
-            <li className="mt-5">
-              <div className="flex justify-between items-center">
-                <div className="flex">
-                  <p className="text-sm">Hieu Tran Huu</p>
-                  <p className="ml-2 text-gray-500 text-sm">(+84) 0768757110</p>
-                </div>
-                <div className="button">
-                  <a href="#">Edit</a>
-                  <a href="#" className="ml-2">
-                    Delete
-                  </a>
-                </div>
-              </div>
-              <div className="mt-2 flex justify-between items-center">
-                <div>
-                  <p className="text-gray-500 text-sm">
-                    K19/11 Nguyễn Lương Băng Hoà Khánh Bắc
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    Phường Hòa Khánh Bắc, Quận Liên Chiểu, Đà Nẵng
-                  </p>
-                </div>
-                <div>
-                  <Button outline="outlined" className="w-120px rounded-none">
-                    Set as default
-                  </Button>
-                </div>
-              </div>
-              <div className="h-px bg-gray-200 mt-5"></div>
-            </li> */}
+            {deliveryAddressData.length > 0 &&
+              deliveryAddressData.map((item) => (
+                <li className="mt-2" key={item.id}>
+                  <div className="flex justify-between items-center">
+                    <div className="flex">
+                      <p className="text-sm text-gray-600 uppercase">
+                        {user.fullName}
+                      </p>
+                      <p className="ml-2 text-gray-500 text-sm">
+                        {item.phoneNumber || "Không có số điện thoại"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-2 flex justify-between items-center">
+                    <div>
+                      <p className="text-gray-500 text-sm">
+                        {item.apartmentNumber}
+                      </p>
+                      <p className="text-gray-500 text-sm">
+                        {item.ward}, {item.district}, {item.city}
+                      </p>
+                    </div>
+                    <div className="flex gap-3">
+                      <a href="#" onClick={() => handleUpdateTrue(item.id)}>
+                        <CiEdit />
+                      </a>
+                      <a
+                        href="#"
+                        className="ml-2"
+                        onClick={() => handleDeleteTrue(item.id)}
+                      >
+                        <BsTrash3 />
+                      </a>
+                    </div>
+                  </div>
+                  {/* <div className="mt-2">
+                    <span
+                      className="rounded-none outline outline-1 p-2 text-xs text-gray-600"
+                      size="sm"
+                    >
+                      Default
+                    </span>
+                  </div> */}
+                  <div className="h-px bg-gray-200 mt-5"></div>
+                </li>
+              ))}
           </ul>
         </div>
         <DialogDelete

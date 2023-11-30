@@ -3,8 +3,8 @@ import "./App.css";
 import { ToastContainer } from "react-toastify";
 import { Suspense, lazy } from "react";
 import AccountLayout from "./layout/AccountLayout";
-import AccountInfo from "./pages/information/AccountInfo";
-import AccountAddress from "./pages/information/AccountAddress";
+import AccountInfo from "./module/information/AccountInfo";
+import AccountAddress from "./module/information/AccountAddress";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutUsPage = lazy(() => import("./pages/AboutUsPage"));

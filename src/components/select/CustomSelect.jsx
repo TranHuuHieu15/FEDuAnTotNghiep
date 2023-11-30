@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import { useController } from "react-hook-form";
 const CustomSelect = ({
   className,
   title,
@@ -8,17 +8,26 @@ const CustomSelect = ({
   name,
   value,
   onChange,
+  control,
 }) => {
   const selectClasses = `w-full border-2 p-2 rounded-md ${className}`;
+  const { field } = useController({
+    control,
+    name,
+    defaultValue: "",
+  });
   return (
     <>
       {title && <label className={className2}>{title}</label>}
       <select
         id={name}
         name={name} // Thêm thuộc tính name vào select element
-        value={value}
-        onChange={onChange}
         className={selectClasses}
+        {...field}
+        onChange={(e) => {
+          field.onChange(e);
+          onChange(e);
+        }}
       >
         <option value="" disabled>
           {title}
@@ -39,13 +48,14 @@ CustomSelect.propTypes = {
   title: PropTypes.string,
   options: PropTypes.arrayOf(
     PropTypes.shape({
-      code: PropTypes.string,
+      code: PropTypes.number,
       name: PropTypes.string,
     })
   ),
   name: PropTypes.string, // Thêm prop "name"
   value: PropTypes.string,
   onChange: PropTypes.func,
+  control: PropTypes.any.isRequired,
 };
 
 export default CustomSelect;

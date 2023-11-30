@@ -15,6 +15,7 @@ import {
   registerStart,
   registerSuccess,
 } from "../redux/features/authSlice";
+import { toast } from "react-toastify";
 
 const SignUpPage = () => {
   const dispatch = useDispatch();
@@ -64,9 +65,20 @@ const SignUpPage = () => {
         password: "",
       });
       navigate("/");
-    } catch (error) {
-      dispatch(registerFailure(error.message));
-      console.log(error.message);
+    } catch (response) {
+      if (response.status === 500) {
+        dispatch(registerFailure(response.data.message));
+        toast.error("registration failed ", {
+          position: "top-left",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
     }
     reset({
       username: "",

@@ -21,9 +21,7 @@ const ProductDetailPage = () => {
   const [open, setOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
-  const [currentImage, setCurrentImage] = useState(
-    productDto?.imageProductDto.url
-  );
+  const [currentImage, setCurrentImage] = useState(null);
   const [selectedColors, setSelectedColors] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const toggleOpen = () => setOpen((cur) => !cur);
@@ -172,7 +170,7 @@ const ProductDetailPage = () => {
               ))}
           </div>
           <img
-            src={currentImage}
+            src={currentImage || productDto?.imageProductDto.url}
             alt=""
             className="w-[476px] h-[567px] object-fill hover:scale-105 hover:duration-500 flex-shrink-0 rounded-md"
           />

@@ -1,6 +1,5 @@
 import { BsTrash } from "react-icons/bs";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
-import Select from "../select/Select";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import {
@@ -10,7 +9,7 @@ import {
 } from "../../redux/features/cartSlice";
 import { toast } from "react-toastify";
 
-const CartCard = ({ cartData = [] }) => {
+const CartCard = ({ cartData }) => {
   const dispatch = useDispatch();
   const handleRemove = () => {
     dispatch(deleteItem(cartData.id));

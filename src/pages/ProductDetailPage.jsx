@@ -12,9 +12,8 @@ import { useState } from "react";
 import Color from "../components/color/Color";
 import Size from "../components/size/Size";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/features/cartSlice";
-import { useSaveCartMutation } from "../redux/api/cartApi";
 import { toast } from "react-toastify";
 const ProductDetailPage = () => {
   const [productDetail, setProductDetail] = useState([]);
@@ -28,9 +27,6 @@ const ProductDetailPage = () => {
   const { productId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [saveCart] = useSaveCartMutation();
-  const [currentImage, setCurrentImage] = useState(productDto?.imageProductDto?.url);
-  const userToken = useSelector((state) => state.auth.userToken);
   const findDarkestColor = (colors) => {
     // Hàm để chuyển màu sang giá trị số để so sánh
     const calculateBrightness = (color) => {
@@ -124,27 +120,18 @@ const ProductDetailPage = () => {
   const handleIncrease = () => {
     setQuantity(quantity + 1);
   };
-  const handleAddToCart = () => {
-    const cartItem = {
-      productVariantId: selectedVariant?.id,
-      quantity,
-    };
+  const handleAddToCart = async () => {
     if (selectedVariant) {
-      if (userToken) {
-        saveCart(cartItem);
-      } else {
-        dispatch(
-          addToCart({
-            id: selectedVariant.id,
-            image: productDto.imageProductDto.url,
-            name: productDto.name,
-            price: selectedVariant.price,
-            quantity,
-            color: selectedColor,
-            size: selectedSize,
-          })
-        );
-      }
+      const cartItem = {
+        id: selectedVariant.id,
+        image: productDto.imageProductDto.url,
+        name: productDto.name,
+        price: selectedVariant.price,
+        quantity,
+        color: selectedColor,
+        size: selectedSize,
+      };
+      dispatch(addToCart(cartItem));
     }
     navigate("/cart");
     toast.success("Add to cart successfully!", {

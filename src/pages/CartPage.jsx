@@ -7,6 +7,7 @@ import SiteLayout from "../layout/SiteLayout";
 import { FaShippingFast } from "react-icons/fa";
 import CartList from "../components/list/CartList";
 import { useSelector } from "react-redux";
+import StepLine from "../components/step/StepLine";
 const CartPage = () => {
   const [activeStep, setActiveStep] = React.useState(0);
   const cartData = useSelector((state) => state.cart.products);
@@ -20,19 +21,7 @@ const CartPage = () => {
     <>
       <SiteLayout>
         <div className="flex flex-col items-center justify-center">
-          <div className="w-[1000px] my-10">
-            <Stepper activeStep={activeStep}>
-              <Step onClick={() => setActiveStep(0)}>
-                <AiOutlineShoppingCart className="w-5 h-5" />
-              </Step>
-              <Step onClick={() => setActiveStep(1)}>
-                <MdPayment className="w-5 h-5" />
-              </Step>
-              <Step onClick={() => setActiveStep(2)}>
-                <FaShippingFast className="w-5 h-5" />
-              </Step>
-            </Stepper>
-          </div>
+          <StepLine />
           <div className="flex gap-20">
             <div className="flex flex-col items-center justify-center">
               <CartList></CartList>

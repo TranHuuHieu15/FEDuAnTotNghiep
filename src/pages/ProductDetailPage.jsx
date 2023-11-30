@@ -21,6 +21,9 @@ const ProductDetailPage = () => {
   const [open, setOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [currentImage, setCurrentImage] = useState(
+    productDto?.imageProductDto.url
+  );
   const [selectedColors, setSelectedColors] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const toggleOpen = () => setOpen((cur) => !cur);
@@ -82,7 +85,8 @@ const ProductDetailPage = () => {
   const handleSizeChange = (size) => {
     setSelectedSize(size);
     // Lấy ảnh mới tương ứng với kích thước đã chọn
-    const image = productVariantsDto.find(variant => variant.size === size)?.imageProductDto?.url;
+    const image = productVariantsDto.find((variant) => variant.size === size)
+      ?.imageProductDto?.url;
     if (image) {
       // Cập nhật ảnh hiện tại
       setCurrentImage(image);
@@ -104,7 +108,9 @@ const ProductDetailPage = () => {
   const handleColorChange = (color) => {
     setSelectedColor(color);
     // Lấy ảnh mới tương ứng với màu sắc đã chọn
-    const image = productVariantsDto.find(variant => variant.colorId === color)?.imageProductDto?.url;
+    const image = productVariantsDto.find(
+      (variant) => variant.colorId === color
+    )?.imageProductDto?.url;
     if (image) {
       // Cập nhật ảnh hiện tại
       setCurrentImage(image);
@@ -153,7 +159,8 @@ const ProductDetailPage = () => {
             {productVariantsDto
               ?.filter((variant, index, self) =>
                 index < 4
-                  ? self.findIndex((v) => v.id === variant.id) === index : false
+                  ? self.findIndex((v) => v.id === variant.id) === index
+                  : false
               )
               .map((variant) => (
                 <img
@@ -165,7 +172,7 @@ const ProductDetailPage = () => {
               ))}
           </div>
           <img
-            src={currentImage || productDto?.imageProductDto.url}
+            src={currentImage}
             alt=""
             className="w-[476px] h-[567px] object-fill hover:scale-105 hover:duration-500 flex-shrink-0 rounded-md"
           />

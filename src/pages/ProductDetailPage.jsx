@@ -17,7 +17,7 @@ import { addToCart } from "../redux/features/cartSlice";
 import { toast } from "react-toastify";
 const ProductDetailPage = () => {
   const [productDetail, setProductDetail] = useState([]);
-  const { productVariantsDto, productDto } = productDetail;
+  const { productVariantsDto, productDto, discount } = productDetail;
   const [open, setOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
@@ -126,14 +126,16 @@ const ProductDetailPage = () => {
   };
   const handleAddToCart = async () => {
     if (selectedVariant) {
+      console.log(selectedVariant);
       const cartItem = {
-        id: selectedVariant.id,
+        productVariantId: selectedVariant.id,
         image: productDto.imageProductDto.url,
         name: productDto.name,
         price: selectedVariant.price,
         quantity,
         color: selectedColor,
         size: selectedSize,
+        discount: discount || 0,
       };
       dispatch(addToCart(cartItem));
     }

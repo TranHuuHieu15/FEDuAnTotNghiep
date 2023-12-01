@@ -7,7 +7,7 @@ const CartList = () => {
     <>
       {cartData?.length > 0 &&
         cartData.map((item) => (
-          <CartCard key={item.id} cartData={item}></CartCard>
+          <CartCard key={item.productVariantId} cartData={item}></CartCard>
         ))}
     </>
   );

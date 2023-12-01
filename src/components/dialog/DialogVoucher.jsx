@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../redux/features/authSlice";
 
-const DialogVoucher = ({ show, handleCloseVoucher }) => {
+const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher }) => {
   const user = useSelector(selectCurrentUser);
   const [voucherData, setVoucherData] = useState([]);
   useEffect(() => {
@@ -49,6 +49,10 @@ const DialogVoucher = ({ show, handleCloseVoucher }) => {
 
     return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
   };
+  const handleUseVoucher = (usedVoucher) => {
+    onUseVoucher(usedVoucher);
+    handleCloseVoucher();
+  };
   return (
     <>
       <Dialog open={show}>
@@ -83,7 +87,12 @@ const DialogVoucher = ({ show, handleCloseVoucher }) => {
                     </div>
                   </div>
                   <div className="flex items-center justify-end col-span-1">
-                    <Buttons className="text-center bg-black">Use</Buttons>
+                    <Buttons
+                      className="text-center bg-black"
+                      onClick={() => handleUseVoucher(item)}
+                    >
+                      Use
+                    </Buttons>
                   </div>
                 </CardBody>
               ))}
@@ -96,6 +105,7 @@ const DialogVoucher = ({ show, handleCloseVoucher }) => {
 DialogVoucher.propTypes = {
   show: PropTypes.bool,
   handleCloseVoucher: PropTypes.func,
+  onUseVoucher: PropTypes.func,
 };
 
 export default DialogVoucher;

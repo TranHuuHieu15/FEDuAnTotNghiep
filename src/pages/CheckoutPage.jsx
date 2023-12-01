@@ -23,6 +23,7 @@ const CheckoutPage = () => {
   const [paymentData, setPaymentData] = useState([]);
   const [openDeliveryAddress, setOpenDeliveryAddress] = useState(false);
   const [openVoucher, setOpenVoucher] = useState(false);
+  const [selectVoucher, setSelectVoucher] = useState({});
   const [selectedDelivery, setSelectedDelivery] = useState(
     deliveryMethods.find((delivery) => delivery.id === 1) || {}
   );
@@ -56,7 +57,7 @@ const CheckoutPage = () => {
         paymentId: selectedPaymentMethod.id,
       },
       orderDetailsDto: cartData,
-      discount: 0,
+      discount: selectVoucher.discount,
     };
     try {
       const response = await axios.post(`/order/create`, orderItem, {
@@ -80,6 +81,9 @@ const CheckoutPage = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+  const handleUseVoucher = (usedVoucher) => {
+    setSelectVoucher(usedVoucher);
   };
   const handleMethodClick = (id) => {
     const selectDelivery = deliveryMethods.find(
@@ -215,13 +219,14 @@ const CheckoutPage = () => {
                     <span>${taxes}</span>
                   </div>
                 </div>
-                <div className="flex justify-between gap-3">
+                <div className="flex items-center justify-between gap-3 p-5">
                   <div className="flex items-center justify-start gap-2">
                     <BiSolidDiscount className="text-2xl text-deep-orange-600" />
                     <span className="text-2xl font-eculid ">Voucher</span>
                   </div>
+                  {selectVoucher && <span>{selectVoucher.name}</span>}
                   <span
-                    className="p-5 text-red-700 outline-none cursor-pointer"
+                    className="text-red-700 outline-none cursor-pointer "
                     onClick={handleOpenVoucher}
                   >
                     Choose voucher
@@ -255,6 +260,7 @@ const CheckoutPage = () => {
       <DialogVoucher
         show={openVoucher}
         handleCloseVoucher={handleCloseVoucher}
+        onUseVoucher={handleUseVoucher}
       />
     </>
   );

@@ -23,7 +23,8 @@ const CheckoutPage = () => {
   const [paymentData, setPaymentData] = useState([]);
   const [openDeliveryAddress, setOpenDeliveryAddress] = useState(false);
   const [openVoucher, setOpenVoucher] = useState(false);
-  const [selectVoucher, setSelectVoucher] = useState({});
+  const [discount, setDiscount] = useState(0);
+  const [selectVoucher, setSelectVoucher] = useState(null);
   const [selectedDelivery, setSelectedDelivery] = useState(
     deliveryMethods.find((delivery) => delivery.id === 1) || {}
   );
@@ -34,9 +35,10 @@ const CheckoutPage = () => {
   const totalAmount = cartData.reduce((acc, item) => {
     return acc + item.price * item.quantity;
   }, 0);
+
   const shippingFee = selectedDelivery?.price;
   const taxes = 0.2;
-  const total = totalAmount + shippingFee + taxes;
+  const total = totalAmount - discount + shippingFee + taxes;
 
   useEffect(() => {
     const fetchPayment = async () => {
@@ -49,6 +51,23 @@ const CheckoutPage = () => {
     };
     fetchPayment();
   }, []);
+  useEffect(() => {
+    const matchDiscount = () => {
+      let discountValue = 0;
+      if (totalAmount > selectVoucher?.minTotal) {
+        if (selectVoucher.typeDiscount === "PERCENT") {
+          discountValue = selectVoucher.discount * totalAmount;
+          if (discountValue > selectVoucher.maxDiscount) {
+            discountValue = selectVoucher.maxDiscount;
+          }
+        } else {
+          discountValue = selectVoucher.discount;
+        }
+      }
+      return discountValue;
+    };
+    setDiscount(matchDiscount());
+  }, [selectVoucher, totalAmount]);
   const handleOrder = async () => {
     const orderItem = {
       orderDto: {

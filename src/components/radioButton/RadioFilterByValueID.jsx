@@ -1,22 +1,16 @@
 import { Radio } from "@material-tailwind/react";
 import PropTypes from "prop-types";
-import { useController } from "react-hook-form";
 
-const RadioButtonFilter = ({
+const RadioFilterByValueID = ({
   color = "blue-gray",
   label,
   labelRadio,
   className,
   name,
+  onChange,
+  value,
   ripple,
-  control,
 }) => {
-  const { field } = useController({
-    control,
-    name,
-    defaultValue: "",
-  });
-
   return (
     <div className={className}>
       <div>{labelRadio}</div>
@@ -25,19 +19,21 @@ const RadioButtonFilter = ({
         label={label}
         name={name}
         ripple={ripple}
-        {...field}
+        value={value}
+        onChange={onChange}
       ></Radio>
     </div>
   );
 };
-RadioButtonFilter.propTypes = {
+RadioFilterByValueID.propTypes = {
   color: PropTypes.string,
   className: PropTypes.string,
   name: PropTypes.string,
   ripple: PropTypes.bool,
   label: PropTypes.string,
   labelRadio: PropTypes.string,
-  control: PropTypes.any.isRequired,
+  value: PropTypes.number,
+  onChange: PropTypes.func,
 };
 
-export default RadioButtonFilter;
+export default RadioFilterByValueID;

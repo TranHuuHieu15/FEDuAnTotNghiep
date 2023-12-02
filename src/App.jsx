@@ -27,6 +27,7 @@ const ProblemManage = lazy(() => import("./module/problem/ProblemManage"));
 const FeedbackManage = lazy(() => import("./module/feedback/FeedbackManage"));
 const EvalueateManage = lazy(() => import("./module/evaluate/EvalueateManage"));
 const ColorManage = lazy(() => import("./module/color/ColorManage"));
+const VoucherPage = lazy(() => import("./pages/VoucherPage"));
 
 function App() {
   return (
@@ -56,6 +57,9 @@ function App() {
             path="/checkmail"
             element={<CheckMailPage></CheckMailPage>}
           ></Route>
+
+          <Route path="/voucher" element={<VoucherPage></VoucherPage>}></Route>
+
           <Route element={<AdminLayout></AdminLayout>}>
             <Route
               path="/admin"

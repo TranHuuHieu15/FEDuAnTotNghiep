@@ -68,7 +68,7 @@ const SignUpPage = () => {
     } catch (response) {
       if (response.status === 500) {
         dispatch(registerFailure(response.data.message));
-        toast.error("registration failed ", {
+        toast.error("username and email already exist", {
           position: "top-left",
           autoClose: 3000,
           hideProgressBar: false,

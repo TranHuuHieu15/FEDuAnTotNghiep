@@ -7,7 +7,10 @@ const CheckoutList = () => {
     <>
       {cartData?.length > 0 &&
         cartData.map((item) => (
-          <CheckoutCard key={item.id} cartData={item}></CheckoutCard>
+          <CheckoutCard
+            key={item.productVariantId}
+            cartData={item}
+          ></CheckoutCard>
         ))}
     </>
   );

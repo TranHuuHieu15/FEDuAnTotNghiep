@@ -7,7 +7,7 @@ import { deleteItem } from "../../redux/features/cartSlice";
 const CheckoutCard = ({ cartData }) => {
   const dispatch = useDispatch();
   const handleRemove = () => {
-    dispatch(deleteItem(cartData.id));
+    dispatch(deleteItem(cartData.productVariantId));
     toast.success("🦄 Delete successfully", {
       position: "top-right",
       autoClose: 2000,

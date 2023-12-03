@@ -1,15 +1,9 @@
-import React from "react";
-import { Stepper, Step } from "@material-tailwind/react";
-import { AiOutlineShoppingCart } from "react-icons/ai";
-import { MdPayment } from "react-icons/md";
 import Button from "../components/button/Button";
 import SiteLayout from "../layout/SiteLayout";
-import { FaShippingFast } from "react-icons/fa";
 import CartList from "../components/list/CartList";
 import { useSelector } from "react-redux";
 import StepLine from "../components/step/StepLine";
 const CartPage = () => {
-  const [activeStep, setActiveStep] = React.useState(0);
   const cartData = useSelector((state) => state.cart.products);
   const totalAmount = cartData.reduce((acc, item) => {
     return acc + item.price * item.quantity;

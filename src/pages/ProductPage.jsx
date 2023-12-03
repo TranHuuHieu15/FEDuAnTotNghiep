@@ -1,83 +1,88 @@
 import ProductCard from "../components/card/ProductCard";
-// import Pagination from "../components/pagination/Pagination";
 import SiteLayout from "../layout/SiteLayout";
-// import { Checkbox } from "@material-tailwind/react";
-import InputSearch from "../components/input/InputSearch";
-import RadioButton from "../components/radioButton/RadioButton";
-import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "../config/axios";
+import Filter from "../components/filter/Filter";
+import { Card, CardBody, CardHeader } from "@material-tailwind/react";
+import LoadingSkeleton from "../components/loading/LoadingSkeleton";
+import useDebounce from "../hook/useDebounce";
 
 const ProductPage = () => {
   const [productData, setProductData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [season, setSeason] = useState("");
+  const [gender, setGender] = useState("");
+  const [category, setCategory] = useState("");
+  const [brand, setBrand] = useState("");
+  const [query, setQuery] = useState("");
+  const queryDebounce = useDebounce(query, 1500);
 
+  const fetchData = async (url) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(url);
+      setProductData(response.data || response.content);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get("/product");
-      console.log(response.data);
-      setProductData(response.data);
-    };
-    fetchData();
-  }, []);
+    if (brand || category || gender || season) {
+      fetchData(
+        `/product?season=${season}&gender=${gender}&category=${category}&brand=${brand}`
+      );
+    } else if (queryDebounce) {
+      fetchData(`/product/search?key=${queryDebounce}`);
+    } else {
+      fetchData("/product");
+    }
+  }, [brand, category, gender, queryDebounce, season]);
+  const handleSearchChange = (e) => {
+    setQuery(e.target.value);
+    setBrand("");
+    setGender("");
+    setCategory("");
+    setSeason("");
+  };
+  const handleSeasonValue = (e) => {
+    setSeason(e.target.value);
+  };
+  const handleGenderValue = (e) => {
+    setGender(e.target.value);
+  };
+  const handleCategoryValue = (e) => {
+    setCategory(e.target.value);
+  };
+  const handleBrandValue = (e) => {
+    setBrand(e.target.value);
+  };
   return (
     <>
       <SiteLayout>
-        <div className="flex p-5 mx-20 my-10">
+        <div className="flex justify-center gap-10 mx-20 my-10">
           <div className="mx-6 w-96">
-            {/* <div className="flex flex-col h-full w-72">
-              <InputSearch maxWidth="max-w-[300px]" />
-              <div className="flex flex-col my-5">
-                <h3 className="font-normal">FILTERs</h3>
-                <RadioButton label="Woman" name="filter" />
-                <RadioButton label="Man" name="filter" />
-                <RadioButton label="Girls" name="filter" />
-                <RadioButton label="Babies" name="filter" />
-              </div>
-              <div className="flex flex-col my-5">
-                <h3 className="font-normal">BRANDS</h3>
-                <RadioButton label="Chanel" name="brand" />
-                <RadioButton label="Gucci" name="brand" />
-                <RadioButton label="D&G" name="brand" />
-                <RadioButton label="Zara" name="brand" />
-                <RadioButton label="Dior" name="brand" />
-                <RadioButton label="Versace" name="brand" />
-              </div>
-              <div className="flex flex-col my-5">
-                <h3 className="font-normal">CATEGORIES</h3>
-                <RadioButton label="Dresses" name="category" />
-                <RadioButton label="Jacket" name="category" />
-                <RadioButton label="Tops" name="category" />
-                <RadioButton label="Vintages" name="category" />
-              </div>
-              <div className="flex flex-col my-5">
-                <h3 className="font-normal">SIZES</h3>
-                <RadioButton label="Sexy Plus Size" name="size" />
-                <RadioButton label="Plus Size" name="size" />
-                <RadioButton label="Large" name="size" />
-                <RadioButton label="Medium" name="size" />
-              </div>
-            </div> */}
+            <Filter
+              handleSearchChange={handleSearchChange}
+              handleSeasonValue={handleSeasonValue}
+              handleGenderValue={handleGenderValue}
+              handleCategoryValue={handleCategoryValue}
+              handleBrandValue={handleBrandValue}
+            />
           </div>
-          <div className="flex flex-col">
-            <div className="flex justify-end w-full pr-[58px] font-eculid">
-              {/* <Select
-                title="Sort by price:"
-                className="px-1 py-1"
-                className2="p-2"
-                control={control}
-                options={options}
-                errors={errors}
-              >
-               <option value="">price</option>
-                <option value="low">low</option>
-                <option value="medium">medium</option>
-                <option value="hight">high</option>
-              </Select> 
-              */}
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {productData.length > 0 &&
+          <div className="flex flex-col justify-start">
+            {loading && (
+              <div className="flex flex-wrap items-center gap-3">
+                <ProductCardLoading />
+                <ProductCardLoading />
+                <ProductCardLoading />
+              </div>
+            )}
+            <div className="flex flex-wrap items-center gap-3">
+              {!loading &&
+                productData &&
+                productData.length > 0 &&
                 productData.map((item) => (
                   <ProductCard
                     className="mx-2 my-2 cursor-pointer w-72 hover:scale-105 focus:scale-105 active:scale-100"
@@ -86,11 +91,44 @@ const ProductPage = () => {
                   ></ProductCard>
                 ))}
             </div>
+            <div className="flex flex-wrap items-center gap-3">
+              {!loading && !productData && (
+                <p className="text-xl font-semibold text-center font-eculid">
+                  There are no products to display at the moment
+                </p>
+              )}
+            </div>
           </div>
         </div>
         {/* <Pagination></Pagination> */}
       </SiteLayout>
     </>
+  );
+};
+
+const ProductCardLoading = () => {
+  return (
+    <Card className="mx-2 my-2 cursor-pointer w-72 hover:scale-105 focus:scale-105 active:scale-100">
+      <CardHeader shadow={false} floated={false} className="h-80">
+        <LoadingSkeleton height="100%" />
+      </CardHeader>
+      <CardBody>
+        <LoadingSkeleton height="20px" />
+        <div
+          color="blue-gray"
+          className="flex items-center justify-start gap-2 py-2 text-xl font-medium"
+        >
+          <LoadingSkeleton height="20px" width="50%" />
+        </div>
+        <div
+          color="blue-gray"
+          className="flex items-center justify-between gap-8 font-medium"
+        >
+          <LoadingSkeleton height="10px" width="100%" />
+          <LoadingSkeleton height="10px" width="50%" />
+        </div>
+      </CardBody>
+    </Card>
   );
 };
 

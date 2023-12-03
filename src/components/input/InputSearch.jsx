@@ -10,7 +10,7 @@ const InputSearch = ({ maxWidth, onChange }) => {
         <input
           type="text"
           className="w-full h-10 px-4 py-4 text-base rounded-full font-eculid"
-          onChange={() => onChange}
+          onChange={onChange}
           placeholder="Search..."
         />
         <button>

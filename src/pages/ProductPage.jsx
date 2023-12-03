@@ -16,53 +16,35 @@ const ProductPage = () => {
   const [category, setCategory] = useState("");
   const [brand, setBrand] = useState("");
   const [query, setQuery] = useState("");
-  const queryDebounce = useDebounce(query, 2000);
+  const queryDebounce = useDebounce(query, 1500);
 
+  const fetchData = async (url) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(url);
+      setProductData(response.data || response.content);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get("/product");
-        setProductData(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `/product/search?key=${queryDebounce}`
-        );
-        setProductData(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, [queryDebounce]);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `/product?season=${season}&gender=${gender}&category=${category}&brand=${brand}`
-        );
-        setProductData(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, [brand, category, gender, season]);
+    if (brand || category || gender || season) {
+      fetchData(
+        `/product?season=${season}&gender=${gender}&category=${category}&brand=${brand}`
+      );
+    } else if (queryDebounce) {
+      fetchData(`/product/search?key=${queryDebounce}`);
+    } else {
+      fetchData("/product");
+    }
+  }, [brand, category, gender, queryDebounce, season]);
   const handleSearchChange = (e) => {
     setQuery(e.target.value);
+    setBrand("");
+    setGender("");
+    setCategory("");
+    setSeason("");
   };
   const handleSeasonValue = (e) => {
     setSeason(e.target.value);
@@ -95,15 +77,12 @@ const ProductPage = () => {
                 <ProductCardLoading />
                 <ProductCardLoading />
                 <ProductCardLoading />
-                <ProductCardLoading />
-                <ProductCardLoading />
-                <ProductCardLoading />
-                <ProductCardLoading />
-                <ProductCardLoading />
               </div>
             )}
-            <div className="flex flex-wrap gap-3">
-              {productData.length > 0 &&
+            <div className="flex flex-wrap items-center gap-3">
+              {!loading &&
+                productData &&
+                productData.length > 0 &&
                 productData.map((item) => (
                   <ProductCard
                     className="mx-2 my-2 cursor-pointer w-72 hover:scale-105 focus:scale-105 active:scale-100"
@@ -111,6 +90,13 @@ const ProductPage = () => {
                     item={item}
                   ></ProductCard>
                 ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              {!loading && !productData && (
+                <p className="text-xl font-semibold text-center font-eculid">
+                  There are no products to display at the moment
+                </p>
+              )}
             </div>
           </div>
         </div>

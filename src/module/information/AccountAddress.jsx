@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import Button from "../../components/button/Button";
-import { toast } from "react-toastify";
-import axios from "../../config/axios.js";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import DialogCEDeliveryAddress from "../../components/dialog/DialogCEDeliveryAddress.jsx";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 import { BsTrash3 } from "react-icons/bs";
 import { CiEdit } from "react-icons/ci";
+import axios from "../../config/axios.js";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
+import { toast } from "react-toastify";
 
 const AccountAddress = () => {
-  //gọi thằng user trong userSelector ra
   const user = useSelector(selectCurrentUser);
   const [deliveryAddressData, setDeliveryAddressData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
@@ -18,7 +17,7 @@ const AccountAddress = () => {
     id: null,
     isUpdate: false,
     action: null,
-    deliveryAddressDataToEdit: {},
+    dataToEdit: {},
   });
   const showDialogCERef = useRef(null);
   const [showDialog, setShowDialog] = useState({
@@ -37,108 +36,37 @@ const AccountAddress = () => {
       console.log(error);
     }
   };
-
   useEffect(() => {
     fetchData();
   }, []);
-
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
-
   const handleCreateTrue = () => {
     setShowDialogCE({
       show: true,
       id: null,
       isUpdate: false,
       action: handleCreate,
-      deliveryAddressDataToEdit: {},
+      dataToEdit: {},
     });
   };
-  const handleCreate = async (data) => {
-    const deliveryAddress = {
-      phoneNumber: data.phoneNumber,
-      apartmentNumber: data.apartmentNumber,
-      city: data.selectedCity,
-      district: data.selectedDistrict,
-      ward: data.selectedWard,
-      cityCode: data.cityCode,
-      districtCode: data.districtCode,
-      wardCode: data.wardCode,
-    };
-    // console.log(deliveryAddress);
+  const handleCreate = async (deliveryAddressDTO) => {
     try {
       if (showDialogCERef.current.show) {
-        await axios.post("/deliveryAddress/create", deliveryAddress, {
-          headers: {
-            Authorization: `Bearer ${user.accessToken}`,
-          },
-        });
-        fetchData();
-        handleCloseDialogCE();
-        toast.success("🦄 Add new delivery address successfully", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
-    } catch (err) {
-      console.log(err.response.data.message);
-    }
-  };
-  const handleUpdateTrue = (id) => {
-    const dataEdit = deliveryAddressData.find((item) => item.id === id);
-    console.log("Dữ liệu set lên form", dataEdit);
-    const delivery = {
-      phoneNumber: dataEdit.phoneNumber,
-      apartmentNumber: dataEdit.apartmentNumber,
-      city: dataEdit.cityCode,
-      district: dataEdit.districtCode,
-      ward: dataEdit.wardCode,
-      cityCode: Number.parseInt(dataEdit.cityCode),
-      districtCode: Number.parseInt(dataEdit.districtCode),
-      wardCode: Number.parseInt(dataEdit.wardCode),
-    };
-    console.log(delivery);
-    setShowDialogCE({
-      show: true,
-      id: id,
-      isUpdate: true,
-      action: handleUpdate,
-      deliveryAddressDataToEdit: delivery,
-    });
-  };
-  const handleUpdate = async (data) => {
-    const deliveryAddress = {
-      phoneNumber: data.phoneNumber,
-      apartmentNumber: data.apartmentNumber,
-      city: data.selectedCity,
-      district: data.selectedDistrict,
-      ward: data.selectedWard,
-      cityCode: Number.parseInt(data.cityCode),
-      districtCode: Number.parseInt(data.districtCode),
-      wardCode: Number.parseInt(data.wardCode),
-    };
-    // console.log(deliveryAddress);
-    try {
-      if (showDialogCERef.current.show && showDialogCERef.current.id) {
-        await axios.put(
-          `/deliveryAddress/update/${showDialogCERef.current.id}`,
-          deliveryAddress,
+        const response = await axios.post(
+          "/deliveryAddress/create",
+          deliveryAddressDTO,
           {
             headers: {
               Authorization: `Bearer ${user.accessToken}`,
             },
           }
         );
+        console.log(response);
         fetchData();
         handleCloseDialogCE();
-        toast.success("🦄 Edit deliveryAddress successfully", {
+        toast.success("Create delivery address successfully!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -149,10 +77,53 @@ const AccountAddress = () => {
           theme: "light",
         });
       }
-    } catch (err) {
-      console.log(err.response.data.message);
+    } catch (error) {
+      console.log(error);
     }
   };
+  const handleUpdateTrue = (id) => {
+    console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
+    const dataEdit = deliveryAddressData.find((item) => item.id === id);
+    setShowDialogCE({
+      show: true,
+      id: id,
+      isUpdate: true,
+      action: handleUpdate,
+      dataToEdit: dataEdit,
+    });
+  };
+  const handleUpdate = async (deliveryAddressDTO) => {
+    console.log("In ra id in handleUpdate:", showDialogCERef.current.id);
+    try {
+      if (showDialogCERef.current.show && showDialogCERef.current.id) {
+        const response = await axios.put(
+          `/deliveryAddress/update/${showDialogCERef.current.id}`,
+          deliveryAddressDTO,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+            },
+          }
+        );
+        console.log(response);
+        fetchData();
+        handleCloseDialogCE();
+        toast.success("Update delivery address successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleDeleteTrue = (id) => {
     setShowDialog({
       show: true,
@@ -166,9 +137,8 @@ const AccountAddress = () => {
         setDeliveryAddressData(
           deliveryAddressData.filter((item) => item.id !== showDialog.id)
         );
-        fetchData();
         handleCloseDialog();
-        toast.success("🦄 Delete deliveryAddress successfully!", {
+        toast.success("Delete category successfully!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -189,7 +159,7 @@ const AccountAddress = () => {
       id: null,
       isUpdate: false,
       action: null,
-      deliveryAddressDataToEdit: {},
+      dataToEdit: {},
     });
   };
 
@@ -245,26 +215,21 @@ const AccountAddress = () => {
                       </p>
                     </div>
                     <div className="flex gap-3">
-                      <a href="#" onClick={() => handleUpdateTrue(item.id)}>
+                      <a
+                        className="text-xl hover:text-blue-500 cursor-pointer"
+                        onClick={() => handleUpdateTrue(item.id)}
+                      >
                         <CiEdit />
                       </a>
                       <a
-                        href="#"
-                        className="ml-2"
+                        className="ml-2 text-xl  hover:text-blue-500 cursor-pointer"
                         onClick={() => handleDeleteTrue(item.id)}
                       >
                         <BsTrash3 />
                       </a>
                     </div>
                   </div>
-                  {/* <div className="mt-2">
-                    <span
-                      className="rounded-none outline outline-1 p-2 text-xs text-gray-600"
-                      size="sm"
-                    >
-                      Default
-                    </span>
-                  </div> */}
+
                   <div className="h-px bg-gray-200 mt-5"></div>
                 </li>
               ))}

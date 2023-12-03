@@ -7,11 +7,12 @@ import {
 import PropTypes from "prop-types";
 import Button from "../button/Button";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
 import Input from "../../components/input/Input";
+import { useState } from "react";
 import CustomSelect from "../../components/select/CustomSelect";
 
 const DialogCEDeliveryAddress = ({
@@ -20,28 +21,19 @@ const DialogCEDeliveryAddress = ({
   handleSubmitAddress,
   cancel,
   title,
-  deliveryAddressDataToEdit,
+  dataToEdit,
 }) => {
-  //! Cái ni để call api tỉnh thành ở việt nam
-  const host = "https://provinces.open-api.vn/api/";
-  const [cities, setCities] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [wards, setWards] = useState([]);
-  const [cityCode, setCityCode] = useState();
-  const [districtCode, setDistrictCode] = useState();
-  const [wardCode, setWardCode] = useState();
-  const [selectedCity, setSelectedCity] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [selectedWard, setSelectedWard] = useState("");
-
-  const schema = yup
-    .object({
-      phoneNumber: yup.string().required("Please enter your phone number"),
-      apartmentNumber: yup
-        .string()
-        .required("Please enter your apartment number"),
-    })
-    .required();
+  //TODO hiển thị lỗi
+  const schema = yup.object({
+    phoneNumber: yup
+      .string()
+      .required("Please enter your phone number")
+      .matches(/^[0-9]+$/, "Please enter a valid phone number"),
+    apartmentNumber: yup
+      .string()
+      .required("Please enter your apartment number"),
+  });
+  //TODO submit hiển thị lỗi
   const {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
@@ -50,8 +42,9 @@ const DialogCEDeliveryAddress = ({
   } = useForm({
     resolver: yupResolver(schema),
   });
+  //TODO: lấy dữ liệu từ dataToEdit
   useEffect(() => {
-    if (!show && !isUpdate) {
+    if (!show) {
       reset({
         phoneNumber: "",
         apartmentNumber: "",
@@ -63,34 +56,13 @@ const DialogCEDeliveryAddress = ({
         wardCode: "",
       });
     } else {
-      reset(deliveryAddressDataToEdit);
+      reset(dataToEdit);
     }
-  }, [deliveryAddressDataToEdit, show, reset, isUpdate]);
-  useEffect(() => {
-    // Fetch initial data for cities
-    axios.get(`${host}?depth=1`).then((response) => {
-      setCities(response.data);
-      setCityCode(response.data);
-      // console.log("Tỉnh ", response.data);
-      // axios.get(`${host}p/${cityCode}?depth=2`).then((response) => {
-      //   setDistricts(response.data.districts);
-      //   setDistrictCode(response.data.districts);
-      //   console.log("Huyện ", response.data.districts);
-      //   axios.get(`${host}d/${districtCode}?depth=2`).then((response) => {
-      //     setWards(response.data.wards);
-      //     setWardCode(response.data.wards);
-      //     console.log("Xã", response.data.wards);
-      //   });
-      // });
-    });
-  }, []);
+  }, [dataToEdit, show, reset]);
+
   const onSubmitHandler = (data) => {
-    // Log regardless of form validity
-    console.log("Form data submitted:", data);
-
     if (!isValid) return;
-
-    // handleSubmitAddress(data);
+    handleSubmitAddress(data);
     reset({
       phoneNumber: "",
       apartmentNumber: "",
@@ -103,54 +75,72 @@ const DialogCEDeliveryAddress = ({
     });
   };
 
-  const fetchDistricts = (cityCode) => {
-    axios.get(`${host}p/${cityCode}?depth=2`).then((response) => {
-      setDistricts(response.data.districts);
-    });
+  const [selectedProvince, setSelectedProvince] = useState({
+    id: "",
+    name: "",
+  });
+  const handleProvinceChange = (selectedOption) => {
+    // Lưu ID và Name của tỉnh vào state
+    setSelectedProvince({ id: selectedOption.id, name: selectedOption.name });
+
+    // Gọi API để lấy danh sách quận huyện dựa trên ID của tỉnh
+    fetchDistricts(selectedOption.id);
   };
 
-  const fetchWards = (districtCode) => {
-    axios.get(`${host}d/${districtCode}?depth=2`).then((response) => {
-      setWards(response.data.wards);
-    });
-  };
-  const handleCityChange = (e) => {
-    const selectedCityOption = e.target.options[e.target.selectedIndex];
-    const selectedCityName = selectedCityOption.text;
-    const selectedCityCode = selectedCityOption.value;
-    setSelectedCity(selectedCityName);
-    setCityCode(selectedCityCode);
-    fetchDistricts(selectedCityCode);
-    printResult(selectedCityName);
-  };
+  //* Lấy dữ liệu từ province
+  const [province, setProvinces] = useState([]);
+  useEffect(() => {
+    // Gọi API để lấy danh sách category
+    const fetchProvinces = async () => {
+      try {
+        const response = await axios.get(
+          "https://vapi.vnappmob.com/api/province/"
+        );
+        setProvinces(response.data);
+      } catch (error) {
+        console.error("Error fetching province:", error);
+      }
+    };
 
-  const handleDistrictChange = (e) => {
-    const selectedDistrictOption = e.target.options[e.target.selectedIndex];
-    const selectedDistrictName = selectedDistrictOption.text;
-    const selectedDistrictCode = selectedDistrictOption.value;
-    setSelectedDistrict(selectedDistrictName);
-    setDistrictCode(selectedDistrictCode);
-    fetchWards(selectedDistrictCode);
-    printResult(selectedCity, selectedDistrictName);
-  };
+    fetchProvinces();
+  }, []);
 
-  const handleWardChange = (e) => {
-    const selectedWardOption = e.target.options[e.target.selectedIndex];
-    const selectedWardName = selectedWardOption.text;
-    setSelectedWard(selectedWardName);
-    setWardCode(selectedWardOption.value);
-    printResult(selectedCity, selectedDistrict, selectedWardName);
-  };
-  const printResult = (
-    selectedCityName,
-    selectedDistrictName,
-    selectedWardName
-  ) => {
-    if (selectedCityName && selectedDistrictName && selectedWardName) {
-      const result = `${selectedCityName} | ${selectedDistrictName} | ${selectedWardName}`;
-      console.log(result);
+  //Lấy dữ liệu từ district
+  const [district, setDistrict] = useState([]);
+  console.log(district);
+  const fetchDistricts = async (provinceId) => {
+    try {
+      const response = await axios.get(
+        `https://vapi.vnappmob.com/api/province/district/${provinceId}`
+      );
+      setDistrict(response.data);
+    } catch (error) {
+      console.error("Error fetching districts:", error);
     }
   };
+  useEffect(() => {
+    if (selectedProvince.id) {
+      fetchDistricts(selectedProvince.id);
+    }
+  }, [selectedProvince.id]);
+
+  //Lấy dữ liệu từ ward
+  const [ward, setWard] = useState([]);
+  const fetchWards = async (districtId) => {
+    try {
+      const response = await axios.get(
+        `https://vapi.vnappmob.com/api/province/ward/${districtId}`
+      );
+      setWard(response.data);
+    } catch (error) {
+      console.error("Error fetching wards:", error);
+    }
+  };
+  useEffect(() => {
+    if (district.id) {
+      fetchWards(district.id);
+    }
+  }, [district.id]);
   return (
     <>
       <Dialog open={show} size="sm">
@@ -180,40 +170,37 @@ const DialogCEDeliveryAddress = ({
             </div>
             <div className="mt-2">
               <CustomSelect
+                className2="text-sm ml-1 font-normal"
+                className="p-[10px] rounded-lg border-blue-gray-300"
+                title="Province :"
                 name="city"
-                className="w-full border-2 p-2 rounded-md"
-                title="Chọn tỉnh thành phố"
-                options={cities}
-                value={cityCode}
-                onChange={handleCityChange}
+                options={province}
+                onChange={handleProvinceChange}
                 control={control}
                 errors={errors}
-              />
+              ></CustomSelect>
             </div>
             <div className="mt-2">
               <CustomSelect
+                className2="text-sm ml-1 font-normal"
+                className="p-[10px] rounded-lg border-blue-gray-300"
+                title="District :"
                 name="district"
-                className="w-full border-2 p-2 rounded-md"
-                title="Chọn quận huyện"
-                options={districts}
-                value={districtCode}
-                onChange={handleDistrictChange}
                 control={control}
                 errors={errors}
-              />
+                options={district}
+              ></CustomSelect>
             </div>
-
             <div className="mt-2">
               <CustomSelect
+                className2="text-sm ml-1 font-normal"
+                className="p-[10px] rounded-lg border-blue-gray-300"
+                title="Ward :"
                 name="ward"
-                className="w-full border-2 p-2 rounded-md"
-                title="Chọn phường xã"
-                options={wards}
-                value={wardCode}
-                onChange={handleWardChange}
                 control={control}
                 errors={errors}
-              />
+                options={ward}
+              ></CustomSelect>
             </div>
             <DialogFooter>
               <Button className="bg-red-500" onClick={cancel}>
@@ -239,7 +226,7 @@ DialogCEDeliveryAddress.propTypes = {
   cancel: PropTypes.func,
   show: PropTypes.bool,
   title: PropTypes.string,
-  deliveryAddressDataToEdit: PropTypes.object,
+  dataToEdit: PropTypes.object,
 };
 
 export default DialogCEDeliveryAddress;

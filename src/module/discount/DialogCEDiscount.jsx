@@ -97,7 +97,7 @@ const DialogCEDiscount = ({
     resolver: yupResolver(schema),
   });
   useEffect(() => {
-    if (!show) {
+    if (!show && !isUpdate) {
       reset({
         discount: "",
         registerDate: "",
@@ -112,7 +112,7 @@ const DialogCEDiscount = ({
   }, [dataToEdit, show, reset]);
   const onSubmitHandler = (data) => {
     if (!isValid) return;
-    handleSubmitDiscount(data);
+    // handleSubmitDiscount(data);
     console.log(data);
     console.log(typeof data);
     reset({
@@ -190,13 +190,7 @@ const DialogCEDiscount = ({
                   control={control}
                   errors={errors}
                   options={categories}
-                >
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </Select>
+                />
                 <Textarea
                   name="description"
                   label="Description"

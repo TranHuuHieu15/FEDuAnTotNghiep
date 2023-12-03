@@ -32,8 +32,6 @@ const AccountAddress = () => {
           Authorization: `Bearer ${user.accessToken}`,
         },
       });
-
-      console.log(response.data);
       setDeliveryAddressData(response.data);
     } catch (error) {
       console.log(error);
@@ -43,9 +41,11 @@ const AccountAddress = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
+
   const handleCreateTrue = () => {
     setShowDialogCE({
       show: true,
@@ -56,14 +56,17 @@ const AccountAddress = () => {
     });
   };
   const handleCreate = async (data) => {
-    console.log(data);
     const deliveryAddress = {
       phoneNumber: data.phoneNumber,
       apartmentNumber: data.apartmentNumber,
       city: data.selectedCity,
       district: data.selectedDistrict,
       ward: data.selectedWard,
+      cityCode: data.cityCode,
+      districtCode: data.districtCode,
+      wardCode: data.wardCode,
     };
+    // console.log(deliveryAddress);
     try {
       if (showDialogCERef.current.show) {
         await axios.post("/deliveryAddress/create", deliveryAddress, {
@@ -90,21 +93,43 @@ const AccountAddress = () => {
   };
   const handleUpdateTrue = (id) => {
     const dataEdit = deliveryAddressData.find((item) => item.id === id);
-    console.log(dataEdit);
+    console.log("Dữ liệu set lên form", dataEdit);
+    const delivery = {
+      phoneNumber: dataEdit.phoneNumber,
+      apartmentNumber: dataEdit.apartmentNumber,
+      city: dataEdit.cityCode,
+      district: dataEdit.districtCode,
+      ward: dataEdit.wardCode,
+      cityCode: Number.parseInt(dataEdit.cityCode),
+      districtCode: Number.parseInt(dataEdit.districtCode),
+      wardCode: Number.parseInt(dataEdit.wardCode),
+    };
+    console.log(delivery);
     setShowDialogCE({
       show: true,
       id: id,
       isUpdate: true,
       action: handleUpdate,
-      deliveryAddressDataToEdit: dataEdit,
+      deliveryAddressDataToEdit: delivery,
     });
   };
   const handleUpdate = async (data) => {
+    const deliveryAddress = {
+      phoneNumber: data.phoneNumber,
+      apartmentNumber: data.apartmentNumber,
+      city: data.selectedCity,
+      district: data.selectedDistrict,
+      ward: data.selectedWard,
+      cityCode: Number.parseInt(data.cityCode),
+      districtCode: Number.parseInt(data.districtCode),
+      wardCode: Number.parseInt(data.wardCode),
+    };
+    // console.log(deliveryAddress);
     try {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         await axios.put(
           `/deliveryAddress/update/${showDialogCERef.current.id}`,
-          data,
+          deliveryAddress,
           {
             headers: {
               Authorization: `Bearer ${user.accessToken}`,
@@ -137,7 +162,6 @@ const AccountAddress = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        console.log(showDialog.id);
         await axios.delete(`/deliveryAddress/delete/${showDialog.id}`);
         setDeliveryAddressData(
           deliveryAddressData.filter((item) => item.id !== showDialog.id)
@@ -264,5 +288,4 @@ const AccountAddress = () => {
     </>
   );
 };
-
 export default AccountAddress;

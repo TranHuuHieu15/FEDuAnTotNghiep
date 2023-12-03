@@ -5,14 +5,13 @@ import {
   DialogHeader,
 } from "@material-tailwind/react";
 import PropTypes from "prop-types";
-import Button from "../../components/button/Button";
-import Input from "../../components/input/Input";
+import Button from "../button/Button";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
-import Select from "../../components/select/Select";
+import Input from "../../components/input/Input";
 import CustomSelect from "../../components/select/CustomSelect";
 
 const DialogCEDeliveryAddress = ({
@@ -23,6 +22,18 @@ const DialogCEDeliveryAddress = ({
   title,
   deliveryAddressDataToEdit,
 }) => {
+  //! Cái ni để call api tỉnh thành ở việt nam
+  const host = "https://provinces.open-api.vn/api/";
+  const [cities, setCities] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [cityCode, setCityCode] = useState();
+  const [districtCode, setDistrictCode] = useState();
+  const [wardCode, setWardCode] = useState();
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedWard, setSelectedWard] = useState("");
+
   const schema = yup
     .object({
       phoneNumber: yup.string().required("Please enter your phone number"),
@@ -40,44 +51,57 @@ const DialogCEDeliveryAddress = ({
     resolver: yupResolver(schema),
   });
   useEffect(() => {
-    if (!show) {
+    if (!show && !isUpdate) {
       reset({
         phoneNumber: "",
         apartmentNumber: "",
         city: "",
         district: "",
         ward: "",
+        cityCode: "",
+        districtCode: "",
+        wardCode: "",
       });
     } else {
       reset(deliveryAddressDataToEdit);
     }
-  }, [deliveryAddressDataToEdit, reset, show]);
+  }, [deliveryAddressDataToEdit, show, reset, isUpdate]);
+  useEffect(() => {
+    // Fetch initial data for cities
+    axios.get(`${host}?depth=1`).then((response) => {
+      setCities(response.data);
+      setCityCode(response.data);
+      // console.log("Tỉnh ", response.data);
+      // axios.get(`${host}p/${cityCode}?depth=2`).then((response) => {
+      //   setDistricts(response.data.districts);
+      //   setDistrictCode(response.data.districts);
+      //   console.log("Huyện ", response.data.districts);
+      //   axios.get(`${host}d/${districtCode}?depth=2`).then((response) => {
+      //     setWards(response.data.wards);
+      //     setWardCode(response.data.wards);
+      //     console.log("Xã", response.data.wards);
+      //   });
+      // });
+    });
+  }, []);
   const onSubmitHandler = (data) => {
+    // Log regardless of form validity
+    console.log("Form data submitted:", data);
+
     if (!isValid) return;
-    handleSubmitAddress(data);
+
+    // handleSubmitAddress(data);
     reset({
       phoneNumber: "",
       apartmentNumber: "",
       city: "",
       district: "",
       ward: "",
+      cityCode: "",
+      districtCode: "",
+      wardCode: "",
     });
   };
-
-  //! Cái ni để call api tỉnh thành ở việt nam
-  const host = "https://provinces.open-api.vn/api/";
-  const [cities, setCities] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [wards, setWards] = useState([]);
-  const [selectedCity, setSelectedCity] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [selectedWard, setSelectedWard] = useState("");
-  useEffect(() => {
-    // Fetch initial data for cities
-    axios.get(`${host}?depth=1`).then((response) => {
-      setCities(response.data);
-    });
-  }, []);
 
   const fetchDistricts = (cityCode) => {
     axios.get(`${host}p/${cityCode}?depth=2`).then((response) => {
@@ -90,31 +114,40 @@ const DialogCEDeliveryAddress = ({
       setWards(response.data.wards);
     });
   };
-
   const handleCityChange = (e) => {
-    const selectedCityCode = e.target.value;
-    setSelectedCity(selectedCityCode);
-    setSelectedDistrict("");
-    setSelectedWard("");
+    const selectedCityOption = e.target.options[e.target.selectedIndex];
+    const selectedCityName = selectedCityOption.text;
+    const selectedCityCode = selectedCityOption.value;
+    setSelectedCity(selectedCityName);
+    setCityCode(selectedCityCode);
     fetchDistricts(selectedCityCode);
-    printResult();
+    printResult(selectedCityName);
   };
 
   const handleDistrictChange = (e) => {
-    const selectedDistrictCode = e.target.value;
-    setSelectedDistrict(selectedDistrictCode);
-    setSelectedWard("");
+    const selectedDistrictOption = e.target.options[e.target.selectedIndex];
+    const selectedDistrictName = selectedDistrictOption.text;
+    const selectedDistrictCode = selectedDistrictOption.value;
+    setSelectedDistrict(selectedDistrictName);
+    setDistrictCode(selectedDistrictCode);
     fetchWards(selectedDistrictCode);
-    printResult();
+    printResult(selectedCity, selectedDistrictName);
   };
 
   const handleWardChange = (e) => {
-    setSelectedWard(e.target.value);
-    printResult();
+    const selectedWardOption = e.target.options[e.target.selectedIndex];
+    const selectedWardName = selectedWardOption.text;
+    setSelectedWard(selectedWardName);
+    setWardCode(selectedWardOption.value);
+    printResult(selectedCity, selectedDistrict, selectedWardName);
   };
-  const printResult = () => {
-    if (selectedCity && selectedDistrict && selectedWard) {
-      const result = `${selectedCity} | ${selectedDistrict} | ${selectedWard}`;
+  const printResult = (
+    selectedCityName,
+    selectedDistrictName,
+    selectedWardName
+  ) => {
+    if (selectedCityName && selectedDistrictName && selectedWardName) {
+      const result = `${selectedCityName} | ${selectedDistrictName} | ${selectedWardName}`;
       console.log(result);
     }
   };
@@ -130,20 +163,19 @@ const DialogCEDeliveryAddress = ({
           <form onSubmit={handleSubmit(onSubmitHandler)}>
             <div className="flex items-center">
               <Input
-                type="text"
-                label="Enter your phone number"
-                className="w-[355px]"
                 name="phoneNumber"
-                errors={errors}
+                label="Phone Number"
+                className="w-[355px] ml-3"
                 control={control}
+                errors={errors}
               />
               <Input
                 type="text"
+                name="apartmentNumber"
                 label="Enter your apartment number"
                 className="w-[355px] ml-3"
-                name="apartmentNumber"
-                errors={errors}
                 control={control}
+                errors={errors}
               />
             </div>
             <div className="mt-2">
@@ -152,8 +184,10 @@ const DialogCEDeliveryAddress = ({
                 className="w-full border-2 p-2 rounded-md"
                 title="Chọn tỉnh thành phố"
                 options={cities}
-                value={selectedCity}
+                value={cityCode}
                 onChange={handleCityChange}
+                control={control}
+                errors={errors}
               />
             </div>
             <div className="mt-2">
@@ -162,8 +196,10 @@ const DialogCEDeliveryAddress = ({
                 className="w-full border-2 p-2 rounded-md"
                 title="Chọn quận huyện"
                 options={districts}
-                value={selectedDistrict}
+                value={districtCode}
                 onChange={handleDistrictChange}
+                control={control}
+                errors={errors}
               />
             </div>
 
@@ -173,8 +209,10 @@ const DialogCEDeliveryAddress = ({
                 className="w-full border-2 p-2 rounded-md"
                 title="Chọn phường xã"
                 options={wards}
-                value={selectedWard}
+                value={wardCode}
                 onChange={handleWardChange}
+                control={control}
+                errors={errors}
               />
             </div>
             <DialogFooter>

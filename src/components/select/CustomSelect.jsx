@@ -21,6 +21,7 @@ const CustomSelect = ({
       {title && <label className={className2}>{title}</label>}
       <select
         id={name}
+        value={value}
         name={name} // Thêm thuộc tính name vào select element
         className={selectClasses}
         {...field}

@@ -43,7 +43,7 @@ const SignInPage = () => {
         ...data,
         token: tokenUrl,
       }).unwrap();
-      console.log(response.data);
+      console.log(response);
       dispatch(
         loginSuccess({
           userInfo: response?.data,
@@ -55,6 +55,7 @@ const SignInPage = () => {
         password: "",
       });
       navigate("/");
+      console.log(response.data.message);
       toast.success("Login successfully!", {
         position: "top-left",
         autoClose: 3000,
@@ -65,9 +66,21 @@ const SignInPage = () => {
         progress: undefined,
         theme: "light",
       });
-    } catch (error) {
-      dispatch(loginFailure(error.message));
-      console.log(error.message);
+    } catch (response) {
+      if (response.status === 500)
+        dispatch(loginFailure());
+      toast.error(response.data.message, {
+        position: "top-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      console.log(response);
+      // console.log(error.message);
     }
   };
   return (

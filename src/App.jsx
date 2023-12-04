@@ -5,6 +5,7 @@ import { Suspense, lazy } from "react";
 import AccountLayout from "./layout/AccountLayout";
 import AccountInfo from "./module/information/AccountInfo";
 import AccountAddress from "./module/information/AccountAddress";
+import AccountOrder from "./module/information/AccountOrder";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutUsPage = lazy(() => import("./pages/AboutUsPage"));
@@ -109,6 +110,10 @@ function App() {
             <Route
               path="/user/address"
               element={<AccountAddress></AccountAddress>}
+            ></Route>
+            <Route
+              path="/user/order"
+              element={<AccountOrder></AccountOrder>}
             ></Route>
             <Route
               path="/user/feedback"

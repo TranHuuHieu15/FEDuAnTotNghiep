@@ -5,12 +5,12 @@ import {
   DialogHeader,
 } from "@material-tailwind/react";
 import PropTypes from "prop-types";
-import Button from "../button/Button";
+import Button from "../../components/button/Button";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import axios from "axios";
+import axios from "../../config/axios.js";
 import Input from "../../components/input/Input";
 import { useState } from "react";
 import CustomSelect from "../../components/select/CustomSelect";
@@ -23,6 +23,7 @@ const DialogCEDeliveryAddress = ({
   title,
   dataToEdit,
 }) => {
+  console.log(dataToEdit);
   //TODO hiển thị lỗi
   const schema = yup.object({
     phoneNumber: yup
@@ -56,13 +57,31 @@ const DialogCEDeliveryAddress = ({
         wardCode: "",
       });
     } else {
-      reset(dataToEdit);
+      reset({
+        phoneNumber: dataToEdit.phoneNumber,
+        apartmentNumber: dataToEdit.apartmentNumber,
+        city: dataToEdit.city,
+        district: dataToEdit.district,
+        ward: dataToEdit.ward,
+        cityCode: dataToEdit.cityCode,
+        districtCode: dataToEdit.districtCode,
+        wardCode: dataToEdit.wardCode,
+      });
     }
   }, [dataToEdit, show, reset]);
 
   const onSubmitHandler = (data) => {
     if (!isValid) return;
-    handleSubmitAddress(data);
+    const lastData = {
+      ...data,
+      cityCode,
+      districtCode,
+      wardCode,
+      selectedCity,
+      selectedDistrict,
+      selectedWard,
+    };
+    handleSubmitAddress(lastData);
     reset({
       phoneNumber: "",
       apartmentNumber: "",
@@ -75,17 +94,18 @@ const DialogCEDeliveryAddress = ({
     });
   };
 
-  const [selectedProvince, setSelectedProvince] = useState({
-    id: "",
-    name: "",
-  });
-  const handleProvinceChange = (selectedOption) => {
-    // Lưu ID và Name của tỉnh vào state
-    setSelectedProvince({ id: selectedOption.id, name: selectedOption.name });
+  const host = "https://provinces.open-api.vn/api/";
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedWard, setSelectedWard] = useState("");
+  const [cityCode, setCityCode] = useState("");
+  const [districtCode, setDistrictCode] = useState("");
+  const [wardCode, setWardCode] = useState("");
+  //Lấy dữ liệu từ district
+  const [district, setDistrict] = useState([]);
 
-    // Gọi API để lấy danh sách quận huyện dựa trên ID của tỉnh
-    fetchDistricts(selectedOption.id);
-  };
+  //Lấy dữ liệu từ ward
+  const [ward, setWard] = useState([]);
 
   //* Lấy dữ liệu từ province
   const [province, setProvinces] = useState([]);
@@ -93,10 +113,8 @@ const DialogCEDeliveryAddress = ({
     // Gọi API để lấy danh sách category
     const fetchProvinces = async () => {
       try {
-        const response = await axios.get(
-          "https://vapi.vnappmob.com/api/province/"
-        );
-        setProvinces(response.data);
+        const response = await axios.get(`${host}?depth=1`);
+        setProvinces(response);
       } catch (error) {
         console.error("Error fetching province:", error);
       }
@@ -105,42 +123,55 @@ const DialogCEDeliveryAddress = ({
     fetchProvinces();
   }, []);
 
-  //Lấy dữ liệu từ district
-  const [district, setDistrict] = useState([]);
-  console.log(district);
-  const fetchDistricts = async (provinceId) => {
-    try {
-      const response = await axios.get(
-        `https://vapi.vnappmob.com/api/province/district/${provinceId}`
-      );
-      setDistrict(response.data);
-    } catch (error) {
-      console.error("Error fetching districts:", error);
-    }
+  const handleCityChange = (e) => {
+    const selectedCityOption = e.target.options[e.target.selectedIndex];
+    const selectedCityName = selectedCityOption.text;
+    const selectedCityCode = selectedCityOption.value;
+    setSelectedCity(selectedCityName);
+    setCityCode(selectedCityCode);
+    setSelectedDistrict("");
+    setSelectedWard("");
   };
-  useEffect(() => {
-    if (selectedProvince.id) {
-      fetchDistricts(selectedProvince.id);
-    }
-  }, [selectedProvince.id]);
 
-  //Lấy dữ liệu từ ward
-  const [ward, setWard] = useState([]);
-  const fetchWards = async (districtId) => {
-    try {
-      const response = await axios.get(
-        `https://vapi.vnappmob.com/api/province/ward/${districtId}`
-      );
-      setWard(response.data);
-    } catch (error) {
-      console.error("Error fetching wards:", error);
-    }
+  const handleDistrictChange = (e) => {
+    const selectedDistrictOption = e.target.options[e.target.selectedIndex];
+    const selectedDistrictName = selectedDistrictOption.text;
+    const selectedDistrictCode = selectedDistrictOption.value;
+    setDistrictCode(selectedDistrictCode);
+    setSelectedDistrict(selectedDistrictName);
+    setSelectedWard("");
   };
+
+  const handleWardChange = (e) => {
+    const selectedWardOption = e.target.options[e.target.selectedIndex];
+    const selectedWardName = selectedWardOption.text;
+    setWardCode(selectedWardOption.value);
+    setSelectedWard(selectedWardName);
+  };
+
   useEffect(() => {
-    if (district.id) {
-      fetchWards(district.id);
-    }
-  }, [district.id]);
+    const fetchDistricts = async () => {
+      try {
+        const response = await axios.get(`${host}p/${cityCode}?depth=2`);
+        setDistrict(response.districts);
+      } catch (error) {
+        console.error("Error fetching districts:", error);
+      }
+    };
+    fetchDistricts();
+  }, [cityCode]);
+  useEffect(() => {
+    const fetchWards = async () => {
+      try {
+        const response = await axios.get(`${host}d/${districtCode}?depth=2`);
+        setWard(response.wards);
+      } catch (error) {
+        console.error("Error fetching wards:", error);
+      }
+    };
+    fetchWards();
+  }, [districtCode]);
+
   return (
     <>
       <Dialog open={show} size="sm">
@@ -155,7 +186,7 @@ const DialogCEDeliveryAddress = ({
               <Input
                 name="phoneNumber"
                 label="Phone Number"
-                className="w-[355px] ml-3"
+                className="w-[355px]"
                 control={control}
                 errors={errors}
               />
@@ -170,22 +201,23 @@ const DialogCEDeliveryAddress = ({
             </div>
             <div className="mt-2">
               <CustomSelect
-                className2="text-sm ml-1 font-normal"
-                className="p-[10px] rounded-lg border-blue-gray-300"
-                title="Province :"
+                className="w-full border-2 p-2 rounded-md"
+                title="Province"
+                titleOption="Chọn tỉnh/thành phố"
                 name="city"
                 options={province}
-                onChange={handleProvinceChange}
+                onChange={handleCityChange}
                 control={control}
                 errors={errors}
               ></CustomSelect>
             </div>
             <div className="mt-2">
               <CustomSelect
-                className2="text-sm ml-1 font-normal"
-                className="p-[10px] rounded-lg border-blue-gray-300"
-                title="District :"
+                className="w-full border-2 p-2 rounded-md"
+                title="District"
+                titleOption="Chọn huyện/quận"
                 name="district"
+                onChange={handleDistrictChange}
                 control={control}
                 errors={errors}
                 options={district}
@@ -193,10 +225,11 @@ const DialogCEDeliveryAddress = ({
             </div>
             <div className="mt-2">
               <CustomSelect
-                className2="text-sm ml-1 font-normal"
-                className="p-[10px] rounded-lg border-blue-gray-300"
-                title="Ward :"
+                className="w-full border-2 p-2 rounded-md"
+                title="Ward"
+                titleOption="Chọn xã/phường"
                 name="ward"
+                onChange={handleWardChange}
                 control={control}
                 errors={errors}
                 options={ward}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Button from "../../components/button/Button";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
-import DialogCEDeliveryAddress from "../../components/dialog/DialogCEDeliveryAddress.jsx";
+import DialogCEDeliveryAddress from "../information/DialogCEDeliveryAddress.jsx";
 import { BsTrash3 } from "react-icons/bs";
 import { CiEdit } from "react-icons/ci";
 import axios from "../../config/axios.js";
@@ -51,18 +51,24 @@ const AccountAddress = () => {
       dataToEdit: {},
     });
   };
-  const handleCreate = async (deliveryAddressDTO) => {
+  const handleCreate = async (data) => {
     try {
       if (showDialogCERef.current.show) {
-        const response = await axios.post(
-          "/deliveryAddress/create",
-          deliveryAddressDTO,
-          {
-            headers: {
-              Authorization: `Bearer ${user.accessToken}`,
-            },
-          }
-        );
+        const dataDTO = {
+          phoneNumber: data.phoneNumber,
+          apartmentNumber: data.apartmentNumber,
+          city: data.selectedCity,
+          district: data.selectedDistrict,
+          ward: data.selectedWard,
+          cityCode: data.cityCode,
+          districtCode: data.districtCode,
+          wardCode: data.wardCode,
+        };
+        const response = await axios.post("/deliveryAddress/create", dataDTO, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         console.log(response);
         fetchData();
         handleCloseDialogCE();
@@ -82,23 +88,43 @@ const AccountAddress = () => {
     }
   };
   const handleUpdateTrue = (id) => {
-    console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
     const dataEdit = deliveryAddressData.find((item) => item.id === id);
+    console.log("In ra dataEdit:", dataEdit);
+    const dataEditDTO = {
+      phoneNumber: dataEdit.phoneNumber,
+      apartmentNumber: dataEdit.apartmentNumber,
+      city: dataEdit.cityCode,
+      district: dataEdit.districtCode,
+      ward: dataEdit.wardCode,
+      cityCode: dataEdit.cityCode,
+      districtCode: dataEdit.districtCode,
+      wardCode: dataEdit.wardCode,
+    };
     setShowDialogCE({
       show: true,
       id: id,
       isUpdate: true,
       action: handleUpdate,
-      dataToEdit: dataEdit,
+      dataToEdit: dataEditDTO,
     });
   };
-  const handleUpdate = async (deliveryAddressDTO) => {
-    console.log("In ra id in handleUpdate:", showDialogCERef.current.id);
+  const handleUpdate = async (data) => {
+    const dataDTO = {
+      phoneNumber: data.phoneNumber,
+      apartmentNumber: data.apartmentNumber,
+      city: data.selectedCity,
+      district: data.selectedDistrict,
+      ward: data.selectedWard,
+      cityCode: data.cityCode,
+      districtCode: data.districtCode,
+      wardCode: data.wardCode,
+    };
+    console.log("In ra deliveryAddressDTO:", dataDTO);
     try {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         const response = await axios.put(
           `/deliveryAddress/update/${showDialogCERef.current.id}`,
-          deliveryAddressDTO,
+          dataDTO,
           {
             headers: {
               Authorization: `Bearer ${user.accessToken}`,
@@ -247,7 +273,7 @@ const AccountAddress = () => {
           handleSubmitAddress={showDialogCE.action}
           cancel={handleCloseDialogCE}
           title="Delivery Address"
-          deliveryAddressDataToEdit={showDialogCE.deliveryAddressDataToEdit}
+          dataToEdit={showDialogCE.dataToEdit}
         />
       </div>
     </>

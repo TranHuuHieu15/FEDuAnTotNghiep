@@ -47,7 +47,7 @@ const SideBarAccount = () => {
                 My Order
               </ListItem>
             </Link>
-            <Link>
+            <Link to="/user/changePassword">
               <ListItem>
                 <ListItemPrefix>
                   <MdLockOutline className="w-5 h-5" />
@@ -55,7 +55,7 @@ const SideBarAccount = () => {
                 Change Password
               </ListItem>
             </Link>
-            <Link>
+            <Link to="/user/address">
               <ListItem>
                 <ListItemPrefix>
                   <MdOutlinePlace className="w-5 h-5" />

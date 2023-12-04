@@ -3,6 +3,8 @@ import "./App.css";
 import { ToastContainer } from "react-toastify";
 import { Suspense, lazy } from "react";
 import AccountLayout from "./layout/AccountLayout";
+import AccountInfo from "./module/information/AccountInfo";
+import AccountAddress from "./module/information/AccountAddress";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutUsPage = lazy(() => import("./pages/AboutUsPage"));
@@ -103,17 +105,10 @@ function App() {
             ></Route>
           </Route>
           <Route element={<AccountLayout></AccountLayout>}>
-            <Route
-              path="/user"
-              element={<DashboardPage></DashboardPage>}
-            ></Route>
+            <Route path="/user" element={<AccountInfo></AccountInfo>}></Route>
             <Route
               path="/user/address"
-              element={<VoucherManage></VoucherManage>}
-            ></Route>
-            <Route
-              path="/user/info"
-              element={<ProblemManage></ProblemManage>}
+              element={<AccountAddress></AccountAddress>}
             ></Route>
             <Route
               path="/user/feedback"

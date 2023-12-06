@@ -25,7 +25,7 @@ const DialogDeliveryAddressPayment = ({
   const user = useSelector(selectCurrentUser);
   const navigate = useNavigate();
   const [deliveryAddressData, setDeliveryAddressData] = useState([]);
-  console.log(deliveryAddressData);
+
   useEffect(() => {
     const fetchData = async () => {
       try {

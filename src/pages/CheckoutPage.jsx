@@ -117,6 +117,7 @@ const CheckoutPage = () => {
         },
       });
       if (selectedPaymentMethod.name === "VN PAY") {
+        console.log("run vn pay");
         const orderDtoId = response.data.orderDto.id;
         const responseVNPay = await axios.get(
           `order/payment?orderId=${orderDtoId}`,
@@ -187,8 +188,8 @@ const CheckoutPage = () => {
     <>
       <SiteLayout>
         <StepLine />
-        <div className="flex gap-5 mx-auto justify-center items-start w-[1200px]">
-          <div className="flex flex-col w-full gap-2">
+        <div className="flex items-start justify-center gap-5 mx-auto">
+          <div className="flex flex-col w-[570px] gap-2">
             <Heading className="px-2 text-2xl font-eculid">
               Shipping information
             </Heading>
@@ -326,7 +327,7 @@ const CheckoutPage = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col w-full gap-2">
+          <div className="flex flex-col w-[660px] gap-2">
             <Heading className="px-4 text-2xl font-eculid">
               Order summary
             </Heading>
@@ -342,6 +343,7 @@ const CheckoutPage = () => {
         show={openVoucher}
         handleCloseVoucher={handleCloseVoucher}
         onUseVoucher={handleUseVoucher}
+        total={total}
       />
       <DialogDeliveryAddressPayment
         show={openDeliveryAddress}

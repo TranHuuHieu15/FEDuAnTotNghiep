@@ -3,8 +3,10 @@ import SiteLayout from "../layout/SiteLayout";
 import CartList from "../components/list/CartList";
 import { useSelector } from "react-redux";
 import StepLine from "../components/step/StepLine";
+import { useNavigate } from "react-router-dom";
 const CartPage = () => {
   const cartData = useSelector((state) => state.cart.products);
+  const navigate = useNavigate();
   const totalAmount = cartData.reduce((acc, item) => {
     return acc + item.price * item.quantity;
   }, 0);
@@ -39,7 +41,10 @@ const CartPage = () => {
                 <span>${total}</span>
               </div>
 
-              <Button className="w-[462px] shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
+              <Button
+                className="w-[462px] shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+                onClick={() => navigate("/checkout")}
+              >
                 Purchase
               </Button>
             </div>

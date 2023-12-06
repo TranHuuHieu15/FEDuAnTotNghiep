@@ -1,10 +1,4 @@
-import {
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  Card,
-  CardBody,
-} from "@material-tailwind/react";
+import { Dialog, DialogHeader, DialogBody } from "@material-tailwind/react";
 import Buttons from "../button/Button";
 import PropTypes from "prop-types";
 import { IoMdClose } from "react-icons/io";
@@ -13,9 +7,10 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../redux/features/authSlice";
 
-const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher }) => {
+const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher, total }) => {
   const user = useSelector(selectCurrentUser);
   const [voucherData, setVoucherData] = useState([]);
+  const [isVoucher, setIsVoucher] = useState(false);
   useEffect(() => {
     const fetchVoucher = async () => {
       try {
@@ -24,15 +19,27 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher }) => {
             Authorization: `Bearer ${user.accessToken}`,
           },
         });
-        console.log(response.data);
-        setVoucherData(response.data);
+        //Sắp xếp voucher để voucher có thể sử dụng được lên trên
+        const sortedVouchers = response.data.sort((a, b) => {
+          // Nơi voucher có thể sử dụng được lên trên
+          if (a.minTotal <= total && b.minTotal > total) {
+            return -1;
+          }
+          // Nơi voucher không thể sử dụng được xuống dưới
+          if (a.minTotal > total && b.minTotal <= total) {
+            return 1;
+          }
+          return 0;
+        });
+
+        setVoucherData(sortedVouchers);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchVoucher();
-  }, [user.accessToken]);
+  }, [total, user.accessToken]);
 
   const calculateRemainingTime = (expirationDate) => {
     const now = new Date();
@@ -51,6 +58,7 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher }) => {
   };
   const handleUseVoucher = (usedVoucher) => {
     onUseVoucher(usedVoucher);
+    setIsVoucher(!isVoucher);
     handleCloseVoucher();
   };
   return (
@@ -62,41 +70,57 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher }) => {
             <IoMdClose />
           </span>
         </DialogHeader>
-        <DialogBody className="flex flex-col-reverse overflow-x-auto max-h-96 scrollbar-thumb-blue-500 scrollbar-track-gray-300">
-          <Card className="w-full mb-3 border hover:duration-500">
+        <DialogBody className="overflow-auto scrollbar scrollbar-thin scrollbar-thumb-blue-gray-100 max-h-[600px]">
+          <div className="flex flex-col items-center justify-center gap-5">
             {voucherData?.length > 0 &&
               voucherData.map((item) => (
-                <CardBody
-                  className="grid items-center grid-cols-5 gap-3 p-2"
+                <div
+                  className="flex flex-col items-center justify-center gap-2 w-[730px] h-[100px] shadow-md"
                   key={item.id}
                 >
-                  <div className="col-span-1">
-                    <img
-                      src={item.image}
-                      alt="anh"
-                      className="w-full max-w-[100px] max-h-[120px] object-cover"
-                    />
-                  </div>
-                  <div className="col-span-3">
-                    <div className="text-2xl">
-                      Max giảm giá {item.maxDiscount}%
+                  <div className="flex items-center justify-center w-full gap-2">
+                    <div className="flex items-center justify-start gap-3">
+                      <img
+                        src={item.image}
+                        alt="anh"
+                        className="w-full max-w-[100px] max-h-[120px] object-cover"
+                      />
+                      <div className="flex flex-col items-start justify-center w-[550px]">
+                        <div className="text-xl">
+                          Max giảm giá {item.maxDiscount}%
+                        </div>
+                        <div>{item.description}</div>
+                        <div className="text-xs text-red-900">
+                          Hạn sử dụng:{" "}
+                          {calculateRemainingTime(item.expirationDate)}
+                        </div>
+                      </div>
                     </div>
-                    <div>{item.description}</div>
-                    <div className="text-xs text-red-900">
-                      Hạn sử dụng: {calculateRemainingTime(item.expirationDate)}
+                    <div className="flex items-center justify-center">
+                      {isVoucher ? (
+                        <Buttons
+                          className="text-center bg-black"
+                          onClick={() => handleUseVoucher(null)}
+                        >
+                          Cancel
+                        </Buttons>
+                      ) : (
+                        <Buttons
+                          className="text-center bg-black"
+                          onClick={() => handleUseVoucher(item)}
+                          disabled={item.minTotal > total}
+                        >
+                          Use
+                        </Buttons>
+                      )}
                     </div>
                   </div>
-                  <div className="flex items-center justify-end col-span-1">
-                    <Buttons
-                      className="text-center bg-black"
-                      onClick={() => handleUseVoucher(item)}
-                    >
-                      Use
-                    </Buttons>
-                  </div>
-                </CardBody>
+                  {item.minTotal > total && (
+                    <span className="w-[730px] text-sm text-yellow-900">{`Cannot use the voucher because the total amount is not greater than or equal to $${item.minTotal}.`}</span>
+                  )}
+                </div>
               ))}
-          </Card>
+          </div>
         </DialogBody>
       </Dialog>
     </>
@@ -106,6 +130,7 @@ DialogVoucher.propTypes = {
   show: PropTypes.bool,
   handleCloseVoucher: PropTypes.func,
   onUseVoucher: PropTypes.func,
+  total: PropTypes.number,
 };
 
 export default DialogVoucher;

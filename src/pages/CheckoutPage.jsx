@@ -1,9 +1,9 @@
 import SiteLayout from "../layout/SiteLayout";
-import { AiOutlineCheck, AiOutlinePlus } from "react-icons/ai";
+import { AiOutlineCheck } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import Heading from "../components/heading/Heading";
 import Button from "../components/button/Button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CheckoutList from "../components/list/CheckoutList";
 import axios from "../config/axios";
 import StepLine from "../components/step/StepLine";
@@ -11,6 +11,10 @@ import { MdOutlinePlace } from "react-icons/md";
 import { BiSolidDiscount } from "react-icons/bi";
 import DialogVoucher from "../components/dialog/DialogVoucher";
 import { selectCurrentUser } from "../redux/features/authSlice";
+import DialogDeliveryAddressPayment from "../components/dialog/DialogDeliveryAddressPayment";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { resetCart } from "../redux/features/cartSlice";
 
 const deliveryMethods = [
   { id: 1, name: "Standard", description: "4-10 business days", price: 5.0 },
@@ -20,23 +24,24 @@ const deliveryMethods = [
 
 const CheckoutPage = () => {
   const user = useSelector(selectCurrentUser);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [paymentData, setPaymentData] = useState([]);
   const [openDeliveryAddress, setOpenDeliveryAddress] = useState(false);
   const [openVoucher, setOpenVoucher] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [selectVoucher, setSelectVoucher] = useState(null);
-  const [selectedDelivery, setSelectedDelivery] = useState(
+  const [selectDeliveryAddress, setSelectDeliveryAddress] = useState(null);
+  const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(
     deliveryMethods.find((delivery) => delivery.id === 1) || {}
   );
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
-    deliveryMethods.find((payment) => payment.id === 1) || {}
-  );
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const cartData = useSelector((state) => state.cart.products);
   const totalAmount = cartData.reduce((acc, item) => {
     return acc + item.price * item.quantity;
   }, 0);
 
-  const shippingFee = selectedDelivery?.price;
+  const shippingFee = selectedDeliveryMethod?.price;
   const taxes = 0.2;
   const total = totalAmount - discount + shippingFee + taxes;
 
@@ -69,14 +74,41 @@ const CheckoutPage = () => {
     setDiscount(matchDiscount());
   }, [selectVoucher, totalAmount]);
   const handleOrder = async () => {
+    if (!selectDeliveryAddress) {
+      toast.error("Please choose delivery address!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+    if (!selectedPaymentMethod) {
+      toast.error("Please choose payment method!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     const orderItem = {
       orderDto: {
         total: total,
-        deliveryAddressId: 1,
+        deliveryAddressId: selectDeliveryAddress.id,
         paymentId: selectedPaymentMethod.id,
+        voucherId: selectVoucher?.id,
       },
       orderDetailsDto: cartData,
-      discount: selectVoucher.discount,
+      discount: discount,
     };
     try {
       const response = await axios.post(`/order/create`, orderItem, {
@@ -84,8 +116,8 @@ const CheckoutPage = () => {
           Authorization: `Bearer ${user.accessToken}`,
         },
       });
-      console.log(response);
       if (selectedPaymentMethod.name === "VN PAY") {
+        console.log("run vn pay");
         const orderDtoId = response.data.orderDto.id;
         const responseVNPay = await axios.get(
           `order/payment?orderId=${orderDtoId}`,
@@ -95,8 +127,22 @@ const CheckoutPage = () => {
             },
           }
         );
-        console.log(responseVNPay);
+        const paymentUrl = responseVNPay.data;
+        // Mở URL trong trình duyệt mới
+        window.open(paymentUrl, "_blank"); //"_blank là mở một cửa sổ mới"
       }
+      dispatch(resetCart());
+      navigate("/product");
+      toast.success("Order successfully!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (error) {
       console.log(error);
     }
@@ -104,14 +150,17 @@ const CheckoutPage = () => {
   const handleUseVoucher = (usedVoucher) => {
     setSelectVoucher(usedVoucher);
   };
+  const handleUseDeliveryAddress = (usedDeliveryAddress) => {
+    setSelectDeliveryAddress(usedDeliveryAddress);
+  };
   const handleMethodClick = (id) => {
     const selectDelivery = deliveryMethods.find(
       (delivery) => delivery.id === id
     );
-    if (selectedDelivery && selectedDelivery.id === id) {
-      setSelectedDelivery(null);
+    if (selectedDeliveryMethod && selectedDeliveryMethod.id === id) {
+      setSelectedDeliveryMethod(null);
     } else {
-      setSelectedDelivery(selectDelivery);
+      setSelectedDeliveryMethod(selectDelivery);
     }
   };
   const handlePaymentMethodClick = (id) => {
@@ -131,12 +180,16 @@ const CheckoutPage = () => {
   const handleOpenDeliveryAddress = () => {
     setOpenDeliveryAddress(true);
   };
+
+  const handleCloseDeliveryAddress = () => {
+    setOpenDeliveryAddress(false);
+  };
   return (
     <>
       <SiteLayout>
         <StepLine />
-        <div className="flex gap-5 mx-auto justify-center items-start w-[1200px]">
-          <div className="flex flex-col w-full gap-2">
+        <div className="flex items-start justify-center gap-5 mx-auto">
+          <div className="flex flex-col w-[570px] gap-2">
             <Heading className="px-2 text-2xl font-eculid">
               Shipping information
             </Heading>
@@ -145,13 +198,22 @@ const CheckoutPage = () => {
                 <h5 className="text-xl font-medium font-eculid">
                   Delivery address
                 </h5>
-                <div className="flex items-center justify-center gap-2">
-                  <MdOutlinePlace />
-                  <p>7/6 Ngô Chân Luw, Hòa Minh, Liên Chiểu, Đà Nẵng</p>
-                </div>
-                <div className="flex items-center justify-center gap-2 p-2 cursor-pointer outline outline-1 outline-blue-gray-800">
-                  <AiOutlinePlus />
-                  <span className="">Add new address</span>
+                <div className="flex items-center justify-between gap-5">
+                  <div className="flex items-center justify-center gap-2">
+                    <MdOutlinePlace className="w-8 h-8" />
+                    <p className="w-[407px]">
+                      {selectDeliveryAddress?.apartmentNumber},
+                      {selectDeliveryAddress?.ward},
+                      {selectDeliveryAddress?.district},
+                      {selectDeliveryAddress?.city},
+                    </p>
+                  </div>
+                  <span
+                    className="text-red-700 outline-none cursor-pointer"
+                    onClick={handleOpenDeliveryAddress}
+                  >
+                    Choose
+                  </span>
                 </div>
               </div>
               <div className="flex flex-col items-start justify-center gap-2 p-5 outline outline-1 outline-blue-gray-700">
@@ -163,7 +225,8 @@ const CheckoutPage = () => {
                     <div
                       key={delivery.id}
                       className={`flex w-[170px] px-2 py-1 cursor-pointer outline outline-1 rounded-lg ${
-                        selectedDelivery && selectedDelivery.id === delivery.id
+                        selectedDeliveryMethod &&
+                        selectedDeliveryMethod.id === delivery.id
                           ? "outline-green-500"
                           : "outline-blue-gray-800 "
                       }`}
@@ -178,8 +241,8 @@ const CheckoutPage = () => {
                           ${delivery.price}
                         </p>
                       </div>
-                      {selectedDelivery &&
-                        selectedDelivery.id === delivery.id && (
+                      {selectedDeliveryMethod &&
+                        selectedDeliveryMethod.id === delivery.id && (
                           <AiOutlineCheck
                             className="mt-1 ml-auto bg-green-500 rounded-full justify-self-end"
                             color="white"
@@ -245,7 +308,7 @@ const CheckoutPage = () => {
                   </div>
                   {selectVoucher && <span>{selectVoucher.name}</span>}
                   <span
-                    className="text-red-700 outline-none cursor-pointer "
+                    className="text-red-700 outline-none cursor-pointer"
                     onClick={handleOpenVoucher}
                   >
                     Choose voucher
@@ -257,14 +320,14 @@ const CheckoutPage = () => {
                 </div>
                 <Button
                   onClick={handleOrder}
-                  className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+                  className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105"
                 >
                   Confirm Order
                 </Button>
               </div>
             </div>
           </div>
-          <div className="flex flex-col w-full gap-2">
+          <div className="flex flex-col w-[660px] gap-2">
             <Heading className="px-4 text-2xl font-eculid">
               Order summary
             </Heading>
@@ -280,6 +343,12 @@ const CheckoutPage = () => {
         show={openVoucher}
         handleCloseVoucher={handleCloseVoucher}
         onUseVoucher={handleUseVoucher}
+        total={total}
+      />
+      <DialogDeliveryAddressPayment
+        show={openDeliveryAddress}
+        handleCloseDeliveryAddress={handleCloseDeliveryAddress}
+        onUseDeliveryAddress={handleUseDeliveryAddress}
       />
     </>
   );

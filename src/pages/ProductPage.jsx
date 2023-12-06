@@ -3,6 +3,8 @@ import SiteLayout from "../layout/SiteLayout";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "../config/axios";
+import Pagination from "../components/pagination/Pagination";
+
 import Filter from "../components/filter/Filter";
 import { Card, CardBody, CardHeader } from "@material-tailwind/react";
 import LoadingSkeleton from "../components/loading/LoadingSkeleton";
@@ -17,12 +19,16 @@ const ProductPage = () => {
   const [brand, setBrand] = useState("");
   const [query, setQuery] = useState("");
   const queryDebounce = useDebounce(query, 1500);
+  const [currentPage, setCurrentPage] = useState(0); // Thêm state trang hiện tại
+  const [totalPages, setTotalPages] = useState(0); // Thêm state tổng số trang
 
   const fetchData = async (url) => {
     try {
       setLoading(true);
       const response = await axios.get(url);
       setProductData(response.data || response.content);
+      const totalPages = Math.ceil(response['all-item'] / response.size);
+      setTotalPages(totalPages); // Cập nhật tổng số trang
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -36,15 +42,18 @@ const ProductPage = () => {
     } else if (queryDebounce) {
       fetchData(`/product/search?key=${queryDebounce}`);
     } else {
-      fetchData("/product");
+      fetchData(`/product?page=${currentPage}`);
     }
-  }, [brand, category, gender, queryDebounce, season]);
+  }, [brand, category, gender, queryDebounce, season, currentPage]);
   const handleSearchChange = (e) => {
     setQuery(e.target.value);
     setBrand("");
     setGender("");
     setCategory("");
     setSeason("");
+  };
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
   };
   const handleSeasonValue = (e) => {
     setSeason(e.target.value);
@@ -100,7 +109,18 @@ const ProductPage = () => {
             </div>
           </div>
         </div>
-        {/* <Pagination></Pagination> */}
+        <div className="flex justify-center  gap-3">
+          <Pagination
+
+            currentPage={currentPage}
+
+            totalPages={totalPages}
+
+            onChange={handleChangePage}
+
+          ></Pagination>
+        </div>
+
       </SiteLayout>
     </>
   );

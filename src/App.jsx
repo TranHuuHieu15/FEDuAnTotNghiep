@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import { Suspense, lazy } from "react";
 import AccountLayout from "./layout/AccountLayout";
 import AccountInfo from "./module/information/AccountInfo";
+import AccountChangePassword from "./module/information/AccountChangePassword";
 import AccountAddress from "./module/information/AccountAddress";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -111,8 +112,8 @@ function App() {
               element={<AccountAddress></AccountAddress>}
             ></Route>
             <Route
-              path="/user/feedback"
-              element={<FeedbackManage></FeedbackManage>}
+              path="/user/changePassword"
+              element={<AccountChangePassword></AccountChangePassword>}
             ></Route>
             <Route
               path="/user/discount"

@@ -14,18 +14,14 @@ import Pagination from "../components/pagination/Pagination";
 const ProductPage = () => {
   const [productData, setProductData] = useState([]);
 
-  const [currentPage, setCurrentPage] = useState([]); // Thêm state trang hiện tại
+  const [currentPage, setCurrentPage] = useState(0); // Thêm state trang hiện tại
 
   const [totalPages, setTotalPages] = useState(0); // Thêm state tổng số trang
   useEffect(() => {
     const fetchData = async () => {
-      const page = currentPage === 0
       const response = await axios.get(`/product?page=${currentPage}`);
-      console.log(currentPage);
       setProductData(response.data);
-
       const totalPages = Math.ceil(response['all-item'] / response.size);
-
       setTotalPages(totalPages); // Cập nhật tổng số trang
     };
     fetchData();

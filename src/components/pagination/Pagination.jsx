@@ -1,7 +1,7 @@
-import React from 'react';
+
 import { Button, IconButton } from "@material-tailwind/react";
 import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { number } from 'prop-types';
+import PropTypes from 'prop-types';
 const Pagination = ({ currentPage, totalPages, onChange }) => {
   // Tạo danh sách các nút giao diện cho trang
   const pages = [];
@@ -10,7 +10,7 @@ const Pagination = ({ currentPage, totalPages, onChange }) => {
       <Button
         key={number}
         onClick={() => onChange(number)}
-        className={number === currentPage ? 'bg-teal-300 text-white rounded-2xl border' : 'rounded-2xl border'}
+        className={number === currentPage ? 'bg-white text-black rounded-2xl border-2 border-black' : 'rounded-2xl border'}
         disabled={number === currentPage}
       >
         {number + 1}
@@ -37,5 +37,10 @@ const Pagination = ({ currentPage, totalPages, onChange }) => {
       </IconButton>
     </div>
   );
+};
+Pagination.propTypes = {
+  currentPage: PropTypes.number.isRequired,
+  totalPages: PropTypes.number.isRequired,
+  onChange: PropTypes.func.isRequired,
 };
 export default Pagination;

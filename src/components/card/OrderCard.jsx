@@ -34,24 +34,34 @@ const OrderCard = ({ orders }) => {
 const OrderItem = ({ orderItems }) => {
   const { color, size, quantity, name, image, price } = orderItems;
   return (
-    <div className="flex items-start justify-around w-full gap-3 ">
-      <img src={image} alt="" className="w-40 h-32" />
-      <div className="flex flex-col gap-5">
-        <span className="text-xl font-medium font-eculid">{name}</span>
-        <span className="text-lg font-eculid">{price}</span>
+    <>
+      <div className="flex items-start justify-around w-full gap-3 ">
+        <img src={image} alt="" className="w-40 h-32" />
+        <div className="flex flex-col gap-5">
+          <span className="text-xl font-medium font-eculid">{name}</span>
+          <span className="text-lg font-eculid">{price}</span>
+        </div>
+        <div className="flex flex-col gap-5">
+          <p className="flex gap-2 text-lg font-eculid">
+            Color:
+            <span
+              className="w-5 h-5 mt-1 border-none rounded-full outline-none cursor-pointer hover:opacity-100"
+              style={{ backgroundColor: color }}
+            ></span>
+          </p>
+          <p className="text-lg font-eculid">Size: {size}</p>
+          <p className="text-lg font-eculid">Quantity: {quantity}</p>
+        </div>
       </div>
-      <div className="flex flex-col gap-5">
-        <p className="flex gap-2 text-lg font-eculid">
-          Color:
-          <span
-            className="w-5 h-5 mt-1 border-none rounded-full outline-none cursor-pointer hover:opacity-100"
-            style={{ backgroundColor: color }}
-          ></span>
-        </p>
-        <p className="text-lg font-eculid">Size: {size}</p>
-        <p className="text-lg font-eculid">Quantity: {quantity}</p>
-      </div>
-    </div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1072 2"
+        fill="none"
+        className="w-[650px] h-1"
+      >
+        <path d="M0 1L1072 0.999887" stroke="#D1D5DB" />
+      </svg>
+    </>
   );
 };
 

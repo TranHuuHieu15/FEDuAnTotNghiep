@@ -31,6 +31,7 @@ const FeedbackManage = lazy(() => import("./module/feedback/FeedbackManage"));
 const EvalueateManage = lazy(() => import("./module/evaluate/EvalueateManage"));
 const ColorManage = lazy(() => import("./module/color/ColorManage"));
 const VoucherPage = lazy(() => import("./pages/VoucherPage"));
+const ProductManagePage = lazy(() => import("./module/product/ProductManage"));
 
 function App() {
   return (
@@ -67,6 +68,10 @@ function App() {
             <Route
               path="/admin"
               element={<DashboardPage></DashboardPage>}
+            ></Route>
+            <Route
+              path="/admin/product"
+              element={<ProductManagePage></ProductManagePage>}
             ></Route>
             <Route
               path="/admin/category"

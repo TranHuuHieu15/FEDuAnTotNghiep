@@ -16,6 +16,7 @@ import { selectCurrentUser } from "../../redux/features/authSlice";
 const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher }) => {
   const user = useSelector(selectCurrentUser);
   const [voucherData, setVoucherData] = useState([]);
+  const [isVoucher, setIsVoucher] = useState(false);
   useEffect(() => {
     const fetchVoucher = async () => {
       try {
@@ -24,7 +25,6 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher }) => {
             Authorization: `Bearer ${user.accessToken}`,
           },
         });
-        console.log(response.data);
         setVoucherData(response.data);
       } catch (error) {
         console.error(error);
@@ -51,6 +51,7 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher }) => {
   };
   const handleUseVoucher = (usedVoucher) => {
     onUseVoucher(usedVoucher);
+    setIsVoucher(!isVoucher);
     handleCloseVoucher();
   };
   return (
@@ -87,12 +88,21 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher }) => {
                     </div>
                   </div>
                   <div className="flex items-center justify-end col-span-1">
-                    <Buttons
-                      className="text-center bg-black"
-                      onClick={() => handleUseVoucher(item)}
-                    >
-                      Use
-                    </Buttons>
+                    {isVoucher ? (
+                      <Buttons
+                        className="text-center bg-black"
+                        onClick={() => handleUseVoucher(null)}
+                      >
+                        Cancel
+                      </Buttons>
+                    ) : (
+                      <Buttons
+                        className="text-center bg-black"
+                        onClick={() => handleUseVoucher(item)}
+                      >
+                        Use
+                      </Buttons>
+                    )}
                   </div>
                 </CardBody>
               ))}

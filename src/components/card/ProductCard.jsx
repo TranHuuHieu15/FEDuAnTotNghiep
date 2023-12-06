@@ -9,13 +9,14 @@ import { Rating } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ item, className }) => {
-  const { name, rate, mainImage, minPrice, maxPrice, orderCount, id } = item;
+  const { name, rate, main_image, min_price, max_price, order_count, id } =
+    item;
   const navigate = useNavigate();
   return (
     <Card className={className} onClick={() => navigate(`/product/${id}`)}>
       <CardHeader shadow={false} floated={false} className="h-80">
         <img
-          src={mainImage}
+          src={main_image}
           alt="card-image"
           className="object-cover w-full h-full"
         />
@@ -28,11 +29,17 @@ const ProductCard = ({ item, className }) => {
         >
           {name}
         </Typography>
-        <Typography color="blue-gray" className="flex items-center justify-start gap-2 py-2 text-xl font-medium">
-          {minPrice !== maxPrice ? (<>
-            <span>${minPrice} ~ </span>
-            <span>${maxPrice}</span>
-          </>) : (<span>${minPrice}</span>
+        <Typography
+          color="blue-gray"
+          className="flex items-center justify-start gap-2 py-2 text-xl font-medium"
+        >
+          {min_price !== max_price ? (
+            <>
+              <span>${min_price} ~ </span>
+              <span>${max_price}</span>
+            </>
+          ) : (
+            <span>${min_price}</span>
           )}
         </Typography>
         <Typography
@@ -49,7 +56,7 @@ const ProductCard = ({ item, className }) => {
             />
             <span className="text-sm">{rate}</span>
           </span>
-          <span className="text-xs">Purchased: {orderCount}</span>
+          <span className="text-xs">Purchased: {order_count}</span>
         </Typography>
       </CardBody>
     </Card>
@@ -64,7 +71,7 @@ ProductCard.propTypes = {
   max_price: PropTypes.number,
   rating: PropTypes.number,
   className: PropTypes.string,
-  orderCount: PropTypes.number,
+  order_count: PropTypes.number,
 };
 
 export default ProductCard;

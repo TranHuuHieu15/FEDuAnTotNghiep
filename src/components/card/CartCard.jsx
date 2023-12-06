@@ -1,6 +1,5 @@
 import { BsTrash } from "react-icons/bs";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
-import Select from "../select/Select";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import {
@@ -10,10 +9,10 @@ import {
 } from "../../redux/features/cartSlice";
 import { toast } from "react-toastify";
 
-const CartCard = ({ cartData = [] }) => {
+const CartCard = ({ cartData }) => {
   const dispatch = useDispatch();
   const handleRemove = () => {
-    dispatch(deleteItem(cartData.id));
+    dispatch(deleteItem(cartData.productVariantId));
     toast.success("🦄 Delete successfully", {
       position: "top-right",
       autoClose: 2000,
@@ -26,11 +25,11 @@ const CartCard = ({ cartData = [] }) => {
     });
   };
   const handleIncreaseQuantity = () => {
-    dispatch(increaseQuantity({ id: cartData.id }));
+    dispatch(increaseQuantity({ productVariantId: cartData.productVariantId }));
   };
 
   const handleDecreaseQuantity = () => {
-    dispatch(decreaseQuantity({ id: cartData.id }));
+    dispatch(decreaseQuantity({ productVariantId: cartData.productVariantId }));
   };
   return (
     <>

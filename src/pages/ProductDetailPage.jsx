@@ -12,24 +12,22 @@ import { useState } from "react";
 import Color from "../components/color/Color";
 import Size from "../components/size/Size";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/features/cartSlice";
-import { useSaveCartMutation } from "../redux/api/cartApi";
 import { toast } from "react-toastify";
 const ProductDetailPage = () => {
   const [productDetail, setProductDetail] = useState([]);
-  const { createProductVariant, productDto } = productDetail;
+  const { productVariantsDto, productDto, discount } = productDetail;
   const [open, setOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [currentImage, setCurrentImage] = useState(null);
   const [selectedColors, setSelectedColors] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const toggleOpen = () => setOpen((cur) => !cur);
   const { productId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [saveCart] = useSaveCartMutation();
-  const userToken = useSelector((state) => state.auth.userToken);
   const findDarkestColor = (colors) => {
     // Hàm để chuyển màu sang giá trị số để so sánh
     const calculateBrightness = (color) => {
@@ -55,18 +53,18 @@ const ProductDetailPage = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/product/id/${productId}`);
+        console.log(response.data);
         setProductDetail(response.data);
-        if (response.data.createProductVariant?.length > 0) {
-          const firstSize = response.data.createProductVariant[0].size;
+        if (response.data.productVariantsDto?.length > 0) {
+          const firstSize = response.data.productVariantsDto[0].size;
           setSelectedSize(firstSize);
 
-          const colorsForFirstSize = response.data.createProductVariant
+          const colorsForFirstSize = response.data.productVariantsDto
             .filter((variant) => variant.size === firstSize)
             .map((variant) => variant.colorId);
 
           // Chọn màu tối nhất từ danh sách màu sắc của size đầu tiên
           const darkestColorForFirstSize = findDarkestColor(colorsForFirstSize);
-
           setSelectedColors(colorsForFirstSize);
           setSelectedColor(darkestColorForFirstSize);
         }
@@ -77,15 +75,21 @@ const ProductDetailPage = () => {
     fetchData();
   }, [productId]);
   const selectedVariant =
-    createProductVariant &&
-    createProductVariant.find(
+    productVariantsDto &&
+    productVariantsDto.find(
       (variant) =>
         variant.size === selectedSize && variant.colorId === selectedColor
     );
   const handleSizeChange = (size) => {
     setSelectedSize(size);
-
-    const colorsForSelectedSize = createProductVariant
+    // Lấy ảnh mới tương ứng với kích thước đã chọn
+    const image = productVariantsDto.find((variant) => variant.size === size)
+      ?.imageProductDto?.url;
+    if (image) {
+      // Cập nhật ảnh hiện tại
+      setCurrentImage(image);
+    }
+    const colorsForSelectedSize = productVariantsDto
       .filter((variant) => variant.size === size)
       .map((variant) => variant.colorId);
 
@@ -101,6 +105,14 @@ const ProductDetailPage = () => {
 
   const handleColorChange = (color) => {
     setSelectedColor(color);
+    // Lấy ảnh mới tương ứng với màu sắc đã chọn
+    const image = productVariantsDto.find(
+      (variant) => variant.colorId === color
+    )?.imageProductDto?.url;
+    if (image) {
+      // Cập nhật ảnh hiện tại
+      setCurrentImage(image);
+    }
   };
 
   const handleDecrease = () => {
@@ -112,27 +124,20 @@ const ProductDetailPage = () => {
   const handleIncrease = () => {
     setQuantity(quantity + 1);
   };
-  const handleAddToCart = () => {
-    const cartItem = {
-      productVariantId: selectedVariant?.id,
-      quantity,
-    };
+  const handleAddToCart = async () => {
     if (selectedVariant) {
-      if (userToken) {
-        saveCart(cartItem);
-      } else {
-        dispatch(
-          addToCart({
-            id: selectedVariant.id,
-            image: productDto.imageProductDto.url,
-            name: productDto.name,
-            price: selectedVariant.price,
-            quantity,
-            color: selectedColor,
-            size: selectedSize,
-          })
-        );
-      }
+      console.log(selectedVariant);
+      const cartItem = {
+        productVariantId: selectedVariant.id,
+        image: productDto.imageProductDto.url,
+        name: productDto.name,
+        price: selectedVariant.price,
+        quantity,
+        color: selectedColor,
+        size: selectedSize,
+        discount: discount || 0,
+      };
+      dispatch(addToCart(cartItem));
     }
     navigate("/cart");
     toast.success("Add to cart successfully!", {
@@ -151,7 +156,7 @@ const ProductDetailPage = () => {
       <div className="flex justify-center gap-5">
         <div className="inline-flex items-start gap-5 p-6">
           <div className="flex flex-col gap-3">
-            {createProductVariant
+            {productVariantsDto
               ?.filter((variant, index, self) =>
                 index < 4
                   ? self.findIndex((v) => v.id === variant.id) === index
@@ -162,24 +167,24 @@ const ProductDetailPage = () => {
                   key={variant.id}
                   src={variant.imageProductDto.url}
                   alt="Image"
-                  className="w-[146px] h-[130px] object-fill flex-shrink-0"
+                  className="w-[146px] h-[130px] object-fill flex-shrink-0 rounded-md"
                 />
               ))}
           </div>
           <img
-            src={productDto?.imageProductDto?.url}
+            src={currentImage || productDto?.imageProductDto.url}
             alt=""
-            className="w-[476px] h-[567px] object-fill hover:scale-105 hover:duration-500 flex-shrink-0"
+            className="w-[476px] h-[567px] object-fill hover:scale-105 hover:duration-500 flex-shrink-0 rounded-md"
           />
         </div>
 
         <div className="inline-flex flex-col items-start gap-8 p-6">
           <div className="flex flex-col items-start gap-7">
             <div className="flex flex-col items-start gap-3">
-              <p className="text-2xl not-italic font-normal font-eculid">
+              <p className="text-3xl not-italic font-normal font-eculid">
                 {productDto?.name}
               </p>
-              <span className="text-3xl not-italic font-bold leading-normal font-eculid">
+              <span className="text-2xl not-italic font-bold leading-normal font-eculid">
                 ${selectedVariant?.price || "12"}
               </span>
             </div>
@@ -188,7 +193,7 @@ const ProductDetailPage = () => {
                 Size:
               </h5>
               <Size
-                size={createProductVariant || []}
+                size={productVariantsDto || []}
                 onSizeChange={handleSizeChange}
                 selectedSize={selectedSize}
               />
@@ -198,7 +203,7 @@ const ProductDetailPage = () => {
                 Color:
               </h5>
               <Color
-                color={createProductVariant || []}
+                color={productVariantsDto || []}
                 onColorChange={handleColorChange}
                 selectedColor={selectedColor}
                 availableColors={selectedColors} // Truyền danh sách màu sắc có sẵn

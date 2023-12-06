@@ -21,7 +21,7 @@ import { Link } from "react-router-dom";
 const SideBarAccount = () => {
   return (
     <>
-      <Card className="w-full h-screen max-w-xs max-h-screen border-2">
+      <div className="w-full h-screen max-w-xs max-h-screen">
         <div className="flex items-center justify-center mt-10 mb-5">
           <img
             src={logo}
@@ -47,7 +47,7 @@ const SideBarAccount = () => {
                 My Order
               </ListItem>
             </Link>
-            <Link>
+            <Link to="/user/changePassword">
               <ListItem>
                 <ListItemPrefix>
                   <MdLockOutline className="w-5 h-5" />
@@ -55,7 +55,7 @@ const SideBarAccount = () => {
                 Change Password
               </ListItem>
             </Link>
-            <Link>
+            <Link to="/user/address">
               <ListItem>
                 <ListItemPrefix>
                   <MdOutlinePlace className="w-5 h-5" />
@@ -63,7 +63,7 @@ const SideBarAccount = () => {
                 Address
               </ListItem>
             </Link>
-            <Link>
+            <Link to="/user/historyOrder">
               <ListItem>
                 <ListItemPrefix>
                   <MdOutlineShoppingCartCheckout className="w-5 h-5" />
@@ -81,7 +81,7 @@ const SideBarAccount = () => {
             </Link>
           </List>
         </div>
-      </Card>
+      </div>
     </>
   );
 };

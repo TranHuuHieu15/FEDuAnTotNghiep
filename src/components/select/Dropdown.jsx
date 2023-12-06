@@ -31,7 +31,7 @@ const Dropdown = () => {
         </MenuHandler>
         <MenuList>
           <MenuItem>
-            <Link to="/">My Profile</Link>
+            <Link to="/user">My Profile</Link>
           </MenuItem>
           <MenuItem>
             <Link to="/help">Help</Link>

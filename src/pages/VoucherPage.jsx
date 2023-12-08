@@ -45,7 +45,7 @@ const VoucherPage = () => {
             voucherId: voucherId,
         };
         try {
-            // console.log(VoucherOfAccountDto);
+            console.log(VoucherOfAccountDto);
             const response = await axios.post(`/voucher/add`, VoucherOfAccountDto, {
                 headers: {
                     Authorization: `Bearer ${user.accessToken}`,

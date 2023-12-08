@@ -1,7 +1,6 @@
 import Button from "../../components/button/Button.jsx";
 import Input from "../../components/input/Input.jsx";
 import { useForm } from "react-hook-form";
-import axios from "../../config/axios.js";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
@@ -10,18 +9,19 @@ import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 import { updateUserInfo } from "../../redux/features/authSlice.jsx";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
+import axios from "../../config/axios.js";
 
 const AccountInfo = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
-  console.log(user);
   const schema = yup
     .object({
-      currentPassword: yup
-        .string()
-        .required("Please enter your current password"),
+      oldPassword: yup.string().required("Please enter your current password"),
       newPassword: yup.string().required("Please enter your new password"),
-      password: yup.string().required("Please enter your confirm password"),
+      password: yup
+        .string()
+        .oneOf([yup.ref("newPassword"), null], "Passwords must match")
+        .required("Please enter your confirm password"),
     })
     .required();
 
@@ -33,32 +33,35 @@ const AccountInfo = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      currentPassword: "",
+      oldPassword: "",
       newPassword: "",
       password: "",
     },
   });
 
-  const onSubmitHandler = async (data) => {
-    if (!isValid) return;
-    await handleUpdateData(data);
-    // reset form
-    reset({
-      currentPassword: "",
-      newPassword: "",
-      password: "",
-    });
-  };
-
-  const handleUpdateData = async (data) => {
-    console.log("Dữ liệu của data", data);
+  const handleChangePassword = async (data) => {
+    console.log("Dữ liệu của data", data.oldPassword, data.password);
+    const lastData = {
+      oldPassword: data.oldPassword,
+      password: data.password,
+    };
     try {
-      const response = await axios.put("/account/change-password", data, {
+      if (!isValid) return;
+      await axios.put("/account/change-password", lastData, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
         },
       });
-      console.log(response);
+      dispatch(
+        updateUserInfo({
+          password: data.password,
+        })
+      );
+      reset({
+        oldPassword: "",
+        newPassword: "",
+        password: "",
+      });
       toast.success("Update password successfully!", {
         position: "top-right",
         autoClose: 3000,
@@ -80,7 +83,7 @@ const AccountInfo = () => {
         progress: undefined,
         theme: "light",
       });
-      console.error("Update password error:", error);
+      console.log("Update password error:", error);
     }
   };
 
@@ -97,14 +100,14 @@ const AccountInfo = () => {
 
         <form
           className="flex flex-row justify-center gap-4 p-16 pt-10"
-          onSubmit={handleSubmit(onSubmitHandler)}
+          onSubmit={handleSubmit(handleChangePassword)}
         >
           <div className="flex-1">
             <Input
               type="password"
               label="Enter your current password"
               className="w-auto my-4"
-              name="currentPassword"
+              name="oldPassword"
               control={control}
               errors={errors}
             />
@@ -112,9 +115,9 @@ const AccountInfo = () => {
               type="password"
               label="Enter your new password"
               className="w-auto my-4"
+              name="newPassword"
               control={control}
               errors={errors}
-              name="newPassword"
             />
             <Input
               type="password"
@@ -126,11 +129,7 @@ const AccountInfo = () => {
             />
 
             <div className="mt-7">
-              <Button
-                className="bg-blue-gray-900"
-                type="submit"
-                onClick={() => handleUpdateData()}
-              >
+              <Button className="bg-blue-gray-900" type="submit">
                 Update
               </Button>
               <Button className="ml-5" outline="outlined">

@@ -235,11 +235,7 @@ const AccountInfo = ({ isUpdate }) => {
               ></RadioButton>
             </div>
             <div className="mt-2">
-              <Button
-                className="bg-blue-gray-900"
-                type="submit"
-                onClick={() => handleUpdateData()}
-              >
+              <Button className="bg-blue-gray-900" type="submit">
                 Update
               </Button>
               <Button className="ml-5" outline="outlined">

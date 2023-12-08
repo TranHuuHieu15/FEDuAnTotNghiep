@@ -33,6 +33,7 @@ const ColorManage = lazy(() => import("./module/color/ColorManage"));
 const VoucherPage = lazy(() => import("./pages/VoucherPage"));
 const ProductManagePage = lazy(() => import("./module/product/ProductManage"));
 const ProductCEPage = lazy(() => import("./module/product/ProductCEPage"));
+const ProductAddPage = lazy(() => import("./module/product/ProductAddPage"));
 
 function App() {
   return (
@@ -75,7 +76,11 @@ function App() {
               element={<ProductManagePage></ProductManagePage>}
             ></Route>
             <Route
-              path="/admin/product/edit"
+              path="/admin/product/add"
+              element={<ProductAddPage></ProductAddPage>}
+            ></Route>
+            <Route
+              path="/admin/product/edit/:id"
               element={<ProductCEPage></ProductCEPage>}
             ></Route>
             <Route

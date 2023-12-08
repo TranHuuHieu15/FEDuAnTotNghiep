@@ -43,6 +43,13 @@ const Filter = ({
       <div className="flex flex-col my-5">
         <h3 className="font-normal">Season</h3>
         <RadioFilter
+          label="All"
+          name="season"
+          value=""
+          ripple={true}
+          onChange={handleSeasonValue}
+        />
+        <RadioFilter
           label="Summer"
           name="season"
           value="SUMMER"
@@ -59,6 +66,13 @@ const Filter = ({
       </div>
       <div className="flex flex-col my-5">
         <h3 className="font-normal">BRANDS</h3>
+        <RadioFilter
+          label="All"
+          name="brand"
+          value=""
+          ripple={true}
+          onChange={handleBrandValue}
+        />
         {brandData?.length > 0 &&
           brandData.map((item) => (
             <RadioFilterByValueID
@@ -73,6 +87,13 @@ const Filter = ({
       </div>
       <div className="flex flex-col my-5">
         <h3 className="font-normal">CATEGORIES</h3>
+        <RadioFilter
+          label="All"
+          name="category"
+          value=""
+          ripple={true}
+          onChange={handleCategoryValue}
+        />
         {categoryData?.length > 0 &&
           categoryData.map((item) => (
             <RadioFilterByValueID

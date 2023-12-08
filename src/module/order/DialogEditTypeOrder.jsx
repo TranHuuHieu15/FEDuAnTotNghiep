@@ -82,7 +82,7 @@ const DialogEditTypeOrder = ({
         <DialogHeader>{`Select the appropriate order type.`}</DialogHeader>
         <form onSubmit={handleSubmit(onSubmitHandler)}>
           <DialogBody>
-            <div className="flex flex-col items-center justify-center gap-2">
+            <div className="flex items-center justify-start gap-2 mx-8">
               <Input
                 type="number"
                 name="id"
@@ -92,8 +92,8 @@ const DialogEditTypeOrder = ({
                 errors={errors}
               />
               <SelectDefault
-                className2="text-sm ml-1 font-normal"
-                className="p-[10px] rounded-lg border-blue-gray-300 w-[150px]"
+                className2="text-lg font-normal w-[150px]"
+                className="p-[10px] rounded-lg border-blue-gray-300 w-full"
                 title="Type Order"
                 name="typeOrder"
                 control={control}

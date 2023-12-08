@@ -123,7 +123,7 @@ const Filter = ({
           onChange={handleGenderValue}
         />
         <RadioFilter
-          label="OTHER"
+          label="Other"
           name="gender"
           value="OTHER"
           ripple={true}

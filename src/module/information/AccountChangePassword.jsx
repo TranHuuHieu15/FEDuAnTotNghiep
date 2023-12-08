@@ -89,7 +89,7 @@ const AccountInfo = () => {
 
   return (
     <>
-      <div className="flex-initial w-full border-2 shadow-md rounded-2xl">
+      <div className="flex flex-col gap-5">
         <div className="pt-5 pl-10">
           <p className="text-2xl text-blue-gray-600">Change Password</p>
           <p className="text-gray-600">Manage and protect your account</p>
@@ -102,7 +102,7 @@ const AccountInfo = () => {
           className="flex flex-row justify-center gap-4 p-16 pt-10"
           onSubmit={handleSubmit(handleChangePassword)}
         >
-          <div className="flex-1">
+          <div className="flex-1 w-[574px]">
             <Input
               type="password"
               label="Enter your current password"

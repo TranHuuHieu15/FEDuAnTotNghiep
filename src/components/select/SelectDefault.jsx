@@ -28,10 +28,8 @@ const SelectDefault = ({
             </option>
           ))}
       </select>
-      {errors.typeDiscount && (
-        <p className="mt-2 ml-1 text-xs text-red-500">
-          {errors.typeDiscount.message}
-        </p>
+      {errors.name && (
+        <p className="mt-2 ml-1 text-xs text-red-500">{errors.name.message}</p>
       )}
     </>
   );

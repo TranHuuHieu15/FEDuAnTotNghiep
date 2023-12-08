@@ -10,6 +10,7 @@ const Input = ({
   color,
   label,
   type = "text",
+  disabled = false,
   errors,
   ...props
 }) => {
@@ -18,6 +19,8 @@ const Input = ({
     name: props.name,
     defaultValue: "",
   });
+  const sanitizedValue =
+    field.value !== null && field.value !== undefined ? field.value : "";
   return (
     <>
       <div className={className}>
@@ -27,9 +30,12 @@ const Input = ({
           label={label}
           icon={icon}
           variant={variant}
+          disabled={disabled}
           {...field}
           value={
-            type === "datetime-local" ? field.value.slice(0, 16) : field.value
+            type === "datetime-local"
+              ? sanitizedValue.slice(0, 16)
+              : sanitizedValue
           }
         />
         {errors[props.name] && (
@@ -51,5 +57,6 @@ Input.propTypes = {
   className: PropTypes.string,
   icon: PropTypes.any,
   errors: PropTypes.object,
+  disabled: PropTypes.bool,
 };
 export default Input;

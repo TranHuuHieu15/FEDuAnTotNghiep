@@ -6,6 +6,7 @@ import AccountLayout from "./layout/AccountLayout";
 import AccountInfo from "./module/information/AccountInfo";
 import AccountAddress from "./module/information/AccountAddress";
 import AccountOrder from "./module/information/AccountOrder";
+import AccountChangePassword from "./module/information/AccountChangePassword";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutUsPage = lazy(() => import("./pages/AboutUsPage"));
@@ -33,6 +34,7 @@ const ColorManage = lazy(() => import("./module/color/ColorManage"));
 const VoucherPage = lazy(() => import("./pages/VoucherPage"));
 const ProductManagePage = lazy(() => import("./module/product/ProductManage"));
 const ProductCEPage = lazy(() => import("./module/product/ProductCEPage"));
+const OrderManage = lazy(() => import("./module/order/OrderManage"));
 
 function App() {
   return (
@@ -111,6 +113,10 @@ function App() {
               element={<EvalueateManage></EvalueateManage>}
             ></Route>
             <Route
+              path="/admin/order"
+              element={<OrderManage></OrderManage>}
+            ></Route>
+            <Route
               path="/admin/color"
               element={<ColorManage></ColorManage>}
             ></Route>
@@ -126,8 +132,8 @@ function App() {
               element={<AccountOrder></AccountOrder>}
             ></Route>
             <Route
-              path="/user/feedback"
-              element={<FeedbackManage></FeedbackManage>}
+              path="/user/changePassword"
+              element={<AccountChangePassword></AccountChangePassword>}
             ></Route>
             <Route
               path="/user/discount"

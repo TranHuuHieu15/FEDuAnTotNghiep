@@ -109,6 +109,13 @@ const Filter = ({
       <div className="flex flex-col my-5">
         <h3 className="font-normal">Gender</h3>
         <RadioFilter
+          label="All"
+          name="gender"
+          value=""
+          ripple={true}
+          onChange={handleGenderValue}
+        />
+        <RadioFilter
           label="Male"
           name="gender"
           value="MALE"

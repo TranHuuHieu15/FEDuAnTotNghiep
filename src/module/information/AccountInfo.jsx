@@ -17,7 +17,6 @@ import PropTypes from "prop-types";
 const AccountInfo = ({ isUpdate }) => {
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
-  console.log(user);
   const schema = yup
     .object({
       //Không cẩn ảnh cũng được
@@ -83,7 +82,6 @@ const AccountInfo = ({ isUpdate }) => {
   };
 
   const handleUpdateData = async (data) => {
-    console.log(data);
     try {
       const formData = new FormData();
       typeof data.image === "string"
@@ -96,12 +94,11 @@ const AccountInfo = ({ isUpdate }) => {
       formData.append("birthday", data.birthday);
       formData.append("address", data.address);
       formData.append("sex", data.sex);
-      const response = await axios.put("/account/update-profile", formData, {
+      await axios.put("/account/update-profile", formData, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
         },
       });
-      console.log(response);
       //Đoạn này là để update lại thông tin user trong redux
       dispatch(
         updateUserInfo({

@@ -1,7 +1,12 @@
 import { BsBell, BsGear } from "react-icons/bs";
 import InputSearch from "../../components/input/InputSearch";
+import Dropdown from "../../components/select/Dropdown";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/features/authSlice";
 
 const Header = () => {
+  const user = useSelector(selectCurrentUser);
+  console.log(user);
   return (
     <div className="flex items-center justify-around">
       <div>
@@ -19,14 +24,14 @@ const Header = () => {
         </div>
         <p>|</p>
         <div className="flex items-center justify-center gap-3">
-          <p className="text-base font-medium text-blue-gray-600 font-eculid">
-            Annette Black
-          </p>
-          <img
-            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZmFjZSUyMGFzaWElMjBnaXJsfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60"
-            alt=""
-            className="rounded-full h-11 w-11"
-          />
+          {user && (
+            <>
+              <p className="text-base font-medium text-blue-gray-600 font-eculid">
+                {user.fullName}
+              </p>
+              <Dropdown />
+            </>
+          )}
         </div>
       </div>
     </div>

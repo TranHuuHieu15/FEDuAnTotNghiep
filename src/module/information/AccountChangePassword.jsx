@@ -18,7 +18,10 @@ const AccountInfo = () => {
     .object({
       oldPassword: yup.string().required("Please enter your current password"),
       newPassword: yup.string().required("Please enter your new password"),
-      password: yup.string().required("Please enter your confirm password"),
+      password: yup
+        .string()
+        .oneOf([yup.ref("newPassword"), null], "Passwords must match")
+        .required("Please enter your confirm password"),
     })
     .required();
 

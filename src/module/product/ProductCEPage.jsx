@@ -1,5 +1,6 @@
 import ImageUpload from "../../components/imageUpload/ImageUpload";
 import * as yup from "yup";
+import { useParams } from "react-router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { set, useForm } from "react-hook-form";
 import SelectDefault from "../../components/select/SelectDefault";
@@ -15,6 +16,9 @@ import { IoAdd } from "react-icons/io5";
 const ProductCEPage = () => {
   const [openDialogHashtag, setDialogHashtag] = useState(false);
   const [selectHashtag, setSelectHashtag] = useState([]);
+  const [productData, setProductData] = useState({});
+  const [productVariantDatas, setProductVariantDatas] = useState([])
+  const { id } = useParams();
   // const [handleRemoveHashtag, setHandleRemoveHashtag] = useState([]);
   const [hashtagData, setHashtagData] = useState([]);
   const typeGender = [
@@ -121,20 +125,39 @@ const ProductCEPage = () => {
   }, []);
 
   //*   call api hashtag
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get("/hashtag");
+  //       // console.log(response.data);
+  //       setHashtagData(response.data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
+
+  //*   call api hashtag
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("/hashtag");
-        // console.log(response.data);
-        setHashtagData(response.data);
+        const response = await axios.get(`/product/id/${id}`);
+        console.log(response.data);
+        setProductData(response.data.productDto);
+        setSelectHashtag(response.data.hashtagDtos)
+        setProductVariantDatas(response.data.productVariantsDto);
+        reset(response.data);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [id]);
 
+  useEffect
   const schema = yup
     .object({
       image: yup.mixed().test("file", "Please choose a image file", (value) => {
@@ -169,7 +192,7 @@ const ProductCEPage = () => {
   const handleUseHashtag = (useHashtag) => {
     setSelectHashtag([...selectHashtag, useHashtag]);
   };
-  console.log("lo", selectHashtag);
+  // console.log("lo", selectHashtag);
   const handleCloseDialogHashtag = () => {
     setDialogHashtag(false);
   };
@@ -183,6 +206,9 @@ const ProductCEPage = () => {
   useEffect(() => {
     // console.log("Select Hashtags:", selectHashtag);
   }, [selectHashtag]);
+  // console.log(typeof productVariantDatas[0].price);
+
+
   return (
     <>
       <div className="flex flex-row gap-3 items-center">
@@ -210,8 +236,8 @@ const ProductCEPage = () => {
                   mainClassName="flex flex-col"
                   className2="text-sm ml-1 font-normal"
                   className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
-                  title="Type Voucher"
-                  name="session"
+                  title="Season"
+                  name="season"
                   options={typeSeason}
                   control={control}
                   errors={errors}
@@ -243,7 +269,7 @@ const ProductCEPage = () => {
                   className2="text-sm ml-1 font-normal"
                   className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
                   title="Brands"
-                  name="categoryId"
+                  name="brandId"
                   control={control}
                   errors={errors}
                   options={brands}
@@ -283,108 +309,60 @@ const ProductCEPage = () => {
         {/* form thứ 2 gồm các form nhỏ */}
         <div className="flex-1 mr-3">
           <div className="flex flex-col gap-3">
-            <div className="flex flex-row border items-center p-5">
-              <ImageUpload
-                name="image"
-                className="w-full"
-                control={control}
-                // isUpdate={isUpdate}
-                errors={errors}
-              />
-              <div className="flex flex-col gap-3">
-                <div className="flex flex-row gap-3">
-                  <SelectDefault
-                    mainClassName="flex flex-col"
-                    className2="text-sm ml-1 font-normal"
-                    className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
-                    title="Size"
-                    name="size"
-                    options={typeSize}
-                    control={control}
-                    errors={errors}
-                  />
-                  <Select
-                    mainClassName="flex flex-col"
-                    className2="text-sm ml-1 font-normal"
-                    className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
-                    title="Category"
-                    name="categoryId"
-                    control={control}
-                    errors={errors}
-                    options={categories}
-                  />
-                </div>
-                <div className="flex flex-row gap-28">
-                  <Input
-                    label="Quantity"
-                    name="quantity"
-                    placeholder="Enter quantity product variant"
-                    className="w-[100px]"
-                    control={control}
-                    errors={errors}
-                  />
-                  <Input
-                    label="Price"
-                    name="price"
-                    placeholder="Enter price product variant"
-                    className="w-20"
-                    control={control}
-                    errors={errors}
-                  />
-                </div>
-              </div>
-            </div>
-            {/* <div className="flex flex-row border items-center">
-              <ImageUpload
-                name="image"
-                className="w-full"
-                control={control}
-                // isUpdate={isUpdate}
-                errors={errors}
-              />
-              <div className="flex flex-col gap-3">
-                <div className="flex flex-row gap-3">
-                  <SelectDefault
-                    mainClassName="flex flex-col"
-                    className2="text-sm ml-1 font-normal"
-                    className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
-                    title="Size"
-                    name="size"
-                    options={typeSize}
-                    control={control}
-                    errors={errors}
-                  />
-                  <Select
-                    mainClassName="flex flex-col"
-                    className2="text-sm ml-1 font-normal"
-                    className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
-                    title="Category"
-                    name="categoryId"
-                    control={control}
-                    errors={errors}
-                    options={categories}
-                  />
-                </div>
-                <div className="flex flex-row gap-28">
-                  <Input
-                    label="Quantity"
-                    name="quantity"
-                    placeholder="Enter quantity product variant"
-                    className="w-[100px]"
-                    control={control}
-                    errors={errors}
-                  />
-                  <Input
-                    label="Price"
-                    name="price"
-                    placeholder="Enter price product variant"
-                    className="w-20"
-                    control={control}
-                    errors={errors}
-                  />
+            {productVariantDatas.map((item) => (
+              <div className="flex flex-row border items-center p-5" key={item.id}>
+                <ImageUpload
+                  name="image"
+                  className="w-full"
+                  control={control}
+                  // isUpdate={isUpdate}
+                  errors={errors}
+                />
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-row gap-3">
+                    <SelectDefault
+                      mainClassName="flex flex-col"
+                      className2="text-sm ml-1 font-normal"
+                      className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
+                      title="Size"
+                      name="size"
+                      options={typeSize}
+                      control={control}
+                      errors={errors}
+                    />
+                    <Select
+                      mainClassName="flex flex-col"
+                      className2="text-sm ml-1 font-normal"
+                      className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
+                      title="Category"
+                      name="categoryId"
+                      control={control}
+                      errors={errors}
+                      options={categories}
+                    />
+                  </div>
+                  <div className="flex flex-row gap-28">
+                    <Input
+                      label="Quantity"
+                      name="khsf"
+                      placeholder="Enter quantity product variant"
+                      className="w-[100px]"
+                      control={control}
+                      errors={errors}
+                    />
+                    <Input
+                      label="Price"
+                      name="price"
+                      placeholder="Enter price product variant"
+                      className="w-20"
+                      control={control}
+                      errors={errors}
+                    />
+                  </div>
                 </div>
               </div>
-            </div> */}
+            ))}
+
             <Button
               className="w-full text-6xl h-[250px] flex items-center justify-center"
               outline="outlined"

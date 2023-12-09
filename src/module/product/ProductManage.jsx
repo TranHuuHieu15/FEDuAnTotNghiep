@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
 import Button from "../../components/button/Button";
+
 import axios from "../../config/axios.js";
 // import { toast } from "react-toastify";
 import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
+
 const ProductManage = () => {
   const [productData, setProductData] = useState([]);
+  const navigate = useNavigate();
 
   //Call api
   const fetchData = async () => {
     try {
       const response = await axios.get("/product");
       setProductData(response.data);
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -26,7 +30,7 @@ const ProductManage = () => {
     <>
       <Button
         className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
-        // onClick={handleCreateTrue}
+      // onClick={handleCreateTrue}
       >
         Add new product
       </Button>
@@ -48,7 +52,7 @@ const ProductManage = () => {
           {productData.length > 0 &&
             productData.map((item) => (
               <tr key={item.id}>
-                <td className="">
+                <td className="w-9">
                   <img src={item.main_image} alt="" />
                 </td>
                 <td className="p-2 font-medium text-gray-800">{item.name}</td>
@@ -62,13 +66,13 @@ const ProductManage = () => {
                   <span className="flex items-center justify-center gap-3">
                     <a
                       className="p-3 text-2xl hover:text-blue-500 cursor-pointer"
-                      // onClick={() => handleUpdateTrue(item.id)}
+                      onClick={() => navigate(`/admin/product/edit/${item.id}`)}
                     >
                       <CiEdit />
                     </a>
                     <a
                       className="ml-2 p-2 text-2xl  hover:text-blue-500 cursor-pointer"
-                      // onClick={() => handleDeleteTrue(item.id)}
+                    // onClick={() => handleDeleteTrue(item.id)}
                     >
                       <BsTrash3 />
                     </a>

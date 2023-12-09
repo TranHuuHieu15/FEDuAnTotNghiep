@@ -1,4 +1,53 @@
+import axios from "../config/axios";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../redux/features/authSlice";
+import { Input } from "@material-tailwind/react";
+
 const DashboardPage = () => {
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+  const user = useSelector(selectCurrentUser);
+  const [statisticByYear, setStatisticDataByYear] = useState([]);
+  const [dateBefore, setDateBefore] = useState(formatDate(new Date()));
+  const futureDate = new Date();
+  futureDate.setDate(futureDate.getDate() + 30);
+  const [dateAfter, setDateAfter] = useState(formatDate(futureDate));
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `/statistic/income?dateBefore=${dateBefore}&dateAfter=${dateAfter}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+            },
+          }
+        );
+        console.log(response.data);
+        setStatisticDataByYear(response.data);
+      } catch (error) {
+        setStatisticDataByYear([]);
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [dateBefore, dateAfter, user.accessToken]);
+
+  const handleDateBeforeChange = (e) => {
+    const newDateBefore = formatDate(new Date(e.target.value));
+    setDateBefore(newDateBefore);
+  };
+
+  const handleDateAfterChange = (e) => {
+    const newDateAfter = formatDate(new Date(e.target.value));
+    setDateAfter(newDateAfter);
+  };
   return (
     <>
       <div className="flex flex-col justify-center lg:mr-16">
@@ -147,6 +196,73 @@ const DashboardPage = () => {
                 </a>
               </div>
             </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col items-end justify-center gap-3">
+            <div className="flex items-center justify-center gap-3 mr-10">
+              <Input
+                type="date"
+                name="registerDate"
+                label="Register Date"
+                className="w-full"
+                onChange={handleDateBeforeChange}
+              />
+              <Input
+                type="datetime-local"
+                name="registerDate"
+                label="Register Date"
+                className="w-full"
+                onChange={handleDateAfterChange}
+              />
+            </div>
+            <table className="w-full table-auto">
+              <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
+                <tr>
+                  <th className="px-6 py-4 font-medium text-gray-900">
+                    Customer
+                  </th>
+                  <th className="px-6 py-4 font-medium text-gray-900">Items</th>
+                  <th className="px-6 py-4 font-medium text-gray-900">Price</th>
+                  <th className="px-6 py-4 font-medium text-gray-900">
+                    Purchase Date
+                  </th>
+                  <th className="px-6 py-4 font-medium text-gray-900">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 font-medium text-gray-900"></th>
+                </tr>
+              </thead>
+              <tbody className="text-sm divide-y divide-gray-100">
+                {/* {statisticByYear.map((item, index) => ( */}
+                <tr>
+                  <td className="rc-table-cell">
+                    <div className="flex items-center justify-center gap-3">
+                      <img
+                        src=""
+                        alt="avatar"
+                        className="object-cover w-10 h-10 rounded-full "
+                        loading="lazy"
+                      />
+                      <div className="grid gap-0.5">
+                        <p className="text-sm font-medium text-gray-900 font-lexend dark:text-gray-700"></p>
+                        <p className="text-[13px] text-gray-500"></p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-3">
+                    <p className="flex items-center justify-center font-medium text-gray-700"></p>
+                  </td>
+                  <td className="p-3">
+                    <p className="flex items-center justify-center font-medium text-gray-700"></p>
+                  </td>
+                  <td className="p-3">
+                    <p className="flex items-center justify-center font-medium text-gray-700"></p>
+                  </td>
+                </tr>
+                {/* ))} */}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

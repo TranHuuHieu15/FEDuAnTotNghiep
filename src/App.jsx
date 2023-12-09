@@ -7,6 +7,7 @@ import AccountInfo from "./module/information/AccountInfo";
 import AccountAddress from "./module/information/AccountAddress";
 import AccountOrder from "./module/information/AccountOrder";
 import AccountChangePassword from "./module/information/AccountChangePassword";
+import Information from "./module/dashboard/Information";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutUsPage = lazy(() => import("./pages/AboutUsPage"));
@@ -109,6 +110,10 @@ function App() {
             <Route
               path="/admin/color"
               element={<ColorManage></ColorManage>}
+            ></Route>
+            <Route
+              path="/admin/profile"
+              element={<Information></Information>}
             ></Route>
           </Route>
           <Route element={<AccountLayout></AccountLayout>}>

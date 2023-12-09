@@ -79,7 +79,7 @@ const Navbar = () => {
         </Link>
         <div className="hidden lg:block">{navList}</div>
         {user && user.username ? (
-          <Dropdown></Dropdown>
+          <Dropdown user={user}></Dropdown>
         ) : (
           <div className="flex gap-2">
             <Link to="/login">

@@ -8,7 +8,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../redux/api/authApi";
+import {
+  useLoginMutation,
+  useOauth2GoogleMutation,
+} from "../redux/api/authApi";
 import {
   loginFailure,
   loginStart,
@@ -21,6 +24,7 @@ const SignInPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loginMutation] = useLoginMutation();
+  const [loginGoogle] = useOauth2GoogleMutation();
   const urlParams = new URLSearchParams(search);
   const tokenUrl = urlParams.get("token");
   const schema = yup.object().shape({
@@ -43,7 +47,6 @@ const SignInPage = () => {
         ...data,
         token: tokenUrl,
       }).unwrap();
-      console.log(response);
       dispatch(
         loginSuccess({
           userInfo: response?.data,
@@ -54,11 +57,52 @@ const SignInPage = () => {
         username: "",
         password: "",
       });
+      if (response.data.path === 0) {
+        navigate("/");
+      } else {
+        navigate("/admin");
+      }
+
+      toast.success("Login successfully!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error) {
+      if (error.status === 500) dispatch(loginFailure());
+      toast.error(error.data.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      console.log(error);
+    }
+  };
+  const handleLoginGoogle = async () => {
+    try {
+      dispatch(loginStart());
+      const response = await loginGoogle().unwrap();
+      dispatch(
+        loginSuccess({
+          userInfo: response,
+          userToken: response?.accessToken,
+        })
+      );
       navigate("/");
       console.log(response.data.message);
       toast.success("Login successfully!", {
-        position: "top-left",
-        autoClose: 3000,
+        position: "top-right",
+        autoClose: 2000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -66,21 +110,8 @@ const SignInPage = () => {
         progress: undefined,
         theme: "light",
       });
-    } catch (response) {
-      if (response.status === 500)
-        dispatch(loginFailure());
-      toast.error(response.data.message, {
-        position: "top-left",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      console.log(response);
-      // console.log(error.message);
+    } catch (error) {
+      console.log(error);
     }
   };
   return (
@@ -159,7 +190,10 @@ const SignInPage = () => {
                   <span className="w-16 h-px bg-gray-300"></span>
                 </div>
                 <div className="flex justify-center w-full gap-7">
-                  <Button className="flex justify-center w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900">
+                  <Button
+                    className="flex justify-center w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900"
+                    onClick={handleLoginGoogle}
+                  >
                     <FcGoogle className="w-4 h-4" />
                     <span>Google</span>
                   </Button>

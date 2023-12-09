@@ -53,7 +53,6 @@ const SignUpPage = () => {
     dispatch(registerStart());
     try {
       const response = await registerMutation(data).unwrap();
-      console.log(response.data);
       dispatch(
         registerSuccess({
           userInfo: response.data.userInfo,
@@ -62,9 +61,14 @@ const SignUpPage = () => {
       );
       reset({
         username: "",
+        fullName: "",
+        birthday: "",
         password: "",
+        email: "",
+        gender: "",
+        term: false,
       });
-      navigate("/");
+      navigate("/checkmail");
     } catch (response) {
       if (response.status === 500) {
         dispatch(registerFailure(response.data.message));
@@ -80,15 +84,6 @@ const SignUpPage = () => {
         });
       }
     }
-    reset({
-      username: "",
-      fullName: "",
-      birthday: "",
-      password: "",
-      email: "",
-      gender: "",
-      term: false,
-    });
   };
   return (
     <>

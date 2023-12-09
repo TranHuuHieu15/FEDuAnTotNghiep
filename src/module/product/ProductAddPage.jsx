@@ -219,6 +219,7 @@ const ProductAddPage = () => {
     const handleCloseDialogHashtag = () => {
         setDialogHashtag(false);
     };
+
     const handleDeleteHashtag = (useHashtag) => {
         setSelectHashtag((prevSelectHashtag) =>
             prevSelectHashtag.filter((item) => item.id !== useHashtag.id)
@@ -228,17 +229,14 @@ const ProductAddPage = () => {
             prevSelectedHashtags.filter((item) => item.id !== useHashtag.id)
         );
     };
-
-
     useEffect(() => {
     }, [selectHashtag]);
-
-
     return (
         <>
-            <div className="flex flex-row gap-3 items-center">
+
+            <div className="flex flex-row gap-3">
                 {/* form đầu tiên */}
-                <div className="border flex-none w-[500px]">
+                <div className="flex-none w-[500px]">
                     <form onSubmit={handleSubmitFixedForm((data) => handleFormSubmit(data, 0))}>
                         <div className="flex flex-col gap-3 items-center">
                             <ImageUpload
@@ -330,9 +328,10 @@ const ProductAddPage = () => {
                             </div>
                         </div>
                     </form>
+
                 </div>
                 {/* form thứ 2 gồm các form nhỏ */}
-                <div className="flex-1 mr-3">
+                <div className="flex-1 p-1 max-h-[600px] overflow-y-auto">
                     <div className="flex flex-col gap-3">
                         {Array.from({ length: divCount }).map((_, index) => (
                             <div className="flex flex-row border items-center p-5" key={index}>
@@ -406,17 +405,18 @@ const ProductAddPage = () => {
                         </Button>
                     </div>
                 </div>
+
             </div>
-            <div className="flex items-end justify-end p-10">
-                <Button
-                    className="text-sm flex items-end justify-end"
-                    outline="outlined"
-                    onClick={onSubmitAllForms}
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? "Submitting..." : "Submit"}
-                </Button>
-            </div>
+            {/* <div className="flex items-end justify-end"> */}
+            <Button
+                className="text-sm flex items-end justify-end"
+                outline="outlined"
+                onClick={onSubmitAllForms}
+                disabled={isSubmitting}
+            >
+                {isSubmitting ? "Submitting..." : "Submit"}
+            </Button>
+            {/* </div> */}
             <DialogHashtag
                 show={openDialogHashtag}
                 handleCloseDialogHashtag={handleCloseDialogHashtag}

@@ -1,6 +1,5 @@
 import ImageUpload from "../../components/imageUpload/ImageUpload";
 import * as yup from "yup";
-import { useParams } from "react-router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { set, useForm } from "react-hook-form";
 import SelectDefault from "../../components/select/SelectDefault";
@@ -17,7 +16,12 @@ const ProductAddPage = () => {
     const [divCount, setDivCount] = useState(1);
     const [selectHashtag, setSelectHashtag] = useState([]);
     const [openDialogHashtag, setDialogHashtag] = useState(false);
-    const [hashtagData, setHashtagData] = useState([]);
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [dynamicFormData, setDynamicFormData] = useState([]);
+    const [selectedHashtags, setSelectedHashtags] = useState([]);
+
+
     const typeGender = [
         {
             id: 1,
@@ -121,6 +125,7 @@ const ProductAddPage = () => {
         fetchCategories();
     }, []);
 
+
     useEffect
     const schema = yup
         .object({
@@ -140,11 +145,20 @@ const ProductAddPage = () => {
             name: yup.string().required("Please enter payment name"),
         })
         .required();
+    // State cho biểu mẫu cố định
     const {
-        handleSubmit,
-        formState: { errors, isValid, isSubmitting },
-        control,
-        reset,
+        handleSubmit: handleSubmitFixedForm,
+        formState: { errors: errorsFixedForm },
+        control: controlFixedForm,
+    } = useForm({
+        resolver: yupResolver(schema),
+    });
+
+    // State cho biểu mẫu động
+    const {
+        handleSubmit: handleSubmitDynamicForm,
+        formState: { errors: errorsDynamicForm },
+        control: controlDynamicForm,
     } = useForm({
         resolver: yupResolver(schema),
     });
@@ -152,6 +166,39 @@ const ProductAddPage = () => {
     // const handleOpenDialogHashtag = () => {
     //     setDialogHashtag(true);
     // };
+
+
+    const handleFormSubmit = (data, index) => {
+        setDynamicFormData((prevData) => {
+            const newData = [...prevData];
+            newData[index] = data;
+            return newData;
+        });
+    };
+
+    const onSubmitAllForms = async () => {
+        setIsSubmitting(true);
+
+        try {
+            // Lấy dữ liệu từ biểu mẫu cố định
+            const fixedFormData = await handleSubmitFixedForm();
+
+            // Gửi dữ liệu từ cả hai loại biểu mẫu lên API
+            const response = await axios.post("/api/saveForms", {
+                fixedFormData,
+                dynamicFormData,
+            });
+
+            // Xử lý thành công, ví dụ: reset form
+            // resetFixedForm();
+            // resetDynamicForm();
+            setDynamicFormData([]);
+            console.log("Forms saved successfully:", response.data);
+        } catch (error) {
+            // Xử lý lỗi
+            console.error("Error saving forms:", error);
+        }
+    };
 
     const handleAddDiv = () => {
         setDivCount((prevCount) => prevCount + 1);
@@ -161,44 +208,30 @@ const ProductAddPage = () => {
         setDivCount((prevCount) => prevCount - 1);
     };
 
-
-    // const handleUseHashtag = (useHashtag) => {
-    //     setSelectHashtag([...selectHashtag, useHashtag]);
-    // };
-    // // console.log("lo", selectHashtag);
-    // const handleCloseDialogHashtag = () => {
-    //     setDialogHashtag(false);
-    // };
-
-    // const handleDeleteHashtag = (useHashtag) => {
-    //     setSelectHashtag((prevSelectHashtag) =>
-    //         prevSelectHashtag.filter((item) => item.id !== useHashtag.id)
-    //     );
-    // };
-
     const handleOpenDialogHashtag = () => {
         setDialogHashtag(true);
     };
 
     const handleUseHashtag = (useHashtag) => {
         setSelectHashtag([...selectHashtag, useHashtag]);
+        setSelectedHashtags([...selectedHashtags, useHashtag]);
     };
-    // console.log("lo", selectHashtag);
     const handleCloseDialogHashtag = () => {
         setDialogHashtag(false);
     };
-
     const handleDeleteHashtag = (useHashtag) => {
         setSelectHashtag((prevSelectHashtag) =>
             prevSelectHashtag.filter((item) => item.id !== useHashtag.id)
         );
+
+        setSelectedHashtags((prevSelectedHashtags) =>
+            prevSelectedHashtags.filter((item) => item.id !== useHashtag.id)
+        );
     };
 
-    useEffect(() => {
-        // console.log("Select Hashtags:", selectHashtag);
-    }, [selectHashtag]);
-    // console.log(typeof productVariantDatas[0].price);
 
+    useEffect(() => {
+    }, [selectHashtag]);
 
 
     return (
@@ -206,22 +239,22 @@ const ProductAddPage = () => {
             <div className="flex flex-row gap-3 items-center">
                 {/* form đầu tiên */}
                 <div className="border flex-none w-[500px]">
-                    <form>
+                    <form onSubmit={handleSubmitFixedForm((data) => handleFormSubmit(data, 0))}>
                         <div className="flex flex-col gap-3 items-center">
                             <ImageUpload
                                 name="image"
                                 className="w-full"
-                                control={control}
+                                control={controlFixedForm}
                                 // isUpdate={isUpdate}
-                                errors={errors}
+                                errors={errorsFixedForm}
                             />
                             <Input
                                 label="Name"
                                 name="name"
                                 placeholder="Enter name product"
                                 className="w-[58%]"
-                                control={control}
-                                errors={errors}
+                                control={controlFixedForm}
+                                errors={errorsFixedForm}
                             />
                             <div className="flex flex-row items-center justify-center gap-3">
                                 <SelectDefault
@@ -231,8 +264,8 @@ const ProductAddPage = () => {
                                     title="Season"
                                     name="season"
                                     options={typeSeason}
-                                    control={control}
-                                    errors={errors}
+                                    control={controlFixedForm}
+                                    errors={errorsFixedForm}
                                 />
                                 <SelectDefault
                                     mainClassName="flex flex-col"
@@ -241,8 +274,8 @@ const ProductAddPage = () => {
                                     title="Gender"
                                     name="gender"
                                     options={typeGender}
-                                    control={control}
-                                    errors={errors}
+                                    control={controlFixedForm}
+                                    errors={errorsFixedForm}
                                 />
                             </div>
                             <div className="flex flex-row items-center justify-center gap-3">
@@ -252,8 +285,8 @@ const ProductAddPage = () => {
                                     className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
                                     title="Category"
                                     name="categoryId"
-                                    control={control}
-                                    errors={errors}
+                                    control={controlFixedForm}
+                                    errors={errorsFixedForm}
                                     options={categories}
                                 />
                                 <Select
@@ -262,8 +295,8 @@ const ProductAddPage = () => {
                                     className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
                                     title="Brands"
                                     name="brandId"
-                                    control={control}
-                                    errors={errors}
+                                    control={controlFixedForm}
+                                    errors={errorsFixedForm}
                                     options={brands}
                                 />
                             </div>
@@ -292,7 +325,7 @@ const ProductAddPage = () => {
                                 <Textarea
                                     label="Description"
                                     name="description"
-                                    control={control}
+                                    control={controlFixedForm}
                                 />
                             </div>
                         </div>
@@ -303,64 +336,65 @@ const ProductAddPage = () => {
                     <div className="flex flex-col gap-3">
                         {Array.from({ length: divCount }).map((_, index) => (
                             <div className="flex flex-row border items-center p-5" key={index}>
-                                <ImageUpload
-                                    name="image"
-                                    className="w-full"
-                                    control={control}
-                                    // isUpdate={isUpdate}
-                                    errors={errors}
-                                />
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex flex-row gap-3">
-                                        <SelectDefault
-                                            mainClassName="flex flex-col"
-                                            className2="text-sm ml-1 font-normal"
-                                            className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
-                                            title="Size"
-                                            name="size"
-                                            options={typeSize}
-                                            control={control}
-                                            errors={errors}
-                                        />
-                                        <Select
-                                            mainClassName="flex flex-col"
-                                            className2="text-sm ml-1 font-normal"
-                                            className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
-                                            title="Category"
-                                            name="categoryId"
-                                            control={control}
-                                            errors={errors}
-                                            options={categories}
-                                        />
+                                <form className="flex flex-row items-center p-5" onSubmit={handleSubmitDynamicForm((data) => handleFormSubmit(data, index))}>
+                                    <ImageUpload
+                                        name={`image-${index}`} // Đặt tên khác nhau cho từng biểu mẫu động
+                                        className="w-full"
+                                        control={controlDynamicForm}
+                                        // isUpdate={isUpdate}
+                                        errors={errorsDynamicForm}
+                                    />
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex flex-row gap-3">
+                                            <SelectDefault
+                                                mainClassName="flex flex-col"
+                                                className2="text-sm ml-1 font-normal"
+                                                className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
+                                                title="Size"
+                                                name={`size-${index}`} // Đặt tên khác nhau cho từng biểu mẫu động
+                                                options={typeSize}
+                                                control={controlDynamicForm}
+                                                errors={errorsDynamicForm}
+                                            />
+                                            <Select
+                                                mainClassName="flex flex-col"
+                                                className2="text-sm ml-1 font-normal"
+                                                className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
+                                                title="Color"
+                                                name={`categoryId-${index}`} // Đặt tên khác nhau cho từng biểu mẫu động
+                                                control={controlDynamicForm}
+                                                errors={errorsDynamicForm}
+                                                options={colors}
+                                            />
+                                        </div>
+                                        <div className="flex flex-row gap-28">
+                                            <Input
+                                                label="Quantity"
+                                                name={`quantity-${index}`} // Đặt tên khác nhau cho từng biểu mẫu động
+                                                placeholder="Enter quantity product variant"
+                                                className="w-[100px]"
+                                                control={controlDynamicForm}
+                                                errors={errorsDynamicForm}
+                                            />
+                                            <Input
+                                                label="Price"
+                                                name={`price-${index}`} // Đặt tên khác nhau cho từng biểu mẫu động
+                                                placeholder="Enter price product variant"
+                                                className="w-20"
+                                                control={controlDynamicForm}
+                                                errors={errorsDynamicForm}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="flex flex-row gap-28">
-                                        <Input
-                                            label="Quantity"
-                                            name="khsf"
-                                            placeholder="Enter quantity product variant"
-                                            className="w-[100px]"
-                                            control={control}
-                                            errors={errors}
-                                        />
-                                        <Input
-                                            label="Price"
-                                            name="price"
-                                            placeholder="Enter price product variant"
-                                            className="w-20"
-                                            control={control}
-                                            errors={errors}
-                                        />
+                                    <div className="p-5 gap-3">
+                                        <div className="p-1">
+                                            <Button className="w-[100px]" onClick={() => handleRemoveDiv(index)}>Remove</Button>
+                                        </div>
+                                        <div className="p-1">
+                                            <Button className="w-[100px]" onClick={() => handleRemoveDiv(index)}>Save</Button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="p-5 gap-3">
-                                    <div className="p-1">
-                                        <Button className="w-[100px]" onClick={() => handleRemoveDiv(index)}>Remove</Button>
-                                    </div>
-                                    <div className="p-1">
-                                        <Button className="w-[100px]" onClick={() => handleRemoveDiv(index)}>Save</Button>
-                                    </div>
-                                </div>
-
+                                </form>
                             </div>
                         ))}
 
@@ -373,13 +407,24 @@ const ProductAddPage = () => {
                     </div>
                 </div>
             </div>
+            <div className="flex items-end justify-end p-10">
+                <Button
+                    className="text-sm flex items-end justify-end"
+                    outline="outlined"
+                    onClick={onSubmitAllForms}
+                    disabled={isSubmitting}
+                >
+                    {isSubmitting ? "Submitting..." : "Submit"}
+                </Button>
+            </div>
             <DialogHashtag
                 show={openDialogHashtag}
                 handleCloseDialogHashtag={handleCloseDialogHashtag}
                 onUseDialogHashtag={handleOpenDialogHashtag}
                 onSelectHashtag={handleUseHashtag}
-                selectedHashtag={hashtagData}
+                selectedHashtag={selectHashtag}
             />
+
         </>
     );
 };

@@ -11,7 +11,6 @@ const HomeCard = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/statistic/top-product?top=${top}`);
-        console.log(response);
         setTopProduct(response.data);
       } catch (error) {
         console.log(error);

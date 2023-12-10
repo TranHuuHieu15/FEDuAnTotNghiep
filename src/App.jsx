@@ -34,6 +34,7 @@ const EvalueateManage = lazy(() => import("./module/evaluate/EvalueateManage"));
 const ColorManage = lazy(() => import("./module/color/ColorManage"));
 const VoucherPage = lazy(() => import("./pages/VoucherPage"));
 const OrderManage = lazy(() => import("./module/order/OrderManage"));
+const AccountManage = lazy(() => import("./module/account/AccountManage"));
 
 function App() {
   return (
@@ -70,6 +71,10 @@ function App() {
             <Route
               path="/admin"
               element={<DashboardPage></DashboardPage>}
+            ></Route>
+            <Route
+              path="/admin/account"
+              element={<AccountManage></AccountManage>}
             ></Route>
             <Route
               path="/admin/category"

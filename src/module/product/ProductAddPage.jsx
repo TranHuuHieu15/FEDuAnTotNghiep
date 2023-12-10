@@ -1,26 +1,38 @@
 import ImageUpload from "../../components/imageUpload/ImageUpload";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import SelectDefault from "../../components/select/SelectDefault";
-import { useEffect, useState } from "react";
-import axios from "../../config/axios.js";
 import Select from "../../components/select/Select.jsx";
 import Textarea from "../../components/textarea/Textarea.jsx";
 import Input from "../../components/input/Input.jsx";
 import DialogHashtag from "../../components/dialog/DialogHashtag.jsx";
 import Button from "../../components/button/Button";
 import { IoAdd } from "react-icons/io5";
+import axios from "../../config/axios.js";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 
 const ProductAddPage = () => {
-    const [divCount, setDivCount] = useState(1);
+    const [divCount, setDivCount] = useState(0);
     const [selectHashtag, setSelectHashtag] = useState([]);
     const [openDialogHashtag, setDialogHashtag] = useState(false);
-
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [dynamicFormData, setDynamicFormData] = useState([]);
     const [selectedHashtags, setSelectedHashtags] = useState([]);
-
+    const [hashtagChoose, setHashTagChoose] = useState({});
+    const [colors, setColors] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [brands, setBrands] = useState([]);
+    const [dynamicFormData, setDynamicFormData] = useState([]);
+    const [fileDatas, setFileDatas] = useState([]);
+    const user = useSelector(selectCurrentUser);
+    const [productDtoRequest, setProductDtoRequest] = useState({
+        productDto: {}, // Assuming fixed form data structure
+        hashtagOfProductsDto: [],
+        createProductVariant: [],
+        deleteProductVariant: [],
+        updateProductVariant: [],
+    });
 
     const typeGender = [
         {
@@ -79,13 +91,12 @@ const ProductAddPage = () => {
             value: "XXL",
         },
     ];
-    // * Lấy dữ liệu từ api của category
-    const [categories, setCategories] = useState([]);
+
     useEffect(() => {
-        // Gọi API để lấy danh sách category
         const fetchCategories = async () => {
             try {
                 const response = await axios.get("/category");
+
                 setCategories(response.data);
             } catch (error) {
                 console.error("Error fetching categories:", error);
@@ -95,25 +106,22 @@ const ProductAddPage = () => {
         fetchCategories();
     }, []);
 
-    const [brands, setBrands] = useState([]);
     useEffect(() => {
-        // Gọi API để lấy danh sách category
-        const fetchCategories = async () => {
+        const fetchBrands = async () => {
             try {
                 const response = await axios.get("/brand");
+                // console.log(response.data);
                 setBrands(response.data);
             } catch (error) {
                 console.error("Error fetching brands:", error);
             }
         };
 
-        fetchCategories();
+        fetchBrands();
     }, []);
 
-    const [colors, setColors] = useState([]);
     useEffect(() => {
-        // Gọi API để lấy danh sách category
-        const fetchCategories = async () => {
+        const fetchColors = async () => {
             try {
                 const response = await axios.get("/color");
                 setColors(response.data);
@@ -122,89 +130,158 @@ const ProductAddPage = () => {
             }
         };
 
-        fetchCategories();
+        fetchColors();
     }, []);
 
+    const createFormSchema = () => {
+        return yup.object({
+            image: yup
+                .mixed()
+                .test("file", "Please choose a valid image file", (value) => {
+                    if (value instanceof File) {
+                        const acceptedExtensions = [".jpg", ".jpeg", ".png"];
+                        const fileExtension = value.name.split(".").pop().toLowerCase();
+                        return acceptedExtensions.includes(`.${fileExtension}`);
+                    } else if (typeof value === "string") {
+                        const imageExtensions = [".jpg", ".jpeg", ".png"];
+                        return imageExtensions.some((extension) =>
+                            value.toLowerCase().endsWith(extension)
+                        );
+                    }
+                    return false;
+                }),
+            name: yup.string().required("Please enter product name"),
+        });
+    };
 
-    useEffect
-    const schema = yup
-        .object({
-            image: yup.mixed().test("file", "Please choose a image file", (value) => {
-                if (value instanceof File) {
-                    const acceptedExtensions = [".jpg", ".jpeg", ".png"];
-                    const fileExtension = value.name.split(".").pop().toLowerCase();
-                    return acceptedExtensions.includes(`.${fileExtension}`);
-                } else if (typeof value === "string") {
-                    const imageExtensions = [".jpg", ".jpeg", ".png"];
-                    return imageExtensions.some((extension) =>
-                        value.toLowerCase().endsWith(extension)
-                    );
-                }
-                return false; // Trường hợp khác không hợp lệ
-            }),
-            name: yup.string().required("Please enter payment name"),
-        })
-        .required();
-    // State cho biểu mẫu cố định
+    const schema = createFormSchema();
+
     const {
         handleSubmit: handleSubmitFixedForm,
         formState: { errors: errorsFixedForm },
         control: controlFixedForm,
+        setValue,
     } = useForm({
         resolver: yupResolver(schema),
+        defaultValues: {
+            categoryId: categories.length > 0 ? categories[0].id : "", // Chọn một giá trị mặc định từ mảng categories nếu có
+            brandId: brands.length > 0 ? brands[0].name : "", // Chọn một giá trị mặc định từ mảng brands nếu có
+            gender: typeGender[0].name,
+            season: typeSeason[0].name
+        },
     });
+    // Bạn cũng có thể sử dụng useEffect để thiết lập giá trị mặc định dựa trên API call hoặc dữ liệu động khác
+    useEffect(() => {
+        if (categories.length > 0) {
+            setValue("categoryId", categories[0].id);
+        }
+        if (brands.length > 0) {
+            setValue("brandId", brands[0].id);
+        }
+        if (typeGender.length > 0) {
+            setValue("gender", typeGender[0].name);
+        }
+        if (typeSeason.length > 0) {
+            setValue("season", typeSeason[0].name);
+        }
+    }, [categories, brands, typeGender, typeSeason, setValue]);
 
-    // State cho biểu mẫu động
+    // Thêm hàm handleAddImage vào component
+    const handleAddImage = (image) => {
+        setFileDatas((prevFileDatas) => [...prevFileDatas, image]);
+    };
+
+    const handleFormSubmit = async (data) => {
+        try {
+            const { name, season, gender, categoryId, brandId, description } = data;
+
+            const productDto = {
+                name,
+                season,
+                gender,
+                categoryId,
+                brandId,
+                description,
+            };
+
+            setProductDtoRequest((prevData) => ({
+                ...prevData,
+                productDto: productDto,
+            }));
+
+            console.log(productDtoRequest);
+            console.log("List Files: ", fileDatas);
+            const formData = new FormData();
+
+            formData.append('productDtoRequest', JSON.stringify(productDtoRequest));
+
+            // Thêm toàn bộ fileDatas vào FormData với tên 'files'
+            fileDatas.forEach((fileData) => {
+                formData.append('files', fileData); // Thêm từng file vào FormData
+            });
+
+            console.log(formData.getAll('files'));
+
+            const response = await axios.post('/product/create', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${user.accessToken}`,
+                },
+            });
+
+            console.log("API Response:", response.data);
+        } catch (error) {
+            console.error("Error posting data to API:", error);
+            // Add additional error handling or user feedback here
+        }
+    };
+
     const {
-        handleSubmit: handleSubmitDynamicForm,
+
         formState: { errors: errorsDynamicForm },
         control: controlDynamicForm,
     } = useForm({
         resolver: yupResolver(schema),
     });
 
-    // const handleOpenDialogHashtag = () => {
-    //     setDialogHashtag(true);
-    // };
 
-
-    const handleFormSubmit = (data, index) => {
+    const handleDynamicFormSubmit = (data, index) => {
+        // Lưu trữ dữ liệu của productvariant vào mảng dynamicFormData
         setDynamicFormData((prevData) => {
             const newData = [...prevData];
-            newData[index] = data;
+            // Tạo một bản sao của dữ liệu biểu mẫu động không bao gồm trường ảnh
+            const productVariantData = { ...data };
+            delete productVariantData.image;
+            newData[index] = productVariantData;
             return newData;
         });
-    };
 
-    const onSubmitAllForms = async () => {
-        setIsSubmitting(true);
+        // Update createProductVariant in productDtoRequest state
+        setProductDtoRequest((prevProductDtoRequest) => {
+            const newCreateProductVariant = [...prevProductDtoRequest.createProductVariant];
 
-        try {
-            // Lấy dữ liệu từ biểu mẫu cố định
-            const fixedFormData = await handleSubmitFixedForm();
+            // Assuming productVariantData is an object with the structure you need
+            const productVariantData = {
+                ...data,
+            };
 
-            // Gửi dữ liệu từ cả hai loại biểu mẫu lên API
-            const response = await axios.post("/api/saveForms", {
-                fixedFormData,
-                dynamicFormData,
-            });
+            newCreateProductVariant[index] = productVariantData;
 
-            // Xử lý thành công, ví dụ: reset form
-            // resetFixedForm();
-            // resetDynamicForm();
-            setDynamicFormData([]);
-            console.log("Forms saved successfully:", response.data);
-        } catch (error) {
-            // Xử lý lỗi
-            console.error("Error saving forms:", error);
-        }
+            return {
+                ...prevProductDtoRequest,
+                createProductVariant: newCreateProductVariant,
+            };
+        });
+
+        // Thực hiện các xử lý khác nếu cần
+        console.log(`Dynamic Form ${index} Data:`, data);
     };
 
     const handleAddDiv = () => {
         setDivCount((prevCount) => prevCount + 1);
     };
 
-    const handleRemoveDiv = (index) => {
+    const handleRemoveDiv = () => {
         setDivCount((prevCount) => prevCount - 1);
     };
 
@@ -212,39 +289,62 @@ const ProductAddPage = () => {
         setDialogHashtag(true);
     };
 
-    const handleUseHashtag = (useHashtag) => {
-        setSelectHashtag([...selectHashtag, useHashtag]);
-        setSelectedHashtags([...selectedHashtags, useHashtag]);
-    };
     const handleCloseDialogHashtag = () => {
         setDialogHashtag(false);
     };
 
+    const handleUseHashtag = (useHashtag) => {
+        console.log(hashtagChoose);
+        // Thêm hashtag vào trạng thái của component
+        setSelectHashtag([...selectHashtag, useHashtag]);
+        setSelectedHashtags([...selectedHashtags, useHashtag]);
+
+        // Create a new object with the hashtagId field
+        const newHashtagObject = {
+            hashtagId: useHashtag.id,
+        };
+
+        // Cập nhật hashtagOfProductsDto trong productDtoRequest
+        setProductDtoRequest((prevProductDtoRequest) => ({
+            ...prevProductDtoRequest,
+            hashtagOfProductsDto: [
+                ...prevProductDtoRequest.hashtagOfProductsDto,
+                newHashtagObject,
+            ],
+        }));
+    };
+
     const handleDeleteHashtag = (useHashtag) => {
+        // Loại bỏ hashtag khỏi trạng thái của component
         setSelectHashtag((prevSelectHashtag) =>
             prevSelectHashtag.filter((item) => item.id !== useHashtag.id)
         );
-
         setSelectedHashtags((prevSelectedHashtags) =>
             prevSelectedHashtags.filter((item) => item.id !== useHashtag.id)
         );
+
+        // Cập nhật hashtagOfProductsDto trong productDtoRequest
+        setProductDtoRequest((prevProductDtoRequest) => ({
+            ...prevProductDtoRequest,
+            hashtagOfProductsDto: prevProductDtoRequest.hashtagOfProductsDto.filter(
+                (item) => item.id !== useHashtag.id
+            ),
+        }));
     };
-    useEffect(() => {
-    }, [selectHashtag]);
+
+    // console.log(productDtoRequest);
     return (
         <>
-
             <div className="flex flex-row gap-3">
-                {/* form đầu tiên */}
                 <div className="flex-none w-[500px]">
-                    <form onSubmit={handleSubmitFixedForm((data) => handleFormSubmit(data, 0))}>
+                    <form onSubmit={handleSubmitFixedForm((data) => handleFormSubmit(data))}>
                         <div className="flex flex-col gap-3 items-center">
                             <ImageUpload
                                 name="image"
                                 className="w-full"
                                 control={controlFixedForm}
-                                // isUpdate={isUpdate}
                                 errors={errorsFixedForm}
+                                onAddImage={handleAddImage}
                             />
                             <Input
                                 label="Name"
@@ -326,23 +426,44 @@ const ProductAddPage = () => {
                                     control={controlFixedForm}
                                 />
                             </div>
+                            <Button type="submit">Submit Fixed Form</Button>
                         </div>
                     </form>
-
                 </div>
-                {/* form thứ 2 gồm các form nhỏ */}
-                <div className="flex-1 p-1 max-h-[600px] overflow-y-auto">
+
+                <div className="flex-1 max-h-[600px] overflow-y-auto">
                     <div className="flex flex-col gap-3">
                         {Array.from({ length: divCount }).map((_, index) => (
                             <div className="flex flex-row border items-center p-5" key={index}>
-                                <form className="flex flex-row items-center p-5" onSubmit={handleSubmitDynamicForm((data) => handleFormSubmit(data, index))}>
+                                <form
+                                    className="flex flex-row items-center p-5"
+                                    onSubmit={(e) => {
+                                        e.preventDefault(); // Ngăn chặn việc gửi mẫu theo cách mặc định
+                                        const formData = new FormData(e.target);
+
+                                        // Trích xuất dữ liệu từ biểu mẫu với tên trường chứa chỉ số
+                                        const data = {};
+                                        formData.forEach((value, key) => {
+                                            // Kiểm tra xem tên trường có chứa chỉ số hiện tại không
+                                            if (key.includes(`-${index}`)) {
+                                                // Trích xuất tên trường gốc mà không có chỉ số
+                                                const originalKey = key.replace(`-${index}`, '');
+                                                data[originalKey] = value;
+                                            }
+                                        });
+
+                                        // Xử lý việc gửi biểu mẫu động với dữ liệu trích xuất và chỉ số
+                                        handleDynamicFormSubmit(data, index);
+                                    }}
+                                >
                                     <ImageUpload
-                                        name={`image-${index}`} // Đặt tên khác nhau cho từng biểu mẫu động
+                                        name={`image-${index}`}
                                         className="w-full"
                                         control={controlDynamicForm}
-                                        // isUpdate={isUpdate}
                                         errors={errorsDynamicForm}
+                                        onAddImage={handleAddImage}
                                     />
+
                                     <div className="flex flex-col gap-3">
                                         <div className="flex flex-row gap-3">
                                             <SelectDefault
@@ -360,7 +481,7 @@ const ProductAddPage = () => {
                                                 className2="text-sm ml-1 font-normal"
                                                 className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
                                                 title="Color"
-                                                name={`categoryId-${index}`} // Đặt tên khác nhau cho từng biểu mẫu động
+                                                name={`colorId-${index}`} // Đặt tên khác nhau cho từng biểu mẫu động
                                                 control={controlDynamicForm}
                                                 errors={errorsDynamicForm}
                                                 options={colors}
@@ -390,33 +511,37 @@ const ProductAddPage = () => {
                                             <Button className="w-[100px]" onClick={() => handleRemoveDiv(index)}>Remove</Button>
                                         </div>
                                         <div className="p-1">
-                                            <Button className="w-[100px]" onClick={() => handleRemoveDiv(index)}>Save</Button>
+                                            <Button className="w-[100px]" type="Submit">
+                                                Save
+                                            </Button>
                                         </div>
                                     </div>
+                                    {/* <div className="p-2 gap-2">
+                                        <div className="p-1">
+                                            <Button className="w-[100px]" onClick={() => handleRemoveDiv(index)}>Remove</Button>
+                                        </div>
+                                    </div>
+                                    <div className="p-2 gap-2">
+                                        <div className="p-1">
+                                            <Button className="w-[100px]" type="Submit">
+                                                Save
+                                            </Button>
+                                        </div>
+                                    </div> */}
                                 </form>
                             </div>
                         ))}
-
                         <Button
                             className="w-full text-6xl h-[250px] flex items-center justify-center"
-                            outline="outlined" onClick={handleAddDiv}
+                            outline="outlined"
+                            onClick={handleAddDiv}
                         >
                             <IoAdd />
                         </Button>
                     </div>
                 </div>
-
             </div>
-            {/* <div className="flex items-end justify-end"> */}
-            <Button
-                className="text-sm flex items-end justify-end"
-                outline="outlined"
-                onClick={onSubmitAllForms}
-                disabled={isSubmitting}
-            >
-                {isSubmitting ? "Submitting..." : "Submit"}
-            </Button>
-            {/* </div> */}
+
             <DialogHashtag
                 show={openDialogHashtag}
                 handleCloseDialogHashtag={handleCloseDialogHashtag}
@@ -424,7 +549,6 @@ const ProductAddPage = () => {
                 onSelectHashtag={handleUseHashtag}
                 selectedHashtag={selectHashtag}
             />
-
         </>
     );
 };

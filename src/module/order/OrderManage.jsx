@@ -95,7 +95,8 @@ const OrderManage = () => {
   };
   const statusColorMap = {
     PENDING: "orange",
-    PAID: "green",
+    WAIT_TO_PAY: "green",
+    PROCESSING: "blue",
     DELIVERING: "blue",
     SUCCESSFUL: "green",
     CANCELLED: "red",
@@ -112,7 +113,8 @@ const OrderManage = () => {
               onChange={handleChangeSelect}
             >
               <Option value="PENDING">PENDING</Option>
-              <Option value="PAID">PAID</Option>
+              <Option value="WAIT_TO_PAY">TO PAY</Option>
+              <Option value="PROCESSING">PROCESSING</Option>
               <Option value="DELIVERING">DELIVERING</Option>
               <Option value="SUCCESSFUL">SUCCESSFUL</Option>
               <Option value="CANCELLED">CANCELLED</Option>

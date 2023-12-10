@@ -12,7 +12,7 @@ const AccountOrder = () => {
 
   const tabs = [
     { label: "Pending", value: "PENDING" },
-    { label: "Paid", value: "PAID" },
+    { label: "To Pay", value: "WAIT_TO_PAY" },
     { label: "Delivering", value: "DELIVERING" },
     { label: "Completed", value: "SUCCESSFUL" },
     { label: "Cancelled", value: "CANCELLED" },

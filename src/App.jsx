@@ -35,6 +35,7 @@ const ColorManage = lazy(() => import("./module/color/ColorManage"));
 const VoucherPage = lazy(() => import("./pages/VoucherPage"));
 const OrderManage = lazy(() => import("./module/order/OrderManage"));
 const AccountManage = lazy(() => import("./module/account/AccountManage"));
+const HashtagManage = lazy(() => import("./module/hashtag/HashtagManage"));
 
 function App() {
   return (
@@ -119,6 +120,10 @@ function App() {
             <Route
               path="/admin/profile"
               element={<Information></Information>}
+            ></Route>
+            <Route
+              path="/admin/hashtag"
+              element={<HashtagManage></HashtagManage>}
             ></Route>
           </Route>
           <Route element={<AccountLayout></AccountLayout>}>

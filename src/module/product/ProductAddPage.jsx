@@ -12,14 +12,14 @@ import { IoAdd } from "react-icons/io5";
 import axios from "../../config/axios.js";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 
 const ProductAddPage = () => {
-    const [divCount, setDivCount] = useState(0);
+    const [divCount, setDivCount] = useState(1);
     const [selectHashtag, setSelectHashtag] = useState([]);
     const [openDialogHashtag, setDialogHashtag] = useState(false);
     const [selectedHashtags, setSelectedHashtags] = useState([]);
-    const [hashtagChoose, setHashTagChoose] = useState({});
     const [colors, setColors] = useState([]);
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
@@ -96,13 +96,11 @@ const ProductAddPage = () => {
         const fetchCategories = async () => {
             try {
                 const response = await axios.get("/category");
-
                 setCategories(response.data);
             } catch (error) {
                 console.error("Error fetching categories:", error);
             }
         };
-
         fetchCategories();
     }, []);
 
@@ -116,7 +114,6 @@ const ProductAddPage = () => {
                 console.error("Error fetching brands:", error);
             }
         };
-
         fetchBrands();
     }, []);
 
@@ -129,7 +126,6 @@ const ProductAddPage = () => {
                 console.error("Error fetching colors:", error);
             }
         };
-
         fetchColors();
     }, []);
 
@@ -151,130 +147,157 @@ const ProductAddPage = () => {
                     return false;
                 }),
             name: yup.string().required("Please enter product name"),
+            season: yup.string().required("Please enter product season"),
+            gender: yup.string().required("Please enter product gender"),
+            categoryId: yup.string().required("Please enter product category"),
+            brandId: yup.string().required("Please enter product brand"),
+            description: yup.string().required("Please enter product description"),
         });
     };
-
     const schema = createFormSchema();
 
     const {
         handleSubmit: handleSubmitFixedForm,
         formState: { errors: errorsFixedForm },
         control: controlFixedForm,
-        setValue,
+        // setValue,
     } = useForm({
         resolver: yupResolver(schema),
-        defaultValues: {
-            categoryId: categories.length > 0 ? categories[0].id : "", // Chọn một giá trị mặc định từ mảng categories nếu có
-            brandId: brands.length > 0 ? brands[0].name : "", // Chọn một giá trị mặc định từ mảng brands nếu có
-            gender: typeGender[0].name,
-            season: typeSeason[0].name
-        },
     });
-    // Bạn cũng có thể sử dụng useEffect để thiết lập giá trị mặc định dựa trên API call hoặc dữ liệu động khác
-    useEffect(() => {
-        if (categories.length > 0) {
-            setValue("categoryId", categories[0].id);
-        }
-        if (brands.length > 0) {
-            setValue("brandId", brands[0].id);
-        }
-        if (typeGender.length > 0) {
-            setValue("gender", typeGender[0].name);
-        }
-        if (typeSeason.length > 0) {
-            setValue("season", typeSeason[0].name);
-        }
-    }, [categories, brands, typeGender, typeSeason, setValue]);
 
-    // Thêm hàm handleAddImage vào component
-    const handleAddImage = (image) => {
-        setFileDatas((prevFileDatas) => [...prevFileDatas, image]);
-    };
 
-    const handleFormSubmit = async (data) => {
-        try {
-            const { name, season, gender, categoryId, brandId, description } = data;
+    // const createFormDynamicSchema = (divCount) => {
+    //     const schemas = Array.from({ length: divCount }).map((_, index) => {
+    //         return yup.object({
+    //             image: yup
+    //                 .mixed()
+    //                 .test("file", "Please choose a valid image file", (value) => {
+    //                     if (value instanceof File) {
+    //                         const acceptedExtensions = [".jpg", ".jpeg", ".png"];
+    //                         const fileExtension = value.name.split(".").pop().toLowerCase();
+    //                         return acceptedExtensions.includes(`.${fileExtension}`);
+    //                     } else if (typeof value === "string") {
+    //                         const imageExtensions = [".jpg", ".jpeg", ".png"];
+    //                         return imageExtensions.some((extension) =>
+    //                             value.toLowerCase().endsWith(extension)
+    //                         );
+    //                     }
+    //                 }),
+    //             name: yup.string().required("Vui lòng nhập tên sản phẩm"),
+    //             size: yup.string().required("Vui lòng chọn kích thước"),
+    //             colorId: yup.string().required("Vui lòng chọn màu sắc"),
+    //             quantity: yup.number().required("Vui lòng nhập số lượng"),
+    //             price: yup.number().required("Vui lòng nhập giá"),
+    //         });
+    //     });
 
-            const productDto = {
-                name,
-                season,
-                gender,
-                categoryId,
-                brandId,
-                description,
-            };
+    //     return yup.array().of(schemas);
+    // };
 
-            setProductDtoRequest((prevData) => ({
-                ...prevData,
-                productDto: productDto,
-            }));
-
-            console.log(productDtoRequest);
-            console.log("List Files: ", fileDatas);
-            const formData = new FormData();
-
-            formData.append('productDtoRequest', JSON.stringify(productDtoRequest));
-
-            // Thêm toàn bộ fileDatas vào FormData với tên 'files'
-            fileDatas.forEach((fileData) => {
-                formData.append('files', fileData); // Thêm từng file vào FormData
-            });
-
-            console.log(formData.getAll('files'));
-
-            const response = await axios.post('/product/create', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${user.accessToken}`,
-                },
-            });
-
-            console.log("API Response:", response.data);
-        } catch (error) {
-            console.error("Error posting data to API:", error);
-            // Add additional error handling or user feedback here
-        }
-    };
+    // // // Ví dụ sử dụng
+    // const dynamicFormSchema = createFormDynamicSchema(divCount);
 
     const {
-
         formState: { errors: errorsDynamicForm },
         control: controlDynamicForm,
     } = useForm({
         resolver: yupResolver(schema),
     });
 
+    const postData = async () => {
+        // console.log("dataa form: ", productDtoRequest);
+        const formData = new FormData();
+        formData.append('productDtoRequest', JSON.stringify(productDtoRequest));
+        // Thêm toàn bộ fileDatas vào FormData với tên 'files'
+        // console.log("file ảnh: ", fileDatas);
+        fileDatas.forEach((fileData) => {
+            alert("ảnh ", fileData.length);
+            formData.append('files', fileData);
+        });
+        try {
+            const response = await axios.post('/product/create', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${user.accessToken}`,
+                },
+            });
+            if (response.status === 200) {
+                toast.success("Create product successfully!", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setProductDtoRequest()
+            }
+        } catch (response) {
+            console.log(response);
+        }
+        // console.log(response.data);
+    }
+    const handleFormSubmit = async (data) => {
+        // Thêm file vào mảng fileDatas
+        setFileDatas((prevFileDatas) => {
+            const newFileDatas = [...prevFileDatas];
+            const imageFile = data.image;
+            newFileDatas.push(imageFile);
+            return newFileDatas;
+        });
+        // console.log("đấy file", fileDatas);
+        // Lưu trữ phần còn lại của dữ liệu vào productDto trong productDtoRequest
+        setProductDtoRequest((prevData) => ({
+            ...prevData,
+            productDto: {
+                name: data.name,
+                season: data.season,
+                gender: data.gender,
+                categoryId: data.categoryId,
+                brandId: data.brandId,
+                description: data.description,
+                // Thêm các trường khác nếu cần
+            },
+        }));
+    };
 
-    const handleDynamicFormSubmit = (data, index) => {
+    const handleDynamicFormSubmit = (data) => {
+
+        // Thêm file vào mảng fileDatas
+        setFileDatas((prevFileDatas) => {
+            const newFileDatas = [...prevFileDatas];
+            // Assuming data.image là file hoặc dữ liệu ảnh
+            const imageFile = data.image;
+            // Thêm file vào mảng fileDatas
+            newFileDatas.push(imageFile);
+            return newFileDatas;
+        });
         // Lưu trữ dữ liệu của productvariant vào mảng dynamicFormData
+
         setDynamicFormData((prevData) => {
             const newData = [...prevData];
             // Tạo một bản sao của dữ liệu biểu mẫu động không bao gồm trường ảnh
             const productVariantData = { ...data };
             delete productVariantData.image;
-            newData[index] = productVariantData;
+            newData.push(productVariantData);
             return newData;
         });
 
         // Update createProductVariant in productDtoRequest state
         setProductDtoRequest((prevProductDtoRequest) => {
             const newCreateProductVariant = [...prevProductDtoRequest.createProductVariant];
-
             // Assuming productVariantData is an object with the structure you need
             const productVariantData = {
                 ...data,
             };
-
-            newCreateProductVariant[index] = productVariantData;
-
+            newCreateProductVariant.push(productVariantData);
             return {
                 ...prevProductDtoRequest,
                 createProductVariant: newCreateProductVariant,
             };
         });
-
-        // Thực hiện các xử lý khác nếu cần
-        console.log(`Dynamic Form ${index} Data:`, data);
     };
 
     const handleAddDiv = () => {
@@ -294,7 +317,6 @@ const ProductAddPage = () => {
     };
 
     const handleUseHashtag = (useHashtag) => {
-        console.log(hashtagChoose);
         // Thêm hashtag vào trạng thái của component
         setSelectHashtag([...selectHashtag, useHashtag]);
         setSelectedHashtags([...selectedHashtags, useHashtag]);
@@ -335,16 +357,15 @@ const ProductAddPage = () => {
     // console.log(productDtoRequest);
     return (
         <>
-            <div className="flex flex-row gap-3">
+            <div className="flex flex-row gap-2">
                 <div className="flex-none w-[500px]">
-                    <form onSubmit={handleSubmitFixedForm((data) => handleFormSubmit(data))}>
+                    <form onSubmit={handleSubmitFixedForm((data) => handleFormSubmit(data, 0))}>
                         <div className="flex flex-col gap-3 items-center">
                             <ImageUpload
                                 name="image"
                                 className="w-full"
                                 control={controlFixedForm}
                                 errors={errorsFixedForm}
-                                onAddImage={handleAddImage}
                             />
                             <Input
                                 label="Name"
@@ -426,13 +447,13 @@ const ProductAddPage = () => {
                                     control={controlFixedForm}
                                 />
                             </div>
-                            <Button type="submit">Submit Fixed Form</Button>
+                            <Button type="submit">Save</Button>
                         </div>
                     </form>
                 </div>
 
-                <div className="flex-1 max-h-[600px] overflow-y-auto">
-                    <div className="flex flex-col gap-3">
+                <div className="flex-1">
+                    <div className="flex flex-col gap-3  max-h-[330px] overflow-y-auto">
                         {Array.from({ length: divCount }).map((_, index) => (
                             <div className="flex flex-row border items-center p-5" key={index}>
                                 <form
@@ -461,7 +482,6 @@ const ProductAddPage = () => {
                                         className="w-full"
                                         control={controlDynamicForm}
                                         errors={errorsDynamicForm}
-                                        onAddImage={handleAddImage}
                                     />
 
                                     <div className="flex flex-col gap-3">
@@ -516,28 +536,21 @@ const ProductAddPage = () => {
                                             </Button>
                                         </div>
                                     </div>
-                                    {/* <div className="p-2 gap-2">
-                                        <div className="p-1">
-                                            <Button className="w-[100px]" onClick={() => handleRemoveDiv(index)}>Remove</Button>
-                                        </div>
-                                    </div>
-                                    <div className="p-2 gap-2">
-                                        <div className="p-1">
-                                            <Button className="w-[100px]" type="Submit">
-                                                Save
-                                            </Button>
-                                        </div>
-                                    </div> */}
                                 </form>
                             </div>
                         ))}
+                    </div>
+                    <div className="flex items-center justify-center p-2">
                         <Button
-                            className="w-full text-6xl h-[250px] flex items-center justify-center"
+                            className="w-3/4 text-6xl h-[250px] flex items-center justify-center"
                             outline="outlined"
                             onClick={handleAddDiv}
                         >
                             <IoAdd />
                         </Button>
+                    </div>
+                    <div className="flex items-center justify-center p-0">
+                        <Button onClick={postData}>Add</Button>
                     </div>
                 </div>
             </div>

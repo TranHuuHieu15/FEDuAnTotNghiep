@@ -1,5 +1,8 @@
 import { Button } from "@material-tailwind/react";
 import PropTypes from "prop-types";
+import { useState } from "react";
+import DialogRating from "../dialog/DialogRating";
+import { useNavigate } from "react-router-dom";
 
 const OrderCard = ({ orders }) => {
   const { orderDto, orderDetailsDto } = orders;
@@ -25,7 +28,7 @@ const OrderCard = ({ orders }) => {
             )}
           </div>
         </div>
-        <div className="flex flex-col items-start justify-center w-[660px] gap-5">
+        <div className="flex flex-col items-start justify-center w-[660px] gap-5 mr-5">
           {orderDetailsDto.map((item) => (
             <OrderItem key={item.id} orderItems={item} orderDto={orderDto} />
           ))}
@@ -35,7 +38,19 @@ const OrderCard = ({ orders }) => {
   );
 };
 const OrderItem = ({ orderItems, orderDto }) => {
-  const { color, size, quantity, name, image, price } = orderItems;
+  const {
+    color,
+    size,
+    quantity,
+    name,
+    image,
+    price,
+    productId,
+    id,
+    isEvaluate,
+  } = orderItems;
+  const [showRating, setShowRating] = useState(false);
+  const navigate = useNavigate();
   return (
     <>
       <div className="flex items-center justify-center w-full gap-10">
@@ -57,8 +72,22 @@ const OrderItem = ({ orderItems, orderDto }) => {
             <p className="text-lg font-eculid">Quantity: {quantity}</p>
           </div>
         </div>
-        {orderDto.typeOrder === "SUCCESSFUL" && (
-          <Button variant="outlined">Đánh Giá</Button>
+        {orderDto.typeOrder === "SUCCESSFUL" && !isEvaluate ? (
+          <Button
+            variant="outlined"
+            className="w-28"
+            onClick={() => setShowRating(true)}
+          >
+            Rating
+          </Button>
+        ) : (
+          <Button
+            variant="outlined"
+            className="w-28"
+            onClick={() => navigate(`/product/${productId}`)}
+          >
+            Preview
+          </Button>
         )}
       </div>
       <svg
@@ -69,6 +98,12 @@ const OrderItem = ({ orderItems, orderDto }) => {
       >
         <path d="M0 1L1072 0.999887" stroke="#D1D5DB" />
       </svg>
+      <DialogRating
+        show={showRating}
+        handleClose={() => setShowRating(false)}
+        productId={productId}
+        orderDetailId={id}
+      />
     </>
   );
 };

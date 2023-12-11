@@ -17,6 +17,7 @@ import { addToCart } from "../redux/features/cartSlice";
 import { toast } from "react-toastify";
 const ProductDetailPage = () => {
   const [productDetail, setProductDetail] = useState([]);
+  const [evaluateData, setEvaluateData] = useState([]);
   const { productVariantsDto, productDto, discount } = productDetail;
   const [open, setOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -28,6 +29,12 @@ const ProductDetailPage = () => {
   const { productId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const selectedVariant =
+    productVariantsDto &&
+    productVariantsDto.find(
+      (variant) =>
+        variant.size === selectedSize && variant.colorId === selectedColor
+    );
   const findDarkestColor = (colors) => {
     // Hàm để chuyển màu sang giá trị số để so sánh
     const calculateBrightness = (color) => {
@@ -53,7 +60,6 @@ const ProductDetailPage = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/product/id/${productId}`);
-        console.log(response.data);
         setProductDetail(response.data);
         if (response.data.productVariantsDto?.length > 0) {
           const firstSize = response.data.productVariantsDto[0].size;
@@ -74,12 +80,17 @@ const ProductDetailPage = () => {
     };
     fetchData();
   }, [productId]);
-  const selectedVariant =
-    productVariantsDto &&
-    productVariantsDto.find(
-      (variant) =>
-        variant.size === selectedSize && variant.colorId === selectedColor
-    );
+  useEffect(() => {
+    const fetchReview = async () => {
+      try {
+        const response = await axios.get(`/evaluate/product/${productId}`);
+        setEvaluateData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchReview();
+  }, [productId]);
   const handleSizeChange = (size) => {
     setSelectedSize(size);
     // Lấy ảnh mới tương ứng với kích thước đã chọn
@@ -126,7 +137,6 @@ const ProductDetailPage = () => {
   };
   const handleAddToCart = async () => {
     if (selectedVariant) {
-      console.log(selectedVariant);
       const cartItem = {
         productVariantId: selectedVariant.id,
         image: productDto.imageProductDto.url,
@@ -296,14 +306,22 @@ const ProductDetailPage = () => {
       </div>
       <div className="flex flex-col justify-center mx-40">
         <h3 className="text-2xl font-semibold font-eculid">Customer Reviews</h3>
-        <Comment></Comment>
-        <Comment></Comment>
-        <Comment></Comment>
-        <div className="flex items-center justify-center my-8">
-          <Button className="text-base font-semibold w-60 bg-blue-gray-800 hover:scale-105">
-            Load More
-          </Button>
-        </div>
+        {evaluateData?.length > 0 &&
+          evaluateData.map((item) => (
+            <Comment key={item.id} items={item}></Comment>
+          ))}
+        {evaluateData?.length > 0 && (
+          <div className="flex items-center justify-center my-8">
+            <Button className="text-base font-semibold w-60 bg-blue-gray-800 hover:scale-105">
+              Load More
+            </Button>
+          </div>
+        )}
+        {evaluateData.length === 0 && (
+          <div className="flex items-center justify-center my-8 text-xl font-medium font-eculid">
+            No reviews have been submitted for the product yet.
+          </div>
+        )}
       </div>
     </SiteLayout>
   );

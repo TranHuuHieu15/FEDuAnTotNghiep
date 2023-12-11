@@ -100,9 +100,13 @@ const ProductDetailPage = () => {
       // Cập nhật ảnh hiện tại
       setCurrentImage(image);
     }
-    const colorsForSelectedSize = productVariantsDto
-      .filter((variant) => variant.size === size)
-      .map((variant) => variant.colorId);
+    const variantsForSelectedSize = productVariantsDto.filter(
+      (variant) => variant.size === size
+    );
+
+    const colorsForSelectedSize = Array.from(
+      new Set(variantsForSelectedSize.map((variant) => variant.colorId))
+    );
 
     // Chọn màu tối nhất từ danh sách màu sắc của size đó
     const darkestColorForSelectedSize = findDarkestColor(colorsForSelectedSize);

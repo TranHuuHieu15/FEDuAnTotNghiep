@@ -7,7 +7,7 @@ import {
 import React from "react";
 import logo from "/src/assets/images/logo.jpg";
 import Button from "../button/Button";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Dropdown from "../select/Dropdown";
 import { selectCurrentUser } from "../../redux/features/authSlice";
@@ -15,6 +15,7 @@ import { BsCart } from "react-icons/bs";
 
 const Navbar = () => {
   const user = useSelector(selectCurrentUser);
+  const navigate = useNavigate();
   const cartData = useSelector((state) => state.cart.products);
   const [openNav, setOpenNav] = React.useState(false);
 
@@ -103,7 +104,10 @@ const Navbar = () => {
               </Link>
             </div>
           )}
-          <div className="relative cursor-pointer">
+          <div
+            className="relative cursor-pointer"
+            onClick={() => navigate("/cart")}
+          >
             <BsCart className="w-12 h-6" />
             {cartData?.length > 0 && (
               <span className="absolute top-0 right-0 text-xs">

@@ -6,8 +6,11 @@ import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import DialogCEDiscount from "./DialogCEDiscount.jsx";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 
 const DiscountManage = () => {
+  const user = useSelector(selectCurrentUser);
   const [discountData, setDiscountData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -57,7 +60,11 @@ const DiscountManage = () => {
         formData.append("quantity", data.quantity);
         formData.append("categoryId", data.categoryId);
         formData.append("description", data.description);
-        const response = await axios.post("/discount/create", formData);
+        const response = await axios.post("/discount/create", formData, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         console.log(response);
         fetchData();
         handleCloseDialogCE();
@@ -103,7 +110,12 @@ const DiscountManage = () => {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         const response = await axios.put(
           `/discount/update/${showDialogCERef.current.id}`,
-          formData
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+            },
+          }
         );
         console.log(response);
         fetchData();
@@ -132,7 +144,11 @@ const DiscountManage = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        await axios.delete(`/discount/delete/${showDialog.id}`);
+        await axios.delete(`/discount/delete/${showDialog.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         setDiscountData(
           discountData.filter((item) => item.id !== showDialog.id)
         );

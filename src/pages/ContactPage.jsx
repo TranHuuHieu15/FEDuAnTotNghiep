@@ -12,8 +12,11 @@ import Select from "../components/select/Select";
 import { useEffect, useState } from "react";
 import axios from "../config/axios.js";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../redux/features/authSlice.jsx";
 
 const ContactPage = () => {
+  const user = useSelector(selectCurrentUser);
   //! Lấy dữ liệu từ problem
   const [problems, setProblems] = useState([]);
   useEffect(() => {
@@ -60,7 +63,11 @@ const ContactPage = () => {
 
   const handleCreateData = async (data) => {
     try {
-      const response = await axios.post("/feedback/create", data);
+      const response = await axios.post("/feedback/create", data, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      });
       console.log(response);
       toast.success("Create feedback successfully!", {
         position: "top-right",

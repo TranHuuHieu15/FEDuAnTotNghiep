@@ -6,8 +6,11 @@ import DialogCEHashtag from "./DialogCEHashtag.jsx";
 import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 
 const HashtagManage = () => {
+  const user = useSelector(selectCurrentUser);
   const [hashtagData, setHashtagData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -48,7 +51,11 @@ const HashtagManage = () => {
   const handleCreate = async (hashtagDto) => {
     try {
       if (showDialogCERef.current.show) {
-        const response = await axios.post("/hashtag/create", hashtagDto);
+        const response = await axios.post("/hashtag/create", hashtagDto, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         console.log(response);
         fetchData();
         handleCloseDialogCE();
@@ -84,7 +91,12 @@ const HashtagManage = () => {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         const response = await axios.put(
           `/hashtag/update/${showDialogCERef.current.id}`,
-          hashtagDto
+          hashtagDto,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+            },
+          }
         );
         console.log(response);
         fetchData();
@@ -114,7 +126,11 @@ const HashtagManage = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        await axios.delete(`/hashtag/delete/${showDialog.id}`);
+        await axios.delete(`/hashtag/delete/${showDialog.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         setHashtagData(hashtagData.filter((item) => item.id !== showDialog.id));
         handleCloseDialog();
         toast.success("Delete hashtag successfully!", {

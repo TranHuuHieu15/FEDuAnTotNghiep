@@ -8,8 +8,11 @@ import DialogCEColor from "./DialogCEColor";
 import { BsTrash3 } from "react-icons/bs";
 import { CiEdit } from "react-icons/ci";
 import { Button } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/features/authSlice";
 
 const ColorManage = () => {
+  const user = useSelector(selectCurrentUser);
   const [colorData, setColorData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -50,7 +53,11 @@ const ColorManage = () => {
   const handleCreate = async (colorDto) => {
     try {
       if (showDialogCERef.current.show) {
-        const response = await axios.post("/color/create", colorDto);
+        const response = await axios.post("/color/create", colorDto, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         console.log(response);
         fetchData();
         handleCloseDialogCE();
@@ -85,7 +92,12 @@ const ColorManage = () => {
         const endcodeId = showDialogCERef.current.id.replace(/^#/, "%23");
         const response = await axios.put(
           `/color/update/${endcodeId}`,
-          colorDto
+          colorDto,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+            },
+          }
         );
         console.log(response);
         fetchData();
@@ -116,7 +128,11 @@ const ColorManage = () => {
     try {
       if (showDialog.show && showDialog.id) {
         const endcodeId = showDialog.id.replace(/^#/, "%23");
-        await axios.delete(`/color/delete/${endcodeId}`);
+        await axios.delete(`/color/delete/${endcodeId}`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         setColorData(colorData.filter((item) => item.id !== showDialog.id));
         handleCloseDialog();
         toast.success("Delete category successfully!", {

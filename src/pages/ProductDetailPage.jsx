@@ -12,10 +12,12 @@ import { useState } from "react";
 import Color from "../components/color/Color";
 import Size from "../components/size/Size";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/features/cartSlice";
 import { toast } from "react-toastify";
+import { selectCurrentUser } from "../redux/features/authSlice";
 const ProductDetailPage = () => {
+  const user = useSelector(selectCurrentUser);
   const [productDetail, setProductDetail] = useState([]);
   const [evaluateData, setEvaluateData] = useState([]);
   const { productVariantsDto, productDto, discount } = productDetail;
@@ -84,7 +86,11 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const fetchReview = async () => {
       try {
-        const response = await axios.get(`/evaluate/product/${productId}`);
+        const response = await axios.get(`/evaluate/product/${productId}`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         setEvaluateData(response.data);
       } catch (error) {
         console.log(error);

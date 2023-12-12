@@ -159,7 +159,11 @@ const AccountAddress = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        await axios.delete(`/deliveryAddress/delete/${showDialog.id}`);
+        await axios.delete(`/deliveryAddress/delete/${showDialog.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         setDeliveryAddressData(
           deliveryAddressData.filter((item) => item.id !== showDialog.id)
         );

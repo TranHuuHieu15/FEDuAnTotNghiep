@@ -9,7 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useRegisterMutation } from "../redux/api/authApi";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   registerFailure,
   registerStart,
@@ -95,12 +95,12 @@ const SignUpPage = () => {
               <h3 className="text-2xl font-semibold text-gray-800">Sign Up </h3>
               <p className="text-gray-400">
                 Already have an account?
-                <a
-                  href="/login"
+                <Link
+                  to="/login"
                   className="text-sm text-purple-700 hover:text-purple-700"
                 >
                   Sign In
-                </a>
+                </Link>
               </p>
             </div>
             <div className="space-y-4">

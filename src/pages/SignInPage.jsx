@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../redux/api/authApi";
 import {
   loginFailure,
@@ -119,12 +119,12 @@ const SignInPage = () => {
               <h3 className="text-2xl font-semibold text-gray-800">Sign In </h3>
               <p className="text-gray-400">
                 Don't have an account?
-                <a
-                  href="/signup"
+                <Link
+                  to="/signup"
                   className="text-sm text-purple-700 hover:text-purple-700"
                 >
                   Sign Up
-                </a>
+                </Link>
               </p>
             </div>
             <div className="space-y-5">
@@ -149,12 +149,12 @@ const SignInPage = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="ml-auto text-sm">
-                    <a
-                      href="#"
+                    <Link
+                      to="/forgotPW"
                       className="text-purple-700 hover:text-purple-600"
                     >
                       Forgot your password?
-                    </a>
+                    </Link>
                   </div>
                 </div>
                 <div>

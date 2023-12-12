@@ -19,6 +19,7 @@ const ProductDetailPage = lazy(() => import("./pages/ProductDetailPage"));
 const SignInPage = lazy(() => import("./pages/SignInPage"));
 const SignUpPage = lazy(() => import("./pages/SignUpPage"));
 const ForgotPWPage = lazy(() => import("./pages/ForgotPWPage"));
+const EnterNewPWPage = lazy(() => import("./pages/EnterNewPWPage"));
 const CheckMailPage = lazy(() => import("./pages/CheckMailPage"));
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
@@ -57,8 +58,12 @@ function App() {
           <Route path="/login" element={<SignInPage></SignInPage>}></Route>
           <Route path="/signup" element={<SignUpPage></SignUpPage>}></Route>
           <Route
-            path="/resetpassword"
+            path="/forgotPW"
             element={<ForgotPWPage></ForgotPWPage>}
+          ></Route>
+          <Route
+            path="/enterNewPW"
+            element={<EnterNewPWPage></EnterNewPWPage>}
           ></Route>
           <Route
             path="/checkmail"

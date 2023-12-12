@@ -17,11 +17,11 @@ import PropTypes from "prop-types";
 const ProfileCard = ({ item }) => {
   const { name, role, img } = item;
   return (
-    <Card className="w-96">
+    <Card className="h-full w-72">
       <CardHeader floated={false} className="h-80">
-        <img src={img} alt="" className="object-cover w-full" />
+        <img src={img} alt="" className="object-cover w-full h-full" />
       </CardHeader>
-      <CardBody className="text-center">
+      <CardBody className="p-3 mt-2 text-center">
         <Typography variant="h4" color="blue-gray" className="mb-0">
           {name}
         </Typography>
@@ -29,7 +29,7 @@ const ProfileCard = ({ item }) => {
           {role}
         </Typography>
       </CardBody>
-      <CardFooter className="flex justify-center pt-0 gap-7">
+      <CardFooter className="flex justify-center gap-10 pt-0">
         <Tooltip content="Like">
           <Typography as="a" href="#facebook" variant="lead" color="blue">
             <FontAwesomeIcon icon={faFacebook} size="1x" color="blue" />

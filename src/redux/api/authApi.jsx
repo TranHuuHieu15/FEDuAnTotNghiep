@@ -27,6 +27,24 @@ export const authApi = createApi({
         body: data,
       }),
     }),
+    verifyEmail: builder.mutation({
+      query: (data) => ({
+        url: `auth/verify-email?email=${data.email}`,
+        method: "GET",
+      }),
+    }),
+    forgotPW: builder.mutation({
+      query: (data) => ({
+        url: "auth/for-got-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
-export const { useLoginMutation, useRegisterMutation } = authApi;
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useVerifyEmailMutation,
+  useForgotPWMutation,
+} = authApi;

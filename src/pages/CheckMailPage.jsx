@@ -10,11 +10,11 @@ const CheckMailPage = () => {
             <h1 className="text-2xl font-semibold text-gray-800">
               Thank you for choosing us!
             </h1>
-            <h2 className=" text-gray-600">
+            <h2 className="text-gray-600 ">
               Follow these simple steps to complete the account creation
               process:
             </h2>
-            <p className=" text-gray-400">
+            <div className="text-gray-400">
               <ol className="list-decimal">
                 <li>
                   Visit your email account, open the email sent by The Trendy
@@ -25,7 +25,7 @@ const CheckMailPage = () => {
                   registration process
                 </li>
               </ol>
-            </p>
+            </div>
           </div>
         </div>
       </div>

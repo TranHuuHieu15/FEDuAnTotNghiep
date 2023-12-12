@@ -60,6 +60,7 @@ const ProductDetailPage = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/product/id/${productId}`);
+        console.log(response.data);
         setProductDetail(response.data);
         if (response.data.productVariantsDto?.length > 0) {
           const firstSize = response.data.productVariantsDto[0].size;
@@ -179,14 +180,14 @@ const ProductDetailPage = () => {
               .map((variant) => (
                 <img
                   key={variant.id}
-                  src={variant.imageProductDto.url}
+                  src={variant.url}
                   alt="Image"
                   className="w-[146px] h-[130px] object-fill flex-shrink-0 rounded-md"
                 />
               ))}
           </div>
           <img
-            src={currentImage || productDto?.imageProductDto.url}
+            src={currentImage || productDto?.url}
             alt=""
             className="w-[476px] h-[567px] object-fill hover:scale-105 hover:duration-500 flex-shrink-0 rounded-md"
           />

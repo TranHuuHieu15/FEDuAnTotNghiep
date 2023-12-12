@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../redux/api/authApi";
 import {
   loginFailure,
@@ -15,6 +15,7 @@ import {
   loginSuccess,
 } from "../redux/features/authSlice";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 const SignInPage = () => {
   const { search } = useLocation();
@@ -29,36 +30,56 @@ const SignInPage = () => {
   });
   const {
     handleSubmit,
-    formState: { errors, isValid, isSubmitting },
+    formState: { errors, isSubmitting },
     control,
     reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
+  useEffect(() => {
+    try {
+      if (tokenUrl) {
+        handleLogin({ token: tokenUrl });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [tokenUrl]);
+  const handleOpenGoogle = () => {
+    try {
+      window.location.href =
+        "http://localhost:8080/oauth2/authorization/google";
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleOpenFaceBook = () => {
+    try {
+      window.location.href =
+        "http://localhost:8080/oauth2/authorization/facebook";
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleLogin = async (data) => {
-    if (!isValid) return;
     dispatch(loginStart());
     try {
-      const response = await loginMutation({
-        ...data,
-        token: tokenUrl,
-      }).unwrap();
+      const response = await loginMutation(data).unwrap();
       dispatch(
         loginSuccess({
           userInfo: response?.data,
           userToken: response?.data.accessToken,
         })
       );
-      reset({
-        username: "",
-        password: "",
-      });
       if (response.data.path === 0) {
         navigate("/");
       } else {
         navigate("/admin");
       }
-
+      reset({
+        username: "",
+        password: "",
+      });
       toast.success("Login successfully!", {
         position: "top-right",
         autoClose: 2000,
@@ -70,17 +91,7 @@ const SignInPage = () => {
         theme: "light",
       });
     } catch (error) {
-      if (error.status === 500) dispatch(loginFailure());
-      toast.error(error.data.message, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      dispatch(loginFailure());
       console.log(error);
     }
   };
@@ -108,12 +119,12 @@ const SignInPage = () => {
               <h3 className="text-2xl font-semibold text-gray-800">Sign In </h3>
               <p className="text-gray-400">
                 Don't have an account?
-                <a
-                  href="/signup"
+                <Link
+                  to="/signup"
                   className="text-sm text-purple-700 hover:text-purple-700"
                 >
                   Sign Up
-                </a>
+                </Link>
               </p>
             </div>
             <div className="space-y-5">
@@ -138,12 +149,12 @@ const SignInPage = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="ml-auto text-sm">
-                    <a
-                      href="#"
+                    <Link
+                      to="/forgotPW"
                       className="text-purple-700 hover:text-purple-600"
                     >
                       Forgot your password?
-                    </a>
+                    </Link>
                   </div>
                 </div>
                 <div>
@@ -161,11 +172,17 @@ const SignInPage = () => {
                   <span className="w-16 h-px bg-gray-300"></span>
                 </div>
                 <div className="flex justify-center w-full gap-7">
-                  <Button className="flex justify-center w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900">
+                  <Button
+                    className="flex justify-center w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900"
+                    onClick={handleOpenGoogle}
+                  >
                     <FcGoogle className="w-4 h-4" />
                     <span>Google</span>
                   </Button>
-                  <Button className="flex justify-center w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900">
+                  <Button
+                    className="flex justify-center w-full gap-2 mx-1 my-0 text-gray-800 bg-gray-300 hover:border-gray-900 hover:bg-gray-900"
+                    onClick={handleOpenFaceBook}
+                  >
                     <BsFacebook color="blue" className="w-4 h-4" />
                     <span>Facebook</span>
                   </Button>

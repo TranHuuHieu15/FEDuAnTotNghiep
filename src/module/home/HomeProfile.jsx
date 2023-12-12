@@ -1,24 +1,41 @@
 import ProfileCard from "../../components/card/ProfileCard";
 import Heading from "../../components/heading/Heading";
+import hieu from "../../assets/images/hieu.jpg";
+import thanh from "../../assets/images/thanh.jpg";
+import manh from "../../assets/images/manh.jpg";
+import phuong from "../../assets/images/phuong.jpg";
+import hiep from "../../assets/images/hiep.jpg";
 
 const profileData = [
   {
     id: 1,
-    name: "Natalie Paisley",
-    role: "CEO / Co-Founder",
-    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    name: "Trần Hữu Hiếu",
+    role: "Co-founder",
+    img: hieu,
   },
   {
     id: 2,
-    name: "Natalie Paisley",
-    role: "CEO / Co-Founder",
-    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    name: "Phạm Sông Hiệp",
+    role: "Adminstator",
+    img: hiep,
   },
   {
     id: 3,
-    name: "Natalie Paisley",
-    role: "CEO / Co-Founder",
-    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    name: "Phạm Tiến Mạnh",
+    role: "CEO/Founder",
+    img: manh,
+  },
+  {
+    id: 4,
+    name: "Trần Lê Kiều Phương",
+    role: "Adminstator",
+    img: phuong,
+  },
+  {
+    id: 5,
+    name: "Lê Ngọc Thanh",
+    role: "Co-Founder",
+    img: thanh,
   },
 ];
 

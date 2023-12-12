@@ -5,7 +5,7 @@ import {
   Collapse,
 } from "@material-tailwind/react";
 import React from "react";
-import logo from "/src/assets/images/logo.jpg";
+import logo from "/src/assets/images/logo-removebg.png";
 import Button from "../button/Button";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -158,22 +158,31 @@ const Navbar = () => {
         <div className="container mx-auto">
           {navList}
           <div className="flex flex-col gap-2 pb-4">
-            <Link to="/login">
-              <Button
-                className="hidden bg-gray-200 text-blue-gray-800 hover:bg-blue-gray-900 hover:text-gray-300 lg:inline-block"
-                outline="text"
-              >
-                Sign In
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button
-                className="hidden text-gray-200 bg-blue-gray-900 hover:bg-gray-300 hover:text-blue-gray-900 lg:inline-block"
-                outline="outlined"
-              >
-                Sign Up
-              </Button>
-            </Link>
+            <div
+              className="relative cursor-pointer"
+              onClick={() => navigate("/cart")}
+            >
+              <BsCart className="w-12 h-6" />
+              {cartData?.length > 0 && (
+                <span className="absolute top-0 right-0 text-xs">
+                  {cartData.length}
+                </span>
+              )}
+            </div>
+            {user && user.username ? (
+              <Dropdown user={user}></Dropdown>
+            ) : (
+              <div className="flex gap-2">
+                <Link to="/login">
+                  <Button
+                    className="hidden bg-gray-200 text-blue-gray-800 hover:bg-blue-gray-900 hover:text-gray-300 lg:inline-block"
+                    outline="text"
+                  >
+                    Sign In
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </Collapse>

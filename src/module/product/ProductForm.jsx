@@ -13,7 +13,7 @@ import Textarea from "../../components/textarea/Textarea.jsx";
 import DialogHashtag from "../../components/dialog/DialogHashtag.jsx";
 import PropTypes from "prop-types";
 
-const ProductForm = ({ category, onSubmitCallback, onResetForm }) => {
+const ProductForm = ({ category, onSubmitCallback }) => {
 
     const [brands, setBrands] = useState([]);
     const [selectHashTag, setSelectHashtag] = useState([]);
@@ -21,7 +21,6 @@ const ProductForm = ({ category, onSubmitCallback, onResetForm }) => {
     const [openDialogHashtag, setDialogHashtag] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
 
-    console.log(onResetForm);
     useEffect(() => {
         const fetchBrands = async () => {
             try {
@@ -62,12 +61,13 @@ const ProductForm = ({ category, onSubmitCallback, onResetForm }) => {
 
 
     const {
-        formState: { errors, isValid },
+        formState: { errors },
         control,
         handleSubmit: handleSubmit,
         reset,
     } = useForm({
         resolver: yupResolver(schema),
+
     });
     const typeGender = [
         {
@@ -100,9 +100,7 @@ const ProductForm = ({ category, onSubmitCallback, onResetForm }) => {
         },
     ];
 
-
     const handleFormSubmit = (data, e) => {
-        if (!isValid) return;
         e.preventDefault();
         const extractedData = selectHashTag.map((item) => ({
             hashtagId: item.id,
@@ -261,6 +259,5 @@ const ProductForm = ({ category, onSubmitCallback, onResetForm }) => {
 ProductForm.propTypes = {
     category: PropTypes.array,
     onSubmitCallback: PropTypes.func,
-    onResetForm: PropTypes.number,
 }
 export default ProductForm;

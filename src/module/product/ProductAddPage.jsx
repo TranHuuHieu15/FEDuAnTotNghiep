@@ -16,7 +16,7 @@ import { useSelector } from "react-redux";
 // ProductAddPage.jsx
 const ProductAddPage = () => {
     const [divCount, setDivCount] = useState(1);
-    const [reset, setReSet] = useState();
+    const { reset: resetProductForm } = useForm();
     const [categories, setCategories] = useState([]);
     const [fileDatas, setFileDatas] = useState([]);
     const user = useSelector(selectCurrentUser);
@@ -41,7 +41,9 @@ const ProductAddPage = () => {
         };
         fetchCategories();
     }, []);
-
+    console.log("Độ dài: ", productDtoRequest.createProductVariant.length);
+    console.log("Vị trí :", divCount);
+    console.log("data file", fileDatas);
     // 
     const handleProductFormSubmit = async (data) => {
         try {
@@ -88,6 +90,7 @@ const ProductAddPage = () => {
             return newFileDatas;
         });
 
+
         setProductDtoRequest((prevProductDtoRequest) => {
             return {
                 ...prevProductDtoRequest,
@@ -109,14 +112,35 @@ const ProductAddPage = () => {
         setDivCount((prevCount) => prevCount + 1);
     };
 
-    const handleRemoveDiv = () => {
-        setDivCount((prevCount) => prevCount - 1);
+    const handleRemoveDiv = (index) => {
+        console.log(index);
+        let createProductVariant = productDtoRequest.createProductVariant;
+        let files = fileDatas;
+        console.log(createProductVariant.length);
+        console.log(createProductVariant);
+        if (index + 1 > createProductVariant.length) {
+            alert("đã xóa");
+            setDivCount((prevCount) => prevCount - 1);
+            return;
+        } else {
+            createProductVariant.splice(index, 1); // Xóa một phần tử từ mảng
+            files.splice(index, 1);
+            alert("Đã xóa");
+            setDivCount((prevCount) => prevCount - 1);
+            // Cập nhật state hoặc thực hiện các thao tác cần thiết
+            setProductDtoRequest((prevProductDtoRequest) => ({
+                ...prevProductDtoRequest,
+                createProductVariant,
+            }));
+
+            setFileDatas((prevFileData) => ({
+                ...prevFileData,
+                fileDatas,
+            }))
+        }
     };
 
-    const resetForm = () => {
-        setReSet(200);
-    };
-
+    console.log("data sau khi xóa: ", productDtoRequest.createProductVariant);
     const postData = async () => {
         // console.log("dataa form: ", productDtoRequest);
         const formData = new FormData();
@@ -145,7 +169,7 @@ const ProductAddPage = () => {
                     progress: undefined,
                     theme: "light",
                 });
-                resetForm();
+
                 setProductDtoRequest();
             }
         } catch (response) {
@@ -160,7 +184,7 @@ const ProductAddPage = () => {
                 <ProductForm
                     category={categories}
                     onSubmitCallback={handleProductFormSubmit}
-                    onResetForm={reset}
+                    onResetForm={resetProductForm}
                 // control={productFormControl}
                 // errors={productFormErrors}
                 />
@@ -174,7 +198,7 @@ const ProductAddPage = () => {
                                     onSubmitCallback={handleDynamicFormSubmit}
                                 />
                                 <div>
-                                    <Button onClick={handleRemoveDiv}>Remove
+                                    <Button onClick={() => handleRemoveDiv(index)}>Remove
                                     </Button>
                                 </div>
                             </div>

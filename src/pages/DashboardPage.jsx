@@ -3,31 +3,24 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../redux/features/authSlice";
-import { Input } from "@material-tailwind/react";
+import { Option, Select } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 
 const DashboardPage = () => {
-  const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
   const user = useSelector(selectCurrentUser);
   const [statisticByYear, setStatisticDataByYear] = useState([]);
   const [totalCustomer, setTotalCustomer] = useState(0);
   const [totalSale, setTotalTotalSale] = useState(0);
   const [totalOrder, setTotalTotalOrder] = useState(0);
-  const [dateBefore, setDateBefore] = useState(formatDate(new Date()));
-  const futureDate = new Date();
-  futureDate.setDate(futureDate.getDate() + 30);
-  const [dateAfter, setDateAfter] = useState(formatDate(futureDate));
-
+  const [year, setYear] = useState(String(new Date().getFullYear()));
+  const [month, setMonth] = useState("0");
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `/statistic/income?dateBefore=${dateBefore}&dateAfter=${dateAfter}`,
+          `/statistic/income?${
+            month === "0" ? `year=${year}` : `year=${year}&month=${month}`
+          }`,
           {
             headers: {
               Authorization: `Bearer ${user.accessToken}`,
@@ -42,7 +35,7 @@ const DashboardPage = () => {
       }
     };
     fetchData();
-  }, [dateBefore, dateAfter, user.accessToken]);
+  }, [month, user.accessToken, year]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,14 +76,25 @@ const DashboardPage = () => {
     fetchData();
   }, [user.accessToken]);
 
-  const handleDateBeforeChange = (e) => {
-    const newDateBefore = formatDate(new Date(e.target.value));
-    setDateBefore(newDateBefore);
+  const handleChangeYear = (value) => {
+    setYear(value);
   };
+  const handleChangeMonth = (value) => {
+    setMonth(value);
+  };
+  const generateYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const startYear = 2000;
+    const yearRange = Array.from(
+      { length: currentYear - startYear + 1 },
+      (_, index) => currentYear - index
+    );
 
-  const handleDateAfterChange = (e) => {
-    const newDateAfter = formatDate(new Date(e.target.value));
-    setDateAfter(newDateAfter);
+    return yearRange.map((year) => (
+      <Option key={year} value={String(year)}>
+        {year}
+      </Option>
+    ));
   };
   return (
     <>
@@ -258,66 +262,84 @@ const DashboardPage = () => {
         <div className="flex flex-col gap-5">
           <div className="flex flex-col items-end justify-center gap-3">
             <div className="flex items-center justify-center gap-3 mr-10">
-              <Input
-                type="date"
-                name="registerDate"
-                label="Register Date"
-                className="w-full"
-                onChange={handleDateBeforeChange}
-              />
-              <Input
-                type="datetime-local"
-                name="registerDate"
-                label="Register Date"
-                className="w-full"
-                onChange={handleDateAfterChange}
-              />
+              <Select
+                label="Select year"
+                value={year}
+                onChange={handleChangeYear}
+              >
+                {generateYearOptions()}
+              </Select>
+              <Select
+                label="Select month"
+                value={month}
+                onChange={handleChangeMonth}
+              >
+                <Option value="0">All</Option>
+                <Option value="1">1</Option>
+                <Option value="2">2</Option>
+                <Option value="3">3</Option>
+                <Option value="4">4</Option>
+                <Option value="5">5</Option>
+                <Option value="5">5</Option>
+                <Option value="6">6</Option>
+                <Option value="7">7</Option>
+                <Option value="8">8</Option>
+                <Option value="9">9</Option>
+                <Option value="10">10</Option>
+                <Option value="11">11</Option>
+                <Option value="12">12</Option>
+              </Select>
             </div>
             <table className="w-full table-auto">
               <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
                 <tr>
+                  <th className="px-6 py-4 font-medium text-gray-900">ID</th>
                   <th className="px-6 py-4 font-medium text-gray-900">
-                    Customer
-                  </th>
-                  <th className="px-6 py-4 font-medium text-gray-900">Items</th>
-                  <th className="px-6 py-4 font-medium text-gray-900">Price</th>
-                  <th className="px-6 py-4 font-medium text-gray-900">
-                    Purchase Date
+                    Total Product
                   </th>
                   <th className="px-6 py-4 font-medium text-gray-900">
-                    Status
+                    Total Price
                   </th>
-                  <th className="px-6 py-4 font-medium text-gray-900"></th>
+                  <th className="px-6 py-4 font-medium text-gray-900">
+                    Total Order
+                  </th>
+                  <th className="px-6 py-4 font-medium text-gray-900">
+                    {typeof month === "string" && month !== null
+                      ? "Date"
+                      : "Month"}
+                  </th>
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-gray-100">
-                {/* {statisticByYear.map((item, index) => ( */}
-                <tr>
-                  <td className="rc-table-cell">
-                    <div className="flex items-center justify-center gap-3">
-                      <img
-                        src=""
-                        alt="avatar"
-                        className="object-cover w-10 h-10 rounded-full "
-                        loading="lazy"
-                      />
-                      <div className="grid gap-0.5">
-                        <p className="text-sm font-medium text-gray-900 font-lexend dark:text-gray-700"></p>
-                        <p className="text-[13px] text-gray-500"></p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-3">
-                    <p className="flex items-center justify-center font-medium text-gray-700"></p>
-                  </td>
-                  <td className="p-3">
-                    <p className="flex items-center justify-center font-medium text-gray-700"></p>
-                  </td>
-                  <td className="p-3">
-                    <p className="flex items-center justify-center font-medium text-gray-700"></p>
-                  </td>
-                </tr>
-                {/* ))} */}
+                {statisticByYear.map((item, index) => (
+                  <tr key={index}>
+                    <td className="rc-table-cell">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {index}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.totalProducts}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.totalIncome}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.totalOrder}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.month ? item.month : item.date}
+                      </p>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

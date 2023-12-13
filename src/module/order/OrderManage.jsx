@@ -23,11 +23,7 @@ const OrderManage = () => {
   useEffect(() => {
     const fetchData = async (url) => {
       try {
-        const response = await axios.get(url, {
-          headers: {
-            Authorization: `Bearer ${user.accessToken}`,
-          },
-        });
+        const response = await axios.get(url);
         const totalPages = Math.ceil(response["all-item"] / response.size);
         setTotalPages(totalPages);
         setOrderData(response.data);

@@ -1,9 +1,8 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { loginSuccess, logout } from "../features/authSlice";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:8080/api/ttf",
-  credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.userToken;
     if (token) {

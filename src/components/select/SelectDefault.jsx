@@ -10,6 +10,7 @@ const SelectDefault = ({
   control,
   name,
   errors,
+  disabled,
 }) => {
   const selectClasses = `border ${className}`;
 
@@ -22,7 +23,7 @@ const SelectDefault = ({
     <>
       <div className={mainClassName}>
         {title && <label className={className2}>{title}</label>}
-        <select className={selectClasses} {...field}>
+        <select disabled={disabled} className={selectClasses} {...field}>
           {options &&
             options.map((item) => (
               <option value={item.value} key={item.id}>
@@ -50,6 +51,7 @@ SelectDefault.propTypes = {
   title: PropTypes.string,
   options: PropTypes.array,
   errors: PropTypes.object,
+  disabled: PropTypes.bool,
 };
 
 export default SelectDefault;

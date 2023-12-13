@@ -9,6 +9,7 @@ const Select = ({
   className2 = "text-blue-gray-500 text-sm",
   control,
   name,
+  disabled,
 }) => {
   const selectClasses = `border ${className}`;
 
@@ -21,7 +22,7 @@ const Select = ({
     <>
       <div className={mainClassName}>
         {title && <label className={className2}>{title}</label>}
-        <select className={selectClasses} {...field}>
+        <select disabled={disabled} className={selectClasses} {...field}>
           {options &&
             options.map((item) => (
               <option value={item.id} key={item.id}>
@@ -42,6 +43,7 @@ Select.propTypes = {
   name: PropTypes.string,
   title: PropTypes.string,
   options: PropTypes.array,
+  disabled: PropTypes.bool,
 };
 
 export default Select;

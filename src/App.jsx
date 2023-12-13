@@ -2,6 +2,12 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { ToastContainer } from "react-toastify";
 import { Suspense, lazy } from "react";
+import AccountLayout from "./layout/AccountLayout";
+import AccountInfo from "./module/information/AccountInfo";
+import AccountAddress from "./module/information/AccountAddress";
+import AccountOrder from "./module/information/AccountOrder";
+import AccountChangePassword from "./module/information/AccountChangePassword";
+import Information from "./module/dashboard/Information";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutUsPage = lazy(() => import("./pages/AboutUsPage"));
@@ -13,6 +19,7 @@ const ProductDetailPage = lazy(() => import("./pages/ProductDetailPage"));
 const SignInPage = lazy(() => import("./pages/SignInPage"));
 const SignUpPage = lazy(() => import("./pages/SignUpPage"));
 const ForgotPWPage = lazy(() => import("./pages/ForgotPWPage"));
+const EnterNewPWPage = lazy(() => import("./pages/EnterNewPWPage"));
 const CheckMailPage = lazy(() => import("./pages/CheckMailPage"));
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
@@ -26,6 +33,9 @@ const ProblemManage = lazy(() => import("./module/problem/ProblemManage"));
 const FeedbackManage = lazy(() => import("./module/feedback/FeedbackManage"));
 const EvalueateManage = lazy(() => import("./module/evaluate/EvalueateManage"));
 const ColorManage = lazy(() => import("./module/color/ColorManage"));
+const VoucherPage = lazy(() => import("./pages/VoucherPage"));
+const OrderManage = lazy(() => import("./module/order/OrderManage"));
+const AccountManage = lazy(() => import("./module/account/AccountManage"));
 
 function App() {
   return (
@@ -48,17 +58,28 @@ function App() {
           <Route path="/login" element={<SignInPage></SignInPage>}></Route>
           <Route path="/signup" element={<SignUpPage></SignUpPage>}></Route>
           <Route
-            path="/resetpassword"
+            path="/forgotPW"
             element={<ForgotPWPage></ForgotPWPage>}
+          ></Route>
+          <Route
+            path="/enterNewPW"
+            element={<EnterNewPWPage></EnterNewPWPage>}
           ></Route>
           <Route
             path="/checkmail"
             element={<CheckMailPage></CheckMailPage>}
           ></Route>
+
+          <Route path="/voucher" element={<VoucherPage></VoucherPage>}></Route>
+
           <Route element={<AdminLayout></AdminLayout>}>
             <Route
               path="/admin"
               element={<DashboardPage></DashboardPage>}
+            ></Route>
+            <Route
+              path="/admin/account"
+              element={<AccountManage></AccountManage>}
             ></Route>
             <Route
               path="/admin/category"
@@ -93,8 +114,39 @@ function App() {
               element={<EvalueateManage></EvalueateManage>}
             ></Route>
             <Route
+              path="/admin/order"
+              element={<OrderManage></OrderManage>}
+            ></Route>
+            <Route
               path="/admin/color"
               element={<ColorManage></ColorManage>}
+            ></Route>
+            <Route
+              path="/admin/profile"
+              element={<Information></Information>}
+            ></Route>
+          </Route>
+          <Route element={<AccountLayout></AccountLayout>}>
+            <Route path="/user" element={<AccountInfo></AccountInfo>}></Route>
+            <Route
+              path="/user/address"
+              element={<AccountAddress></AccountAddress>}
+            ></Route>
+            <Route
+              path="/user/order"
+              element={<AccountOrder></AccountOrder>}
+            ></Route>
+            <Route
+              path="/user/changePassword"
+              element={<AccountChangePassword></AccountChangePassword>}
+            ></Route>
+            <Route
+              path="/user/discount"
+              element={<DiscountManage></DiscountManage>}
+            ></Route>
+            <Route
+              path="/user/evaluate"
+              element={<EvalueateManage></EvalueateManage>}
             ></Route>
           </Route>
           <Route path="*" element={<PageNotFound></PageNotFound>}></Route>

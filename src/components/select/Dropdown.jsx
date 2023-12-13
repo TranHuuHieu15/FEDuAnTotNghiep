@@ -5,11 +5,17 @@ import {
   MenuItem,
   MenuList,
 } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/features/authSlice";
+import PropTypes from "prop-types";
 
-const Dropdown = (handleLogout) => {
-  const handleLogoutDropdown = () => {
-    handleLogout();
+const Dropdown = ({ user }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
   };
   return (
     <>
@@ -24,19 +30,27 @@ const Dropdown = (handleLogout) => {
           />
         </MenuHandler>
         <MenuList>
-          <Link to="/">
-            <MenuItem>My Profile</MenuItem>
-          </Link>
-          <Link>
-            <MenuItem>Help</MenuItem>
-          </Link>
-          <Link onClick={handleLogoutDropdown}>
-            <MenuItem>Log out</MenuItem>
-          </Link>
+          <MenuItem>
+            {user && user?.path === 0 ? (
+              <Link to="/user">My Profile</Link>
+            ) : (
+              <Link to="/admin/profile">My Profile</Link>
+            )}
+          </MenuItem>
+          <MenuItem>
+            <Link to="/help">Help</Link>
+          </MenuItem>
+          <MenuItem>
+            <span onClick={handleLogout}>Log out</span>
+          </MenuItem>
         </MenuList>
       </Menu>
     </>
   );
+};
+
+Dropdown.propTypes = {
+  user: PropTypes.object,
 };
 
 export default Dropdown;

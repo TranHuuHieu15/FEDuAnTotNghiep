@@ -216,12 +216,14 @@ const SideBar = () => {
                 />
               </ListItemSuffix>
             </ListItem>
-            <ListItem>
-              <ListItemPrefix>
-                <UserCircleIcon className="w-5 h-5" />
-              </ListItemPrefix>
-              Profile
-            </ListItem>
+            <Link to="/admin/profile">
+              <ListItem>
+                <ListItemPrefix>
+                  <UserCircleIcon className="w-5 h-5" />
+                </ListItemPrefix>
+                Profile
+              </ListItem>
+            </Link>
             <ListItem>
               <ListItemPrefix>
                 <Cog6ToothIcon className="w-5 h-5" />

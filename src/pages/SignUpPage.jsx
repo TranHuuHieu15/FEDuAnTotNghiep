@@ -9,12 +9,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useRegisterMutation } from "../redux/api/authApi";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   registerFailure,
   registerStart,
   registerSuccess,
 } from "../redux/features/authSlice";
+import { toast } from "react-toastify";
 
 const SignUpPage = () => {
   const dispatch = useDispatch();
@@ -52,7 +53,6 @@ const SignUpPage = () => {
     dispatch(registerStart());
     try {
       const response = await registerMutation(data).unwrap();
-      console.log(response.data);
       dispatch(
         registerSuccess({
           userInfo: response.data.userInfo,
@@ -61,22 +61,29 @@ const SignUpPage = () => {
       );
       reset({
         username: "",
+        fullName: "",
+        birthday: "",
         password: "",
+        email: "",
+        gender: "",
+        term: false,
       });
-      navigate("/");
-    } catch (error) {
-      dispatch(registerFailure(error.message));
-      console.log(error.message);
+      navigate("/checkmail");
+    } catch (response) {
+      if (response.status === 500) {
+        dispatch(registerFailure(response.data.message));
+        toast.error("username and email already exist", {
+          position: "top-left",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
     }
-    reset({
-      username: "",
-      fullName: "",
-      birthday: "",
-      password: "",
-      email: "",
-      gender: "",
-      term: false,
-    });
   };
   return (
     <>
@@ -88,12 +95,12 @@ const SignUpPage = () => {
               <h3 className="text-2xl font-semibold text-gray-800">Sign Up </h3>
               <p className="text-gray-400">
                 Already have an account?
-                <a
-                  href="/login"
+                <Link
+                  to="/login"
                   className="text-sm text-purple-700 hover:text-purple-700"
                 >
                   Sign In
-                </a>
+                </Link>
               </p>
             </div>
             <div className="space-y-4">
@@ -171,7 +178,7 @@ const SignUpPage = () => {
                     className="w-[455px] bg-[#F7C59F]"
                     disabled={isSubmitting}
                   >
-                    Sign in
+                    Sign up
                   </Button>
                 </div>
               </form>

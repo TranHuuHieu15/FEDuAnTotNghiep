@@ -1,48 +1,34 @@
-import logo from "../assets/images/logo-removebg.png";
+import logo from "../assets/images/4616089.png";
 
 const CheckMailPage = () => {
   return (
     <>
-      <div className="absolute top-0 bottom-0 left-0 w-full h-full overflow-hidden leading-5 bg-[#F7C59F] bg-gradient-to-b"></div>
-      <div className="relative justify-center min-h-screen bg-transparent shadow-xl sm:flex sm:flex-row rounded-3xl">
-        <div className="z-10 flex self-center">
-          <div className="p-12 mx-auto bg-white rounded-3xl w-[550px] shadow-lg flex flex-col items-center">
-            <img src={logo} width="35%" alt="" className="" />
-            <div className="mb-1">
-              <h1 className="mt-3 text-2xl font-semibold text-gray-800">
-                Thank you for choosing us!
-              </h1>
-              <h2 className="mt-2 text-gray-600">
-                Follow these simple steps to complete the account creation
-                process:
-              </h2>
-              <p className="mt-3 ml-6 text-gray-400">
-                <ol className="list-decimal">
-                  <li>
-                    Visit your email account, open the email sent by The Trendy
-                    Fashionista
-                  </li>
-                  <li>
-                    Follow the instructions in the email to complete the account
-                    registration process
-                  </li>
-                </ol>
-              </p>
+      <div className="flex items-center justify-center w-screen h-screen ">
+        <div className="flex flex-col gap-2 items-center justify-center p-12 bg-white rounded-3xl w-[550px] shadow-3xl outline outline-2 outline-gray-700">
+          <img src={logo} width="35%" alt="" className="" />
+          <div className="flex flex-col items-center justify-center gap-3">
+            <h1 className="text-2xl font-semibold text-gray-800">
+              Thank you for choosing us!
+            </h1>
+            <h2 className="text-gray-600 ">
+              Follow these simple steps to complete the account creation
+              process:
+            </h2>
+            <div className="text-gray-400">
+              <ol className="list-decimal">
+                <li>
+                  Visit your email account, open the email sent by The Trendy
+                  Fashionista
+                </li>
+                <li>
+                  Follow the instructions in the email to complete the account
+                  registration process
+                </li>
+              </ol>
             </div>
           </div>
         </div>
       </div>
-      <svg
-        className="absolute bottom-0 left-0 "
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 1440 320"
-      >
-        <path
-          fill="#fff"
-          fillOpacity="1"
-          d="M0,0L40,42.7C80,85,160,171,240,197.3C320,224,400,192,480,154.7C560,117,640,75,720,74.7C800,75,880,117,960,154.7C1040,192,1120,224,1200,213.3C1280,203,1360,149,1400,122.7L1440,96L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"
-        ></path>
-      </svg>
     </>
   );
 };

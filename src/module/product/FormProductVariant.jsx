@@ -65,7 +65,7 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
 
     return (
         <>
-            <form onSubmit={handleSubmit((data) => productVariant(data, index))} className="flex flex-row items-center p-5">
+            <form onSubmit={handleSubmit((data) => productVariant(data, index))} className="flex flex-row items-center">
                 <ImageUpload name={`image-${index}`} className="w-full" control={dynamicFormControl} errors={dynamicFormErrors} disabled={isSaved} />
                 <div className="flex flex-col gap-3">
                     <div className="flex flex-row gap-3">
@@ -74,10 +74,11 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
                             className2="text-sm ml-1 font-normal"
                             className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
                             title="Size"
+                            selectDefault="Select size"
                             name={`size-${index}`}
                             options={[
-                                { id: 1, name: "S", value: "S" },
-                                { id: 2, name: "M", value: "M" },
+                                { id: 0, name: "S", value: "S" },
+                                { id: 1, name: "M", value: "M" },
                             ]}
                             control={dynamicFormControl}
                             errors={dynamicFormErrors}
@@ -88,6 +89,7 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
                             className2="text-sm ml-1 font-normal"
                             className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
                             title="Color"
+                            selectDefault="Select color"
                             name={`colorId-${index}`} // Đặt tên khác nhau cho từng biểu mẫu động
                             control={dynamicFormControl}
                             errors={dynamicFormErrors}

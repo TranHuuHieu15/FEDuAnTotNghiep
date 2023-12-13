@@ -57,11 +57,12 @@ const ProductForm = ({ category, onSubmitCallback, onResetForm }) => {
         gender: yup.string().required("Please enter product gender"),
         categoryId: yup.string().required("Please enter product category"),
         brandId: yup.string().required("Please enter product brand"),
-        description: yup.string().required("Please enter product description"),
-    });
+    })
+        .required();
+
 
     const {
-        formState: { errors },
+        formState: { errors, isValid },
         control,
         handleSubmit: handleSubmit,
         reset,
@@ -101,6 +102,7 @@ const ProductForm = ({ category, onSubmitCallback, onResetForm }) => {
 
 
     const handleFormSubmit = (data, e) => {
+        if (!isValid) return;
         e.preventDefault();
         const extractedData = selectHashTag.map((item) => ({
             hashtagId: item.id,
@@ -162,6 +164,7 @@ const ProductForm = ({ category, onSubmitCallback, onResetForm }) => {
                             mainClassName="flex flex-col"
                             className2="text-sm ml-1 font-normal"
                             className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
+                            selectDefault="Select season"
                             title="Season"
                             name="season"
                             options={typeSeason}
@@ -173,6 +176,7 @@ const ProductForm = ({ category, onSubmitCallback, onResetForm }) => {
                             mainClassName="flex flex-col"
                             className2="text-sm ml-1 font-normal"
                             className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
+                            selectDefault="Select gender"
                             title="Gender"
                             name="gender"
                             options={typeGender}
@@ -186,6 +190,7 @@ const ProductForm = ({ category, onSubmitCallback, onResetForm }) => {
                             mainClassName="flex flex-col"
                             className2="text-sm ml-1 font-normal"
                             className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
+                            selectDefault="Select category"
                             title="Category"
                             name="categoryId"
                             control={control}
@@ -197,6 +202,7 @@ const ProductForm = ({ category, onSubmitCallback, onResetForm }) => {
                             mainClassName="flex flex-col"
                             className2="text-sm ml-1 font-normal"
                             className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
+                            selectDefault="Select brand"
                             title="Brands"
                             name="brandId"
                             control={control}

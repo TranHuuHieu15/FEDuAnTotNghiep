@@ -11,9 +11,13 @@ const SelectDefault = ({
   name,
   errors,
   disabled,
+  selectDefault,
 }) => {
   const selectClasses = `border ${className}`;
-
+  // console.log(name);
+  // console.log(errors);
+  console.log(errors);
+  // console.log(errors?.name?.message);
   const { field } = useController({
     control,
     name,
@@ -24,6 +28,7 @@ const SelectDefault = ({
       <div className={mainClassName}>
         {title && <label className={className2}>{title}</label>}
         <select disabled={disabled} className={selectClasses} {...field}>
+          <option value="">{selectDefault}</option>
           {options &&
             options.map((item) => (
               <option value={item.value} key={item.id}>
@@ -31,9 +36,9 @@ const SelectDefault = ({
               </option>
             ))}
         </select>
-        {errors.typeDiscount && (
+        {errors?.[name] && (
           <p className="mt-2 ml-1 text-xs text-red-500">
-            {errors.typeDiscount.message}
+            {errors?.[name]?.message}
           </p>
         )}
       </div>
@@ -52,6 +57,7 @@ SelectDefault.propTypes = {
   options: PropTypes.array,
   errors: PropTypes.object,
   disabled: PropTypes.bool,
+  selectDefault: PropTypes.string,
 };
 
 export default SelectDefault;

@@ -168,12 +168,15 @@ const ProductAddPage = () => {
                 <div className="flex-1">
                     <div className="flex flex-col gap-3  max-h-[330px] overflow-y-auto">
                         {Array.from({ length: divCount }).map((_, index) => (
-                            <div className="flex flex-row border items-center p-5" key={index}>
+                            <div className="flex flex-col border items-center p-5" key={index}>
                                 <FormProductVariant
                                     index={index}
                                     onSubmitCallback={handleDynamicFormSubmit}
                                 />
-
+                                <div>
+                                    <Button onClick={handleRemoveDiv}>Remove
+                                    </Button>
+                                </div>
                             </div>
                         ))}
                     </div>

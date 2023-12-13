@@ -63,7 +63,6 @@ const ImageUpload = ({
         className="max-w-[100px] hidden"
         onChange={handleImage}
         {...fieldProps}
-        ref={inputRef}
       />
       {errors.image && (
         <p className="mt-1 ml-1 text-xs text-red-500">{errors.image.message}</p>

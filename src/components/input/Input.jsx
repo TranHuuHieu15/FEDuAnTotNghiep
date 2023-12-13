@@ -11,6 +11,7 @@ const Input = ({
   label,
   type = "text",
   errors,
+  disabled,
   ...props
 }) => {
   const { field } = useController({
@@ -27,6 +28,7 @@ const Input = ({
           label={label}
           icon={icon}
           variant={variant}
+          disabled={disabled}
           {...field}
           value={
             type === "datetime-local" ? field.value.slice(0, 16) : field.value
@@ -51,5 +53,6 @@ Input.propTypes = {
   className: PropTypes.string,
   icon: PropTypes.any,
   errors: PropTypes.object,
+  disabled: PropTypes.bool,
 };
 export default Input;

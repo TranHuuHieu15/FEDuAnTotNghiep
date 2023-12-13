@@ -58,11 +58,6 @@ const PaymentManage = () => {
     formData.append("imageFile", data.image);
     formData.append("name", data.name);
     formData.append("description", data.description);
-    // const payment = {
-    //   // name: data.name,
-    //   description: data.description,
-    // };
-    // formData.append("paymentDto", JSON.stringify(payment));
     //*Tạo mới payment
     try {
       const response = await axios.post("/payment/create", formData);

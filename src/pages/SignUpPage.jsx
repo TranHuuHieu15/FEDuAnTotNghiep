@@ -9,7 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useRegisterMutation } from "../redux/api/authApi";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   registerFailure,
   registerStart,
@@ -53,7 +53,6 @@ const SignUpPage = () => {
     dispatch(registerStart());
     try {
       const response = await registerMutation(data).unwrap();
-      console.log(response.data);
       dispatch(
         registerSuccess({
           userInfo: response.data.userInfo,
@@ -62,9 +61,14 @@ const SignUpPage = () => {
       );
       reset({
         username: "",
+        fullName: "",
+        birthday: "",
         password: "",
+        email: "",
+        gender: "",
+        term: false,
       });
-      navigate("/");
+      navigate("/checkmail");
     } catch (response) {
       if (response.status === 500) {
         dispatch(registerFailure(response.data.message));
@@ -80,15 +84,6 @@ const SignUpPage = () => {
         });
       }
     }
-    reset({
-      username: "",
-      fullName: "",
-      birthday: "",
-      password: "",
-      email: "",
-      gender: "",
-      term: false,
-    });
   };
   return (
     <>
@@ -100,12 +95,12 @@ const SignUpPage = () => {
               <h3 className="text-2xl font-semibold text-gray-800">Sign Up </h3>
               <p className="text-gray-400">
                 Already have an account?
-                <a
-                  href="/login"
+                <Link
+                  to="/login"
                   className="text-sm text-purple-700 hover:text-purple-700"
                 >
                   Sign In
-                </a>
+                </Link>
               </p>
             </div>
             <div className="space-y-4">

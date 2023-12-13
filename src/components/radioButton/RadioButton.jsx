@@ -25,9 +25,8 @@ const RadioButton = ({
         label={label}
         name={name}
         ripple={ripple}
-        {...field}
-        value={value}
-        defaultChecked={value}
+        checked={field.value === value} // Sử dụng checked thay vì defaultChecked
+        onChange={() => field.onChange(value)} // Cập nhật giá trị của trường thủ công
       ></Radio>
       {errors.name && (
         <p className="mt-2 ml-1 text-xs text-red-500">{errors.name.message}</p>

@@ -10,6 +10,7 @@ const Input = ({
   color,
   label,
   type = "text",
+  disabled = false,
   errors,
   disabled,
   ...props
@@ -19,6 +20,8 @@ const Input = ({
     name: props.name,
     defaultValue: "",
   });
+  const sanitizedValue =
+    field.value !== null && field.value !== undefined ? field.value : "";
   return (
     <>
       <div className={className}>
@@ -31,7 +34,9 @@ const Input = ({
           disabled={disabled}
           {...field}
           value={
-            type === "datetime-local" ? field.value.slice(0, 16) : field.value
+            type === "datetime-local"
+              ? sanitizedValue.slice(0, 16)
+              : sanitizedValue
           }
         />
         {errors[props.name] && (

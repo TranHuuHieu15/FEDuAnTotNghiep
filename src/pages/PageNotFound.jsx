@@ -3,11 +3,11 @@ import page404 from "../assets/images/page404.jpg";
 
 const PageNotFound = () => {
   return (
-    <div className="flex items-center justify-center w-screen h-screen bg-[#F7C59F]">
+    <div className="flex items-center justify-center w-screen h-screen">
       <div className="flex items-center justify-center w-[700px] pr-5 shadow-3xl bg-white h-[400px] rounded-3xl">
-        <img src={page404} alt="" />
-        <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-bold font-eculid text-[#F7C59F]">
+        <img src={page404} alt="Page Not Found" />
+        <div className="flex flex-col gap-3">
+          <h1 className="text-4xl font-bold text-gray-900 font-eculid">
             Page Not Found
           </h1>
           <p className="font-normal text-md font-eculid">
@@ -17,7 +17,7 @@ const PageNotFound = () => {
           </p>
           <Link
             to="/"
-            className="text-xl font-semibold bg-[#F7C59F] text-gray-800 p-2 text-center rounded-full w-[180px] font-eculid"
+            className="text-xl font-semibold bg-gray-900 text-gray-200 hover:bg-gray-200 hover:text-gray-900 p-2 text-center rounded-full w-[180px] font-eculid"
           >
             Back to home
           </Link>

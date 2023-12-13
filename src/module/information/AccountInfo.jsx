@@ -9,29 +9,35 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
+import Textarea from "../../components/textarea/Textarea.jsx";
+import { updateUserInfo } from "../../redux/features/authSlice.jsx";
+import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
-const AccountInfo = () => {
+const AccountInfo = ({ isUpdate }) => {
+  const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
   console.log(user);
   const schema = yup
     .object({
-      image: yup.mixed().test("file", "Please choose a image file", (value) => {
-        if (value instanceof File) {
-          const acceptedExtensions = [".jpg", ".jpeg", ".png"];
-          const fileExtension = value.name.split(".").pop().toLowerCase();
-          return acceptedExtensions.includes(`.${fileExtension}`);
-        } else if (typeof value === "string") {
-          const imageExtensions = [".jpg", ".jpeg", ".png"];
-          return imageExtensions.some((extension) =>
-            value.toLowerCase().endsWith(extension)
-          );
-        }
-        return false; // Trường hợp khác không hợp lệ
-      }),
+      //Không cẩn ảnh cũng được
+      // image: yup.mixed().test("file", "Please choose a image file", (value) => {
+      //   if (value instanceof File) {
+      //     const acceptedExtensions = [".jpg", ".jpeg", ".png"];
+      //     const fileExtension = value.name.split(".").pop().toLowerCase();
+      //     return acceptedExtensions.includes(`.${fileExtension}`);
+      //   } else if (typeof value === "string") {
+      //     const imageExtensions = [".jpg", ".jpeg", ".png"];
+      //     return imageExtensions.some((extension) =>
+      //       value.toLowerCase().endsWith(extension)
+      //     );
+      //   }
+      //   return false; // Trường hợp khác không hợp lệ
+      // }),
       username: yup.string().required("Please enter your username"),
-      fullname: yup.string().required("Please enter your fullname"),
+      fullName: yup.string().required("Please enter your fullname"),
       email: yup.string().required("Please enter your email"),
-      phoneNumber: yup.string().required("Please enter your phone number"),
+      // phoneNumber: yup.string().required("Please enter your phone number"),
       birthday: yup
         .date()
         .transform((originalValue) => {
@@ -65,30 +71,51 @@ const AccountInfo = () => {
     await handleUpdateData(data);
     // reset form
     reset({
-      phoneNumber: "",
-      email: "",
-      username: "",
-      fullname: "",
-      birthday: "",
-      address: "",
+      image: data.image,
+      phoneNumber: data.phoneNumber,
+      email: data.email,
+      username: data.username,
+      fullName: data.fullName,
+      birthday: data.birthday,
+      address: data.address,
+      sex: data.sex,
     });
   };
 
   const handleUpdateData = async (data) => {
+    console.log(data);
     try {
       const formData = new FormData();
       typeof data.image === "string"
         ? formData.append("image", data.image)
         : formData.append("imageFile", data.image);
       formData.append("username", data.username);
-      formData.append("fullname", data.fullname);
+      formData.append("fullName", data.fullName);
       formData.append("email", data.email);
       formData.append("phoneNumber", data.phoneNumber);
       formData.append("birthday", data.birthday);
       formData.append("address", data.address);
-      const response = await axios.put("/user/update", formData);
+      formData.append("sex", data.sex);
+      const response = await axios.put("/account/update-profile", formData, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      });
       console.log(response);
-      toast.success("Update discount successfully!", {
+      //Đoạn này là để update lại thông tin user trong redux
+      dispatch(
+        updateUserInfo({
+          image: data.image,
+          username: data.username,
+          fullName: data.fullName,
+          email: data.email,
+          phoneNumber: data.phoneNumber,
+          birthday: data.birthday,
+          address: data.address,
+          sex: data.sex,
+        })
+      );
+      toast.success("Update user successfully!", {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -99,13 +126,23 @@ const AccountInfo = () => {
         theme: "light",
       });
     } catch (error) {
+      toast.error("Update user fail! (Do not duplicate phone numbers)", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       console.log(error);
     }
   };
 
   return (
     <>
-      <div className="flex-initial w-full border-2 shadow-md rounded-2xl">
+      <div className="flex flex-col gap-5">
         <div className="pt-5 pl-10">
           <p className="text-2xl text-blue-gray-600">Information</p>
           <p className="text-gray-600">Manage and protect your account</p>
@@ -123,15 +160,25 @@ const AccountInfo = () => {
               <ImageUpload
                 name="image"
                 control={control}
-                // isUpdate={isUpdate}
+                isUpdate={isUpdate}
                 errors={errors}
               ></ImageUpload>
             </div>
           </div>
-          <div className="flex-1 mr-16">
+          <div className="flex-1 mr-16 w-[323px]">
+            <Input
+              type="email"
+              label="Enter your email"
+              className="w-auto my-4"
+              disabled={true}
+              name="email"
+              control={control}
+              errors={errors}
+            />
             <Input
               type="text"
               label="Enter your username"
+              disabled={true}
               className="w-auto my-4"
               control={control}
               errors={errors}
@@ -146,15 +193,7 @@ const AccountInfo = () => {
               errors={errors}
             />
             <Input
-              type="email"
-              label="Enter your email"
-              className="w-auto my-4"
-              name="email"
-              control={control}
-              errors={errors}
-            />
-            <Input
-              type="string"
+              type="text"
               label="Enter your phone number"
               className="w-auto my-4"
               name="phoneNumber"
@@ -163,9 +202,15 @@ const AccountInfo = () => {
             />
             <Input
               type="date"
+              name="birthday"
               label="Enter your birthday"
               className="w-auto my-4"
-              name="birthday"
+              control={control}
+              errors={errors}
+            />
+            <Textarea
+              name="address"
+              label="Address"
               control={control}
               errors={errors}
             />
@@ -176,7 +221,6 @@ const AccountInfo = () => {
                 label="Nam"
                 name="sex"
                 ripple={true}
-                // checked={true}
                 control={control}
                 errors={errors}
                 value={true}
@@ -204,5 +248,7 @@ const AccountInfo = () => {
     </>
   );
 };
-
+AccountInfo.propTypes = {
+  isUpdate: PropTypes.bool,
+};
 export default AccountInfo;

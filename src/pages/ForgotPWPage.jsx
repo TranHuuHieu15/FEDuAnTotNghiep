@@ -4,8 +4,12 @@ import logo from "../assets/images/logo-removebg.png";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useNavigate } from "react-router-dom";
+import { useVerifyEmailMutation } from "../redux/api/authApi";
 
 const ForgotPWPage = () => {
+  const navigate = useNavigate();
+  const [verifyEmail] = useVerifyEmailMutation();
   const schema = yup
     .object({
       email: yup.string().email().required("Please enter your email"),
@@ -19,12 +23,22 @@ const ForgotPWPage = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const onSubmitHandler = () => {
+  const onSubmitHandler = async ({ email }) => {
     if (!isValid) return;
+    try {
+      const response = await verifyEmail({ email }).unwrap();
+      console.log(response);
+      if (response.result === true) {
+        navigate("/checkmail");
+      }
+    } catch (error) {
+      console.log(error);
+    }
     reset({
       email: "",
     });
   };
+
   return (
     <>
       <div className="absolute top-0 bottom-0 left-0 w-full h-full overflow-hidden leading-5 bg-[#F7C59F] bg-gradient-to-b"></div>
@@ -44,7 +58,7 @@ const ForgotPWPage = () => {
               <h2 className="mt-2 text-gray-500">
                 Follow these simple steps to reset your account:
               </h2>
-              <p className="mt-3 ml-6 text-gray-400">
+              <div className="mt-3 ml-6 text-gray-400">
                 <ol className="list-decimal">
                   <li>Enter your username or email.</li>
                   <li>
@@ -55,7 +69,7 @@ const ForgotPWPage = () => {
                     Follow the instruction in the mail to change password.
                   </li>
                 </ol>
-              </p>
+              </div>
             </div>
             <div className="flex flex-col items-center w-full gap-5 mb-4">
               <form onSubmit={handleSubmit(onSubmitHandler)}>
@@ -69,7 +83,7 @@ const ForgotPWPage = () => {
                 />
                 <Button
                   type="submit"
-                  className="w-[455px] bg-[#F7C59F]"
+                  className="w-[455px] bg-[#F7C59F]  text-gray-800"
                   disabled={isSubmitting}
                 >
                   Get new password

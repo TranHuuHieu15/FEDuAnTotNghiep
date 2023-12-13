@@ -197,7 +197,7 @@ const AccountAddress = () => {
   };
   return (
     <>
-      <div className="flex-initial shadow-md border-2 w-full rounded-2xl">
+      <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between mt-2 ml-3 pl-10 pt-5">
           <div>
             <p className="text-2xl text-blue-gray-600">My Addresses</p>
@@ -216,7 +216,7 @@ const AccountAddress = () => {
           <span className="w-full px-3 h-px bg-gray-200 mt-3"></span>
         </div>
 
-        <div className="px-10 mt-5">
+        <div className="px-10 mt-5 w-[702px]">
           <ul className="mt-3">
             {deliveryAddressData.length > 0 &&
               deliveryAddressData.map((item) => (

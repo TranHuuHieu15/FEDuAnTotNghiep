@@ -1,7 +1,11 @@
 import { BsSearch } from "react-icons/bs";
 import PropTypes from "prop-types";
 
-const InputSearch = ({ maxWidth, onChange }) => {
+const InputSearch = ({
+  maxWidth = "max-w-[400px]",
+  onChange,
+  placeholder = "Search...",
+}) => {
   return (
     <>
       <div
@@ -11,7 +15,7 @@ const InputSearch = ({ maxWidth, onChange }) => {
           type="text"
           className="w-full h-10 px-4 py-4 text-base rounded-full font-eculid"
           onChange={onChange}
-          placeholder="Search..."
+          placeholder={placeholder}
         />
         <button>
           <BsSearch className="absolute rounded-full top-3 right-2" />
@@ -23,6 +27,7 @@ const InputSearch = ({ maxWidth, onChange }) => {
 
 InputSearch.propTypes = {
   maxWidth: PropTypes.string,
+  placeholder: PropTypes.string,
   onChange: PropTypes.func,
 };
 

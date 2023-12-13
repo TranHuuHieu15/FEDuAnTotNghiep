@@ -7,12 +7,19 @@ import {
 } from "@material-tailwind/react";
 import PropTypes from "prop-types";
 
-const DialogDelete = ({ title, show, confirm, cancel }) => {
+const DialogDelete = ({
+  title,
+  show,
+  confirm,
+  cancel,
+  question = "Delete",
+}) => {
+  const questionLowerCase = question.toLowerCase();
   return (
     <>
-      <Dialog open={show}>
-        <DialogHeader>{`Delete this ${title}`}</DialogHeader>
-        <DialogBody>{`Do you want to delete this ${title}`}</DialogBody>
+      <Dialog open={show} size="xs">
+        <DialogHeader>{`${question} this ${title}`}</DialogHeader>
+        <DialogBody>{`Do you want to ${questionLowerCase} this ${title}`}</DialogBody>
         <DialogFooter>
           <Button color="red" onClick={cancel} className="mr-1">
             <span>Cancel</span>
@@ -27,6 +34,7 @@ const DialogDelete = ({ title, show, confirm, cancel }) => {
 };
 
 DialogDelete.propTypes = {
+  question: PropTypes.string,
   title: PropTypes.string,
   confirm: PropTypes.func,
   cancel: PropTypes.func,

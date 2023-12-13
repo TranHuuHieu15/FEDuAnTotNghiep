@@ -17,6 +17,7 @@ import { addToCart } from "../redux/features/cartSlice";
 import { toast } from "react-toastify";
 const ProductDetailPage = () => {
   const [productDetail, setProductDetail] = useState([]);
+  const [evaluateData, setEvaluateData] = useState([]);
   const { productVariantsDto, productDto, discount } = productDetail;
   const [open, setOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -28,6 +29,12 @@ const ProductDetailPage = () => {
   const { productId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const selectedVariant =
+    productVariantsDto &&
+    productVariantsDto.find(
+      (variant) =>
+        variant.size === selectedSize && variant.colorId === selectedColor
+    );
   const findDarkestColor = (colors) => {
     // Hàm để chuyển màu sang giá trị số để so sánh
     const calculateBrightness = (color) => {
@@ -74,12 +81,17 @@ const ProductDetailPage = () => {
     };
     fetchData();
   }, [productId]);
-  const selectedVariant =
-    productVariantsDto &&
-    productVariantsDto.find(
-      (variant) =>
-        variant.size === selectedSize && variant.colorId === selectedColor
-    );
+  useEffect(() => {
+    const fetchReview = async () => {
+      try {
+        const response = await axios.get(`/evaluate/product/${productId}`);
+        setEvaluateData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchReview();
+  }, [productId]);
   const handleSizeChange = (size) => {
     setSelectedSize(size);
     // Lấy ảnh mới tương ứng với kích thước đã chọn
@@ -89,9 +101,13 @@ const ProductDetailPage = () => {
       // Cập nhật ảnh hiện tại
       setCurrentImage(image);
     }
-    const colorsForSelectedSize = productVariantsDto
-      .filter((variant) => variant.size === size)
-      .map((variant) => variant.colorId);
+    const variantsForSelectedSize = productVariantsDto.filter(
+      (variant) => variant.size === size
+    );
+
+    const colorsForSelectedSize = Array.from(
+      new Set(variantsForSelectedSize.map((variant) => variant.colorId))
+    );
 
     // Chọn màu tối nhất từ danh sách màu sắc của size đó
     const darkestColorForSelectedSize = findDarkestColor(colorsForSelectedSize);
@@ -126,7 +142,6 @@ const ProductDetailPage = () => {
   };
   const handleAddToCart = async () => {
     if (selectedVariant) {
-      console.log(selectedVariant);
       const cartItem = {
         productVariantId: selectedVariant.id,
         image: productDto.imageProductDto.url,
@@ -165,14 +180,14 @@ const ProductDetailPage = () => {
               .map((variant) => (
                 <img
                   key={variant.id}
-                  src={variant.imageProductDto.url}
+                  src={variant.url}
                   alt="Image"
                   className="w-[146px] h-[130px] object-fill flex-shrink-0 rounded-md"
                 />
               ))}
           </div>
           <img
-            src={currentImage || productDto?.imageProductDto.url}
+            src={currentImage || productDto?.url}
             alt=""
             className="w-[476px] h-[567px] object-fill hover:scale-105 hover:duration-500 flex-shrink-0 rounded-md"
           />
@@ -296,14 +311,22 @@ const ProductDetailPage = () => {
       </div>
       <div className="flex flex-col justify-center mx-40">
         <h3 className="text-2xl font-semibold font-eculid">Customer Reviews</h3>
-        <Comment></Comment>
-        <Comment></Comment>
-        <Comment></Comment>
-        <div className="flex items-center justify-center my-8">
-          <Button className="text-base font-semibold w-60 bg-blue-gray-800 hover:scale-105">
-            Load More
-          </Button>
-        </div>
+        {evaluateData?.length > 0 &&
+          evaluateData.map((item) => (
+            <Comment key={item.id} items={item}></Comment>
+          ))}
+        {evaluateData?.length > 0 && (
+          <div className="flex items-center justify-center my-8">
+            <Button className="text-base font-semibold w-60 bg-blue-gray-800 hover:scale-105">
+              Load More
+            </Button>
+          </div>
+        )}
+        {evaluateData.length === 0 && (
+          <div className="flex items-center justify-center my-8 text-xl font-medium font-eculid">
+            No reviews have been submitted for the product yet.
+          </div>
+        )}
       </div>
     </SiteLayout>
   );

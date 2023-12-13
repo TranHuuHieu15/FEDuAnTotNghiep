@@ -7,6 +7,7 @@ import AccountInfo from "./module/information/AccountInfo";
 import AccountAddress from "./module/information/AccountAddress";
 import AccountOrder from "./module/information/AccountOrder";
 import AccountChangePassword from "./module/information/AccountChangePassword";
+import Information from "./module/dashboard/Information";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutUsPage = lazy(() => import("./pages/AboutUsPage"));
@@ -18,6 +19,7 @@ const ProductDetailPage = lazy(() => import("./pages/ProductDetailPage"));
 const SignInPage = lazy(() => import("./pages/SignInPage"));
 const SignUpPage = lazy(() => import("./pages/SignUpPage"));
 const ForgotPWPage = lazy(() => import("./pages/ForgotPWPage"));
+const EnterNewPWPage = lazy(() => import("./pages/EnterNewPWPage"));
 const CheckMailPage = lazy(() => import("./pages/CheckMailPage"));
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
@@ -36,6 +38,7 @@ const ProductManagePage = lazy(() => import("./module/product/ProductManage"));
 const ProductCEPage = lazy(() => import("./module/product/ProductCEPage"));
 const OrderManage = lazy(() => import("./module/order/OrderManage"));
 const ProductAddPage = lazy(() => import("./module/product/ProductAddPage"));
+const AccountManage = lazy(() => import("./module/account/AccountManage"));
 
 function App() {
   return (
@@ -58,8 +61,12 @@ function App() {
           <Route path="/login" element={<SignInPage></SignInPage>}></Route>
           <Route path="/signup" element={<SignUpPage></SignUpPage>}></Route>
           <Route
-            path="/resetpassword"
+            path="/forgotPW"
             element={<ForgotPWPage></ForgotPWPage>}
+          ></Route>
+          <Route
+            path="/enterNewPW"
+            element={<EnterNewPWPage></EnterNewPWPage>}
           ></Route>
           <Route
             path="/checkmail"
@@ -84,6 +91,10 @@ function App() {
             <Route
               path="/admin/product/edit/:id"
               element={<ProductCEPage></ProductCEPage>}
+            ></Route>
+            <Route
+              path="/admin/account"
+              element={<AccountManage></AccountManage>}
             ></Route>
             <Route
               path="/admin/category"
@@ -124,6 +135,10 @@ function App() {
             <Route
               path="/admin/color"
               element={<ColorManage></ColorManage>}
+            ></Route>
+            <Route
+              path="/admin/profile"
+              element={<Information></Information>}
             ></Route>
           </Route>
           <Route element={<AccountLayout></AccountLayout>}>

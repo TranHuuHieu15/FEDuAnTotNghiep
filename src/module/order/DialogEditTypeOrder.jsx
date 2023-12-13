@@ -19,26 +19,31 @@ const typeOrder = [
   },
   {
     id: 2,
-    value: "PAID",
-    name: "PAID",
+    value: "WAIT_TO_PAY",
+    name: "TO PAY",
   },
   {
     id: 3,
+    value: "PROCESSING",
+    name: "PROCESSING",
+  },
+  {
+    id: 4,
     value: "DELIVERING",
     name: "DELIVERING",
   },
   {
-    id: 4,
+    id: 5,
     value: "SUCCESSFUL",
     name: "SUCCESSFUL",
   },
   {
-    id: 5,
+    id: 6,
     value: "CANCELLED",
     name: "CANCELLED",
   },
   {
-    id: 6,
+    id: 7,
     value: "RETURNED",
     name: "RETURNED",
   },

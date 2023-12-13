@@ -142,7 +142,7 @@ const AccountInfo = ({ isUpdate }) => {
 
   return (
     <>
-      <div className="flex-initial w-full border-2 shadow-md rounded-2xl">
+      <div className="flex flex-col gap-5">
         <div className="pt-5 pl-10">
           <p className="text-2xl text-blue-gray-600">Information</p>
           <p className="text-gray-600">Manage and protect your account</p>
@@ -165,7 +165,7 @@ const AccountInfo = ({ isUpdate }) => {
               ></ImageUpload>
             </div>
           </div>
-          <div className="flex-1 mr-16">
+          <div className="flex-1 mr-16 w-[323px]">
             <Input
               type="email"
               label="Enter your email"
@@ -235,11 +235,7 @@ const AccountInfo = ({ isUpdate }) => {
               ></RadioButton>
             </div>
             <div className="mt-2">
-              <Button
-                className="bg-blue-gray-900"
-                type="submit"
-                onClick={() => handleUpdateData()}
-              >
+              <Button className="bg-blue-gray-900" type="submit">
                 Update
               </Button>
               <Button className="ml-5" outline="outlined">

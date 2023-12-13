@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import { useController } from "react-hook-form";
 
 const SelectDefault = ({
+  mainClassName,
   className,
   title,
   options,
@@ -20,18 +21,22 @@ const SelectDefault = ({
   });
   return (
     <>
-      {title && <label className={className2}>{title}</label>}
-      <select disabled={disabled} className={selectClasses} {...field}>
-        {options &&
-          options.map((item) => (
-            <option value={item.value} key={item.id}>
-              {item.name}
-            </option>
-          ))}
-      </select>
-      {errors.name && (
-        <p className="mt-2 ml-1 text-xs text-red-500">{errors.name.message}</p>
-      )}
+      <div className={mainClassName}>
+        {title && <label className={className2}>{title}</label>}
+        <select disabled={disabled} className={selectClasses} {...field}>
+          {options &&
+            options.map((item) => (
+              <option value={item.value} key={item.id}>
+                {item.name}
+              </option>
+            ))}
+        </select>
+        {errors.typeDiscount && (
+          <p className="mt-2 ml-1 text-xs text-red-500">
+            {errors.typeDiscount.message}
+          </p>
+        )}
+      </div>
     </>
   );
 };

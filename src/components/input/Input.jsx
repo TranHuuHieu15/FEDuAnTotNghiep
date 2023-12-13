@@ -12,7 +12,6 @@ const Input = ({
   type = "text",
   disabled = false,
   errors,
-  disabled,
   ...props
 }) => {
   const { field } = useController({

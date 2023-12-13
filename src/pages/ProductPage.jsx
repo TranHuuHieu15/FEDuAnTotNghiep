@@ -27,7 +27,7 @@ const ProductPage = () => {
       setLoading(true);
       const response = await axios.get(url);
       setProductData(response.data || response.content);
-      const totalPages = Math.ceil(response['all-item'] / response.size);
+      const totalPages = Math.ceil(response["all-item"] / response.size);
       setTotalPages(totalPages); // Cập nhật tổng số trang
       setLoading(false);
     } catch (error) {
@@ -80,9 +80,14 @@ const ProductPage = () => {
               handleBrandValue={handleBrandValue}
             />
           </div>
-          <div className="flex flex-col justify-start">
+          <div className="flex flex-col justify-start gap-5">
             {loading && (
               <div className="flex flex-wrap items-center gap-3">
+                <ProductCardLoading />
+                <ProductCardLoading />
+                <ProductCardLoading />
+                <ProductCardLoading />
+                <ProductCardLoading />
                 <ProductCardLoading />
                 <ProductCardLoading />
                 <ProductCardLoading />
@@ -100,6 +105,13 @@ const ProductPage = () => {
                   ></ProductCard>
                 ))}
             </div>
+            <div className="flex items-center justify-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onChange={handleChangePage}
+              ></Pagination>
+            </div>
             <div className="flex flex-wrap items-center gap-3">
               {!loading && !productData && (
                 <p className="text-xl font-semibold text-center font-eculid">
@@ -109,18 +121,6 @@ const ProductPage = () => {
             </div>
           </div>
         </div>
-        <div className="flex justify-center  gap-3">
-          <Pagination
-
-            currentPage={currentPage}
-
-            totalPages={totalPages}
-
-            onChange={handleChangePage}
-
-          ></Pagination>
-        </div>
-
       </SiteLayout>
     </>
   );

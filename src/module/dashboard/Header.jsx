@@ -6,7 +6,6 @@ import { selectCurrentUser } from "../../redux/features/authSlice";
 
 const Header = () => {
   const user = useSelector(selectCurrentUser);
-  console.log(user);
   return (
     <div className="flex items-center justify-around">
       <div>

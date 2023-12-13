@@ -8,12 +8,12 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../../redux/features/authSlice";
+import PropTypes from "prop-types";
 
-const Dropdown = () => {
+const Dropdown = ({ user }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = () => {
-    console.log("logout");
     dispatch(logout());
     navigate("/");
   };
@@ -31,7 +31,11 @@ const Dropdown = () => {
         </MenuHandler>
         <MenuList>
           <MenuItem>
-            <Link to="/user">My Profile</Link>
+            {user && user?.path === 0 ? (
+              <Link to="/user">My Profile</Link>
+            ) : (
+              <Link to="/admin/profile">My Profile</Link>
+            )}
           </MenuItem>
           <MenuItem>
             <Link to="/help">Help</Link>
@@ -43,6 +47,10 @@ const Dropdown = () => {
       </Menu>
     </>
   );
+};
+
+Dropdown.propTypes = {
+  user: PropTypes.object,
 };
 
 export default Dropdown;

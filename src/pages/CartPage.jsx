@@ -22,32 +22,34 @@ const CartPage = () => {
             <div className="flex flex-col items-center justify-center">
               <CartList></CartList>
             </div>
-            <div className="flex flex-col gap-5">
-              <div className="flex gap-20 bg-[#F3F4F6] px-5 py-5">
-                <div className="flex flex-col">
-                  <p>Total Amount:</p>
-                  <p>Shipping Fee:</p>
-                  <p>Taxes:</p>
+            {cartData.length > 0 && (
+              <div className="flex flex-col gap-5">
+                <div className="flex gap-20 bg-[#F3F4F6] px-5 py-5">
+                  <div className="flex flex-col">
+                    <p>Total Amount:</p>
+                    <p>Shipping Fee:</p>
+                    <p>Taxes:</p>
+                  </div>
+                  <div className="flex flex-col not-italic font-bold font-eculid">
+                    <span>${totalAmount}</span>
+                    <span>${shippingFee}</span>
+                    <span>${taxes}</span>
+                  </div>
                 </div>
-                <div className="flex flex-col not-italic font-bold font-eculid">
-                  <span>${totalAmount}</span>
-                  <span>${shippingFee}</span>
-                  <span>${taxes}</span>
+
+                <div className="flex gap-36 bg-[#F3F4F6] px-5 py-3 font-bold">
+                  <p>Total:</p>
+                  <span>${total}</span>
                 </div>
-              </div>
 
-              <div className="flex gap-36 bg-[#F3F4F6] px-5 py-3 font-bold">
-                <p>Total:</p>
-                <span>${total}</span>
+                <Button
+                  className="w-[462px] shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+                  onClick={() => navigate("/checkout")}
+                >
+                  Purchase
+                </Button>
               </div>
-
-              <Button
-                className="w-[462px] shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
-                onClick={() => navigate("/checkout")}
-              >
-                Purchase
-              </Button>
-            </div>
+            )}
           </div>
         </div>
       </SiteLayout>

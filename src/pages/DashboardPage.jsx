@@ -1,4 +1,101 @@
+import axios from "../config/axios";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../redux/features/authSlice";
+import { Option, Select } from "@material-tailwind/react";
+import { Link } from "react-router-dom";
+
 const DashboardPage = () => {
+  const user = useSelector(selectCurrentUser);
+  const [statisticByYear, setStatisticDataByYear] = useState([]);
+  const [totalCustomer, setTotalCustomer] = useState(0);
+  const [totalSale, setTotalTotalSale] = useState(0);
+  const [totalOrder, setTotalTotalOrder] = useState(0);
+  const [year, setYear] = useState(String(new Date().getFullYear()));
+  const [month, setMonth] = useState("0");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `/statistic/income?${
+            month === "0" ? `year=${year}` : `year=${year}&month=${month}`
+          }`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+            },
+          }
+        );
+        console.log(response.data);
+        setStatisticDataByYear(response.data);
+      } catch (error) {
+        setStatisticDataByYear([]);
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [month, user.accessToken, year]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`/account/CUSTOMER`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
+        setTotalCustomer(response["all-item"]);
+        response.data;
+      } catch (error) {
+        setStatisticDataByYear([]);
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [user.accessToken]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`/order/SUCESSFULLY`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
+        const totalAmount = response.data.reduce(
+          (total, order) => total + order.orderDto.total,
+          0
+        );
+        setTotalTotalSale(totalAmount);
+        setTotalTotalOrder(response["all-item"]);
+        response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [user.accessToken]);
+
+  const handleChangeYear = (value) => {
+    setYear(value);
+  };
+  const handleChangeMonth = (value) => {
+    setMonth(value);
+  };
+  const generateYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const startYear = 2000;
+    const yearRange = Array.from(
+      { length: currentYear - startYear + 1 },
+      (_, index) => currentYear - index
+    );
+
+    return yearRange.map((year) => (
+      <Option key={year} value={String(year)}>
+        {year}
+      </Option>
+    ));
+  };
   return (
     <>
       <div className="flex flex-col justify-center lg:mr-16">
@@ -36,12 +133,15 @@ const DashboardPage = () => {
                     <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
                   </svg>
                 </div>
-                <h2 className="self-center text-3xl">421</h2>
+                <h2 className="self-center text-3xl">{totalOrder}</h2>
               </div>
               <div className="px-6 pb-6">
-                <a className="text-sm hover:text-indigo-500" href="#">
+                <Link
+                  className="text-sm hover:text-indigo-500"
+                  to="/admin/order"
+                >
                   View more...
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -75,13 +175,17 @@ const DashboardPage = () => {
                   </svg>
                 </div>
                 <h2 className="self-center text-3xl">
-                  <span>$</span>31K
+                  <span>$</span>
+                  {totalSale}
                 </h2>
               </div>
               <div className="px-6 pb-6">
-                <a className="text-sm hover:text-indigo-500" href="#">
+                <Link
+                  className="text-sm hover:text-indigo-500"
+                  to="/admin/order"
+                >
                   View more...
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -116,16 +220,19 @@ const DashboardPage = () => {
                 <h2 className="self-center text-3xl">1.2K</h2>
               </div>
               <div className="px-6 pb-6">
-                <a className="text-sm hover:text-indigo-500" href="#">
+                <Link
+                  className="text-sm hover:text-indigo-500"
+                  to="/admin/account"
+                >
                   View more...
-                </a>
+                </Link>
               </div>
             </div>
           </div>
           <div className="flex-shrink w-full max-w-full px-4 mb-6 sm:w-1/2 lg:w-1/4">
             <div className="h-full bg-white rounded-lg shadow-lg dark:bg-gray-800">
               <div className="relative px-6 pt-6 text-sm font-semibold">
-                Users Online{" "}
+                Total Users{" "}
                 <span className="w-2 h-2 mt-1 bg-green-500 rounded-full ltr:float-right rtl:float-left animate-pulse"></span>
               </div>
               <div className="flex flex-row justify-between px-6 py-4">
@@ -139,14 +246,102 @@ const DashboardPage = () => {
                     <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"></path>
                   </svg>
                 </div>
-                <h2 className="self-center text-3xl">602</h2>
+                <h2 className="self-center text-3xl">{totalCustomer}</h2>
               </div>
               <div className="px-6 pb-6">
-                <a className="text-sm hover:text-indigo-500" href="#">
+                <Link
+                  className="text-sm hover:text-indigo-500"
+                  to="/admin/account"
+                >
                   View more...
-                </a>
+                </Link>
               </div>
             </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col items-end justify-center gap-3">
+            <div className="flex items-center justify-center gap-3 mr-10">
+              <Select
+                label="Select year"
+                value={year}
+                onChange={handleChangeYear}
+              >
+                {generateYearOptions()}
+              </Select>
+              <Select
+                label="Select month"
+                value={month}
+                onChange={handleChangeMonth}
+              >
+                <Option value="0">All</Option>
+                <Option value="1">1</Option>
+                <Option value="2">2</Option>
+                <Option value="3">3</Option>
+                <Option value="4">4</Option>
+                <Option value="5">5</Option>
+                <Option value="5">5</Option>
+                <Option value="6">6</Option>
+                <Option value="7">7</Option>
+                <Option value="8">8</Option>
+                <Option value="9">9</Option>
+                <Option value="10">10</Option>
+                <Option value="11">11</Option>
+                <Option value="12">12</Option>
+              </Select>
+            </div>
+            <table className="w-full table-auto">
+              <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
+                <tr>
+                  <th className="px-6 py-4 font-medium text-gray-900">ID</th>
+                  <th className="px-6 py-4 font-medium text-gray-900">
+                    Total Product
+                  </th>
+                  <th className="px-6 py-4 font-medium text-gray-900">
+                    Total Price
+                  </th>
+                  <th className="px-6 py-4 font-medium text-gray-900">
+                    Total Order
+                  </th>
+                  <th className="px-6 py-4 font-medium text-gray-900">
+                    {typeof month === "string" && month !== null
+                      ? "Date"
+                      : "Month"}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="text-sm divide-y divide-gray-100">
+                {statisticByYear.map((item, index) => (
+                  <tr key={index}>
+                    <td className="rc-table-cell">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {index}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.totalProducts}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.totalIncome}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.totalOrder}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.month ? item.month : item.date}
+                      </p>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

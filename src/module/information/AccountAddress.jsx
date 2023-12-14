@@ -6,10 +6,14 @@ import { BsTrash3 } from "react-icons/bs";
 import { CiEdit } from "react-icons/ci";
 import axios from "../../config/axios.js";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice.jsx";
 import { toast } from "react-toastify";
 
 const AccountAddress = () => {
+  const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const [deliveryAddressData, setDeliveryAddressData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
@@ -28,7 +32,7 @@ const AccountAddress = () => {
     try {
       const response = await axios.get("/deliveryAddress/account", {
         headers: {
-          Authorization: `Bearer ${user.accessToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       setDeliveryAddressData(response.data);
@@ -38,7 +42,7 @@ const AccountAddress = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
@@ -64,12 +68,11 @@ const AccountAddress = () => {
           districtCode: data.districtCode,
           wardCode: data.wardCode,
         };
-        const response = await axios.post("/deliveryAddress/create", dataDTO, {
+        await axios.post("/deliveryAddress/create", dataDTO, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response);
         fetchData();
         handleCloseDialogCE();
         toast.success("Create delivery address successfully!", {
@@ -89,7 +92,6 @@ const AccountAddress = () => {
   };
   const handleUpdateTrue = (id) => {
     const dataEdit = deliveryAddressData.find((item) => item.id === id);
-    console.log("In ra dataEdit:", dataEdit);
     const dataEditDTO = {
       phoneNumber: dataEdit.phoneNumber,
       apartmentNumber: dataEdit.apartmentNumber,
@@ -119,19 +121,17 @@ const AccountAddress = () => {
       districtCode: data.districtCode,
       wardCode: data.wardCode,
     };
-    console.log("In ra deliveryAddressDTO:", dataDTO);
     try {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
-        const response = await axios.put(
+        await axios.put(
           `/deliveryAddress/update/${showDialogCERef.current.id}`,
           dataDTO,
           {
             headers: {
-              Authorization: `Bearer ${user.accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-        console.log(response);
         fetchData();
         handleCloseDialogCE();
         toast.success("Update delivery address successfully!", {
@@ -161,7 +161,7 @@ const AccountAddress = () => {
       if (showDialog.show && showDialog.id) {
         await axios.delete(`/deliveryAddress/delete/${showDialog.id}`, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setDeliveryAddressData(
@@ -202,7 +202,7 @@ const AccountAddress = () => {
   return (
     <>
       <div className="flex flex-col gap-5">
-        <div className="flex items-center justify-between mt-2 ml-3 pl-10 pt-5">
+        <div className="flex items-center justify-between pt-5 pl-10 mt-2 ml-3">
           <div>
             <p className="text-2xl text-blue-gray-600">My Addresses</p>
             <p className="text-gray-600">All previously saved addresses</p>
@@ -217,7 +217,7 @@ const AccountAddress = () => {
           </div>
         </div>
         <div className="flex items-center justify-center space-x-3">
-          <span className="w-full px-3 h-px bg-gray-200 mt-3"></span>
+          <span className="w-full h-px px-3 mt-3 bg-gray-200"></span>
         </div>
 
         <div className="px-10 mt-5 w-[702px]">
@@ -225,34 +225,34 @@ const AccountAddress = () => {
             {deliveryAddressData.length > 0 &&
               deliveryAddressData.map((item) => (
                 <li className="mt-2" key={item.id}>
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <div className="flex">
                       <p className="text-sm text-gray-600 uppercase">
                         {user.fullName}
                       </p>
-                      <p className="ml-2 text-gray-500 text-sm">
+                      <p className="ml-2 text-sm text-gray-500">
                         {item.phoneNumber || "Không có số điện thoại"}
                       </p>
                     </div>
                   </div>
-                  <div className="mt-2 flex justify-between items-center">
+                  <div className="flex items-center justify-between mt-2">
                     <div>
-                      <p className="text-gray-500 text-sm">
+                      <p className="text-sm text-gray-500">
                         {item.apartmentNumber}
                       </p>
-                      <p className="text-gray-500 text-sm">
+                      <p className="text-sm text-gray-500">
                         {item.ward}, {item.district}, {item.city}
                       </p>
                     </div>
                     <div className="flex gap-3">
                       <a
-                        className="text-xl hover:text-blue-500 cursor-pointer"
+                        className="text-xl cursor-pointer hover:text-blue-500"
                         onClick={() => handleUpdateTrue(item.id)}
                       >
                         <CiEdit />
                       </a>
                       <a
-                        className="ml-2 text-xl  hover:text-blue-500 cursor-pointer"
+                        className="ml-2 text-xl cursor-pointer hover:text-blue-500"
                         onClick={() => handleDeleteTrue(item.id)}
                       >
                         <BsTrash3 />
@@ -260,7 +260,7 @@ const AccountAddress = () => {
                     </div>
                   </div>
 
-                  <div className="h-px bg-gray-200 mt-5"></div>
+                  <div className="h-px mt-5 bg-gray-200"></div>
                 </li>
               ))}
           </ul>

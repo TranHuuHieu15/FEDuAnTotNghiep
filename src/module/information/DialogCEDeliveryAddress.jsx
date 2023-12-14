@@ -14,8 +14,6 @@ import axios from "../../config/axios.js";
 import Input from "../../components/input/Input";
 import { useState } from "react";
 import CustomSelect from "../../components/select/CustomSelect";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 
 const DialogCEDeliveryAddress = ({
   show,
@@ -25,9 +23,16 @@ const DialogCEDeliveryAddress = ({
   title,
   dataToEdit,
 }) => {
-  const user = useSelector(selectCurrentUser);
-  console.log(dataToEdit);
-  //TODO hiển thị lỗi
+  const host = "https://provinces.open-api.vn/api/";
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedWard, setSelectedWard] = useState("");
+  const [cityCode, setCityCode] = useState("");
+  const [districtCode, setDistrictCode] = useState("");
+  const [wardCode, setWardCode] = useState("");
+  const [district, setDistrict] = useState([]);
+  const [ward, setWard] = useState([]);
+  const [province, setProvinces] = useState([]);
   const schema = yup.object({
     phoneNumber: yup
       .string()
@@ -37,7 +42,6 @@ const DialogCEDeliveryAddress = ({
       .string()
       .required("Please enter your apartment number"),
   });
-  //TODO submit hiển thị lỗi
   const {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
@@ -46,7 +50,6 @@ const DialogCEDeliveryAddress = ({
   } = useForm({
     resolver: yupResolver(schema),
   });
-  //TODO: lấy dữ liệu từ dataToEdit
   useEffect(() => {
     if (!show) {
       reset({
@@ -97,23 +100,7 @@ const DialogCEDeliveryAddress = ({
     });
   };
 
-  const host = "https://provinces.open-api.vn/api/";
-  const [selectedCity, setSelectedCity] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [selectedWard, setSelectedWard] = useState("");
-  const [cityCode, setCityCode] = useState("");
-  const [districtCode, setDistrictCode] = useState("");
-  const [wardCode, setWardCode] = useState("");
-  //Lấy dữ liệu từ district
-  const [district, setDistrict] = useState([]);
-
-  //Lấy dữ liệu từ ward
-  const [ward, setWard] = useState([]);
-
-  //* Lấy dữ liệu từ province
-  const [province, setProvinces] = useState([]);
   useEffect(() => {
-    // Gọi API để lấy danh sách category
     const fetchProvinces = async () => {
       try {
         const response = await axios.get(`${host}?depth=1`);
@@ -204,7 +191,7 @@ const DialogCEDeliveryAddress = ({
             </div>
             <div className="mt-2">
               <CustomSelect
-                className="w-full border-2 p-2 rounded-md"
+                className="w-full p-2 border-2 rounded-md"
                 title="Province"
                 titleOption="Chọn tỉnh/thành phố"
                 name="city"
@@ -216,7 +203,7 @@ const DialogCEDeliveryAddress = ({
             </div>
             <div className="mt-2">
               <CustomSelect
-                className="w-full border-2 p-2 rounded-md"
+                className="w-full p-2 border-2 rounded-md"
                 title="District"
                 titleOption="Chọn huyện/quận"
                 name="district"
@@ -228,7 +215,7 @@ const DialogCEDeliveryAddress = ({
             </div>
             <div className="mt-2">
               <CustomSelect
-                className="w-full border-2 p-2 rounded-md"
+                className="w-full p-2 border-2 rounded-md"
                 title="Ward"
                 titleOption="Chọn xã/phường"
                 name="ward"

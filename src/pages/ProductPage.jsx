@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useEffect } from "react";
 import axios from "../config/axios";
 import Pagination from "../components/pagination/Pagination";
-
 import Filter from "../components/filter/Filter";
 import { Card, CardBody, CardHeader } from "@material-tailwind/react";
 import LoadingSkeleton from "../components/loading/LoadingSkeleton";

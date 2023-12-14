@@ -60,7 +60,7 @@ const OrderManage = () => {
     try {
       await axios.put(`/order/update/${data.id}?typeOrder=${data.typeOrder}`, {
         headers: {
-          Authorization: `Bearer ${user.accessToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       toast.success("Order updated successfully", {

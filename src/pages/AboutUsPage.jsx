@@ -1,9 +1,4 @@
 import SiteLayout from "../layout/SiteLayout";
-import { MdOutlinePlace } from "react-icons/md";
-import { BsTelephone } from "react-icons/bs";
-import { AiOutlineMail } from "react-icons/ai";
-import imageAbout from "../assets/images/about.jpg";
-import imageAbout2 from "../assets/images/about-02.jpg";
 import "../assets/css/AboutUs.css";
 
 const AboutUsPage = () => {
@@ -16,10 +11,10 @@ const AboutUsPage = () => {
               About
             </h1>
           </div>
-          <div className="flex justify-center items-center gap-20">
+          <div className="flex items-center justify-center gap-20">
             <div className="w-[570px] p-5">
-              <div className="flex flex-col gap-6 text-md text-gray-600 text-justify">
-                <h3 className="text-3xl text-black font-bold">Our Story</h3>
+              <div className="flex flex-col gap-6 text-justify text-gray-600 text-md">
+                <h3 className="text-3xl font-bold text-black">Our Story</h3>
                 <p>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                   Mauris consequat consequat enim, non auctor massa ultrices
@@ -59,7 +54,7 @@ const AboutUsPage = () => {
               </figure>
             </div>
           </div>
-          <div className="flex justify-center items-center gap-20">
+          <div className="flex items-center justify-center gap-20">
             <div className="w-[400px] image">
               <div className="image-border2">
                 <div className="img2"></div>
@@ -67,8 +62,8 @@ const AboutUsPage = () => {
               </div>
             </div>
             <div className="w-[570px] p-5">
-              <div className="flex flex-col gap-6 text-md text-gray-600 text-justify">
-                <h3 className="text-3xl text-black font-bold">Our Mission</h3>
+              <div className="flex flex-col gap-6 text-justify text-gray-600 text-md">
+                <h3 className="text-3xl font-bold text-black">Our Mission</h3>
                 <p>
                   Mauris non lacinia magna. Sed nec lobortis dolor. Vestibulum
                   rhoncus dignissim risus, sed consectetur erat. Pellentesque

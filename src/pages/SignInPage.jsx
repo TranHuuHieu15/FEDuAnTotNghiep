@@ -65,10 +65,22 @@ const SignInPage = () => {
     dispatch(loginStart());
     try {
       const response = await loginMutation(data).unwrap();
+      const userInfo = {
+        username: response?.data.username,
+        fullName: response?.data.fullName,
+        email: response?.data.email,
+        phoneNumber: response?.data.phoneNumber,
+        sex: response?.data.sex,
+        typeAccount: response?.data.typeAccount,
+        address: response?.data.address,
+        birthday: response?.data.birthday,
+        image: response?.data.image,
+      };
       dispatch(
         loginSuccess({
-          userInfo: response?.data,
+          userInfo: userInfo,
           userToken: response?.data.accessToken,
+          refreshToken: response?.data.refreshToken,
         })
       );
       if (response.data.path === 0) {

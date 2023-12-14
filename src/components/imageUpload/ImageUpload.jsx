@@ -39,7 +39,9 @@ const ImageUpload = ({
             src={
               isUpdate && typeof value === "string"
                 ? value
-                : URL.createObjectURL(value)
+                : typeof value === "object" && value instanceof File
+                ? URL.createObjectURL(value)
+                : imageAvail // Đặt một hình ảnh mặc định nếu value không phải là chuỗi hoặc File
             }
             alt=""
             className={`object-cover rounded-md ${size}`}
@@ -58,7 +60,8 @@ const ImageUpload = ({
       >
         Choose the photo
       </Label>
-      <input disabled={disabled}
+      <input
+        disabled={disabled}
         type="file"
         className="max-w-[100px] hidden"
         onChange={handleImage}

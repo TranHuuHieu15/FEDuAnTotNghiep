@@ -33,6 +33,7 @@ const authSlice = createSlice({
       state.success = true;
       localStorage.setItem("userInfo", JSON.stringify(action.payload.userInfo));
       localStorage.setItem("userToken", action.payload.userToken);
+      localStorage.setItem("refreshToken", action.payload.refreshToken);
     },
     loginFailure: (state, action) => {
       state.loading = false;
@@ -80,3 +81,4 @@ export const {
 } = authSlice.actions;
 export default authSlice.reducer;
 export const selectCurrentUser = (state) => state.auth.userInfo;
+export const selectCurrentToken = (state) => state.auth.userToken;

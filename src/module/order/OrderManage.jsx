@@ -2,7 +2,7 @@ import axios from "../../config/axios";
 import { useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice";
+import { selectCurrentToken } from "../../redux/features/authSlice";
 import { Option, Select } from "@material-tailwind/react";
 import DialogEditTypeOrder from "./DialogEditTypeOrder";
 import { toast } from "react-toastify";
@@ -11,7 +11,7 @@ import Pagination from "../../components/pagination/Pagination";
 const OrderManage = () => {
   const [orderData, setOrderData] = useState([]);
   const [selectTypeOrder, setSelectTypeOrder] = useState("");
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
   const [isEditTypeOrder, setIsEditTypeOrder] = useState({
     show: false,
     dataToEdit: {},
@@ -24,11 +24,10 @@ const OrderManage = () => {
     const fetchData = async (url) => {
       try {
         const response = await axios.get(url, {
-          headers: {
-            Authorization: `Bearer ${user.accessToken}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         const totalPages = Math.ceil(response["all-item"] / response.size);
+        console.log(response);
         setTotalPages(totalPages);
         setOrderData(response.data);
         setIsOrderUpdated(false);
@@ -42,7 +41,7 @@ const OrderManage = () => {
     } else {
       fetchData(`/order?page=${currentPage}`);
     }
-  }, [selectTypeOrder, user.accessToken, isOrderUpdated, currentPage]);
+  }, [selectTypeOrder, token, isOrderUpdated, currentPage]);
   const handleChangeSelect = (value) => {
     setSelectTypeOrder(value);
   };
@@ -137,69 +136,70 @@ const OrderManage = () => {
               </tr>
             </thead>
             <tbody className="text-sm divide-y divide-gray-100">
-              {orderData.map((item, index) => (
-                <tr key={index}>
-                  <td className="rc-table-cell">
-                    <div className="flex items-center justify-center gap-3">
-                      <img
-                        src={item.accountDto.image}
-                        alt="avatar"
-                        className="object-cover w-10 h-10 rounded-full "
-                        loading="lazy"
-                      />
-                      <div className="grid gap-0.5">
-                        <p className="text-sm font-medium text-gray-900 font-lexend dark:text-gray-700">
-                          {item.accountDto.fullName}
-                        </p>
-                        <p className="text-[13px] text-gray-500">
-                          {item.accountDto.email}
+              {orderData &&
+                orderData?.map((item, index) => (
+                  <tr key={index}>
+                    <td className="rc-table-cell">
+                      <div className="flex items-center justify-center gap-3">
+                        <img
+                          src={item.accountDto.image}
+                          alt="avatar"
+                          className="object-cover w-10 h-10 rounded-full "
+                          loading="lazy"
+                        />
+                        <div className="grid gap-0.5">
+                          <p className="text-sm font-medium text-gray-900 font-lexend dark:text-gray-700">
+                            {item.accountDto.fullName}
+                          </p>
+                          <p className="text-[13px] text-gray-500">
+                            {item.accountDto.email}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.orderDetailsDto.length}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.orderDto.total}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.orderDto.purchaseDate}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <div className="flex items-center justify-center">
+                        <span
+                          className={`inline-flex items-center justify-center w-2 h-2 font-semibold leading-none text-white bg-${
+                            statusColorMap[item.orderDto.typeOrder]
+                          }-500 rounded-full rizzui-badge color`}
+                        ></span>
+                        <p
+                          className={`font-medium text-${
+                            statusColorMap[item.orderDto.typeOrder]
+                          }-500 ms-2`}
+                        >
+                          {item.orderDto.typeOrder}
                         </p>
                       </div>
-                    </div>
-                  </td>
-                  <td className="p-3">
-                    <p className="flex items-center justify-center font-medium text-gray-700">
-                      {item.orderDetailsDto.length}
-                    </p>
-                  </td>
-                  <td className="p-3">
-                    <p className="flex items-center justify-center font-medium text-gray-700">
-                      {item.orderDto.total}
-                    </p>
-                  </td>
-                  <td className="p-3">
-                    <p className="flex items-center justify-center font-medium text-gray-700">
-                      {item.orderDto.purchaseDate}
-                    </p>
-                  </td>
-                  <td className="p-3">
-                    <div className="flex items-center justify-center">
-                      <span
-                        className={`inline-flex items-center justify-center w-2 h-2 font-semibold leading-none text-white bg-${
-                          statusColorMap[item.orderDto.typeOrder]
-                        }-500 rounded-full rizzui-badge color`}
-                      ></span>
-                      <p
-                        className={`font-medium text-${
-                          statusColorMap[item.orderDto.typeOrder]
-                        }-500 ms-2`}
-                      >
-                        {item.orderDto.typeOrder}
-                      </p>
-                    </div>
-                  </td>
-                  <td className="p-3">
-                    <div className="flex items-center justify-center gap-3">
-                      <span
-                        onClick={() => handleOpenEdit(item)}
-                        className="p-3 text-2xl cursor-pointer hover:text-blue-500"
-                      >
-                        <CiEdit className="w-8" />
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="p-3">
+                      <div className="flex items-center justify-center gap-3">
+                        <span
+                          onClick={() => handleOpenEdit(item)}
+                          className="p-3 text-2xl cursor-pointer hover:text-blue-500"
+                        >
+                          <CiEdit className="w-8" />
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

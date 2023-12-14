@@ -25,7 +25,7 @@ const HomeCard = () => {
         {topProduct?.length > 0 &&
           topProduct.map((item) => (
             <ProductCard
-              className="w-96"
+              className="mx-2 my-2 cursor-pointer w-72 hover:scale-105 focus:scale-105 active:scale-100"
               key={item.id}
               item={item}
             ></ProductCard>

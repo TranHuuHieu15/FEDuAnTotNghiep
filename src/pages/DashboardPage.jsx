@@ -2,12 +2,12 @@ import axios from "../config/axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../redux/features/authSlice";
+import { selectCurrentToken } from "../redux/features/authSlice";
 import { Option, Select } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 
 const DashboardPage = () => {
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
   const [statisticByYear, setStatisticDataByYear] = useState([]);
   const [totalCustomer, setTotalCustomer] = useState(0);
   const [totalSale, setTotalTotalSale] = useState(0);
@@ -23,11 +23,10 @@ const DashboardPage = () => {
           }`,
           {
             headers: {
-              Authorization: `Bearer ${user.accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-        console.log(response.data);
         setStatisticDataByYear(response.data);
       } catch (error) {
         setStatisticDataByYear([]);
@@ -35,31 +34,30 @@ const DashboardPage = () => {
       }
     };
     fetchData();
-  }, [month, user.accessToken, year]);
+  }, [month, token, year]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/account/CUSTOMER`, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setTotalCustomer(response["all-item"]);
-        response.data;
       } catch (error) {
         setStatisticDataByYear([]);
         console.log(error);
       }
     };
     fetchData();
-  }, [user.accessToken]);
+  }, [token]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/order/SUCESSFULLY`, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         const totalAmount = response.data.reduce(
@@ -68,13 +66,12 @@ const DashboardPage = () => {
         );
         setTotalTotalSale(totalAmount);
         setTotalTotalOrder(response["all-item"]);
-        response.data;
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
-  }, [user.accessToken]);
+  }, [token]);
 
   const handleChangeYear = (value) => {
     setYear(value);

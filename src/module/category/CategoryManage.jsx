@@ -7,10 +7,10 @@ import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
+import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 
 const CategoryManage = () => {
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
   const [categoryData, setCategoryData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -26,7 +26,11 @@ const CategoryManage = () => {
   });
   const fetchData = async () => {
     try {
-      const response = await axios.get("/category");
+      const response = await axios.get("/category", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setCategoryData(response.data);
     } catch (error) {
       console.log(error);
@@ -34,7 +38,7 @@ const CategoryManage = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
@@ -51,12 +55,11 @@ const CategoryManage = () => {
   const handleCreate = async (categoryDto) => {
     try {
       if (showDialogCERef.current.show) {
-        const response = await axios.post("/category/create", categoryDto, {
+        await axios.post("/category/create", categoryDto, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response);
         fetchData();
         handleCloseDialogCE();
         toast.success("Create category successfully!", {
@@ -75,7 +78,6 @@ const CategoryManage = () => {
     }
   };
   const handleUpdateTrue = (id) => {
-    console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
     const dataEdit = categoryData.find((item) => item.id === id);
     setShowDialogCE({
       show: true,
@@ -86,19 +88,17 @@ const CategoryManage = () => {
     });
   };
   const handleUpdate = async (categoryDto) => {
-    console.log("In ra id in handleUpdate:", showDialogCERef.current.id);
     try {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
-        const response = await axios.put(
+        await axios.put(
           `/category/update/${showDialogCERef.current.id}`,
           categoryDto,
           {
             headers: {
-              Authorization: `Bearer ${user.accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-        console.log(response);
         fetchData();
         handleCloseDialogCE();
         toast.success("Update category successfully!", {
@@ -128,7 +128,7 @@ const CategoryManage = () => {
       if (showDialog.show && showDialog.id) {
         await axios.delete(`/category/delete/${showDialog.id}`, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setCategoryData(
@@ -170,20 +170,20 @@ const CategoryManage = () => {
   return (
     <>
       <Button
-        className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
+        className="float-right mb-2 mr-2 cursor-pointer bg-light-green-500"
         onClick={handleCreateTrue}
       >
         Add new Category
       </Button>
-      <table className="w-full table-auto text-center">
-        <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-400">
+      <table className="w-full text-center table-auto">
+        <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
           <tr>
             <th className="px-6 py-4 font-medium text-gray-900">Name</th>
             <th className="px-6 py-4 font-medium text-gray-900">Description</th>
             <th className="px-6 py-4 font-medium text-gray-900">Action</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100 text-sm">
+        <tbody className="text-sm divide-y divide-gray-100">
           {categoryData.length > 0 &&
             categoryData.map((item) => (
               <tr key={item.id}>
@@ -192,13 +192,13 @@ const CategoryManage = () => {
                 <td className="p-2">
                   <span className="flex items-center justify-center gap-3">
                     <a
-                      className="p-3 text-2xl hover:text-blue-500 cursor-pointer"
+                      className="p-3 text-2xl cursor-pointer hover:text-blue-500"
                       onClick={() => handleUpdateTrue(item.id)}
                     >
                       <CiEdit />
                     </a>
                     <a
-                      className="ml-2 p-2 text-2xl  hover:text-blue-500 cursor-pointer"
+                      className="p-2 ml-2 text-2xl cursor-pointer hover:text-blue-500"
                       onClick={() => handleDeleteTrue(item.id)}
                     >
                       <BsTrash3 />

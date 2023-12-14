@@ -8,7 +8,7 @@ import {
 } from "@material-tailwind/react";
 import { IoMdClose } from "react-icons/io";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice";
+import { selectCurrentToken } from "../../redux/features/authSlice";
 import { useEffect, useState } from "react";
 import axios from "../../config/axios";
 import { MdOutlinePlace } from "react-icons/md";
@@ -22,7 +22,7 @@ const DialogDeliveryAddressPayment = ({
   onUseDeliveryAddress,
   handleCloseDeliveryAddress,
 }) => {
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
   const navigate = useNavigate();
   const [deliveryAddressData, setDeliveryAddressData] = useState([]);
 
@@ -31,10 +31,9 @@ const DialogDeliveryAddressPayment = ({
       try {
         const response = await axios.get("/deliveryAddress/account", {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response.data);
         setDeliveryAddressData(response.data);
       } catch (error) {
         console.error(error);
@@ -42,7 +41,7 @@ const DialogDeliveryAddressPayment = ({
     };
 
     fetchData();
-  }, [user.accessToken]);
+  }, [token]);
   const handleUseDeliveryAddress = (usedDeliveryAddress) => {
     onUseDeliveryAddress(usedDeliveryAddress);
     handleCloseDeliveryAddress();

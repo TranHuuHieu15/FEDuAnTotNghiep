@@ -35,10 +35,10 @@ const DialogCEColor = ({
   });
   useEffect(() => {
     if (!show) {
-      // reset({
-      //   id: "",
-      //   name: "",
-      // });
+      reset({
+        id: "",
+        name: "",
+      });
     } else {
       reset(dataToEdit);
     }
@@ -46,10 +46,10 @@ const DialogCEColor = ({
   const onSubmitHandler = (data) => {
     if (!isValid) return;
     handleSubmitColor(data);
-    // reset({
-    //   id: "",
-    //   name: "",
-    // });
+    reset({
+      id: "",
+      name: "",
+    });
   };
   return (
     <>

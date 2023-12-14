@@ -7,10 +7,10 @@ import { toast } from "react-toastify";
 import axios from "../../config/axios.js";
 import DialogCEVoucher from "./DialogCEVoucher";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
+import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 
 const VoucherManage = () => {
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
   const [voucherData, setVoucherData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -26,7 +26,11 @@ const VoucherManage = () => {
   });
   const fetchData = async () => {
     try {
-      const response = await axios.get("/voucher");
+      const response = await axios.get("/voucher", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setVoucherData(response.data);
     } catch (error) {
       console.log(error);
@@ -34,7 +38,7 @@ const VoucherManage = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
@@ -64,12 +68,11 @@ const VoucherManage = () => {
         formData.append("minTotal", data.minTotal);
         formData.append("maxDiscount", data.maxDiscount);
         formData.append("description", data.description);
-        const response = await axios.post("/voucher/create", formData, {
+        await axios.post("/voucher/create", formData, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response);
         fetchData();
         handleCloseDialogCE();
         toast.success("Create category successfully!", {
@@ -114,16 +117,15 @@ const VoucherManage = () => {
         formData.append("minTotal", data.minTotal);
         formData.append("maxDiscount", data.maxDiscount);
         formData.append("description", data.description);
-        const response = await axios.put(
+        await axios.put(
           `/voucher/update/${showDialogCERef.current.id}`,
           formData,
           {
             headers: {
-              Authorization: `Bearer ${user.accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-        console.log(response);
         fetchData();
         handleCloseDialogCE();
         toast.success("Update category successfully!", {
@@ -153,7 +155,7 @@ const VoucherManage = () => {
       if (showDialog.show && showDialog.id) {
         await axios.delete(`/voucher/delete/${showDialog.id}`, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setVoucherData(voucherData.filter((item) => item.id !== showDialog.id));

@@ -3,10 +3,11 @@ import OrderList from "../../components/list/OrderList";
 import Tabs from "../../components/tabs/Tabs";
 import axios from "../../config/axios";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice";
+import { selectCurrentToken } from "../../redux/features/authSlice";
 
 const AccountOrder = () => {
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
+
   const [activeTab, setActiveTab] = useState("PENDING");
   const [orders, setOrders] = useState([]);
 
@@ -25,7 +26,7 @@ const AccountOrder = () => {
       try {
         const response = await axios.get(`/order?type=${activeTab}`, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setOrders(response.data);
@@ -36,7 +37,7 @@ const AccountOrder = () => {
       }
     };
     fetchOrdersByStatus();
-  }, [activeTab, user.accessToken]);
+  }, [activeTab, token]);
 
   return (
     <div className="flex flex-col gap-5">

@@ -5,10 +5,10 @@ import { IoMdClose } from "react-icons/io";
 import axios from "../../config/axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice";
+import { selectCurrentToken } from "../../redux/features/authSlice";
 
 const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher, total }) => {
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
   const [voucherData, setVoucherData] = useState([]);
   const [isVoucher, setIsVoucher] = useState(false);
   useEffect(() => {
@@ -16,7 +16,7 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher, total }) => {
       try {
         const response = await axios.get("/voucher/account", {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         //Sắp xếp voucher để voucher có thể sử dụng được lên trên
@@ -39,7 +39,7 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher, total }) => {
     };
 
     fetchVoucher();
-  }, [total, user.accessToken]);
+  }, [total, token]);
 
   const calculateRemainingTime = (expirationDate) => {
     const now = new Date();

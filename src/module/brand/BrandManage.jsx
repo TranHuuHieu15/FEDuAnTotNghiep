@@ -7,10 +7,10 @@ import { CiEdit } from "react-icons/ci";
 import DialogCEBrand from "./DialogCEBrand.jsx";
 import Button from "../../components/button/Button.jsx";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
+import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 
 const BrandManage = () => {
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -26,7 +26,11 @@ const BrandManage = () => {
   const [brandData, setBrandData] = useState([]);
   const fetchData = async () => {
     try {
-      const response = await axios.get("/brand");
+      const response = await axios.get("/brand", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setBrandData(response.data);
     } catch (error) {
       console.log(error);
@@ -34,7 +38,7 @@ const BrandManage = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
@@ -56,7 +60,7 @@ const BrandManage = () => {
     try {
       await axios.post("/brand/create", formData, {
         headers: {
-          Authorization: `Bearer ${user.accessToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       fetchData();
@@ -96,11 +100,11 @@ const BrandManage = () => {
     try {
       await axios.put(`/brand/update/${showDialogCERef.current.id}`, formData, {
         headers: {
-          Authorization: `Bearer ${user.accessToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
-      fetchData();
       handleCloseDialogCE();
+      fetchData();
       toast.success("🦄 Edit brand successfully", {
         position: "top-right",
         autoClose: 3000,
@@ -111,8 +115,8 @@ const BrandManage = () => {
         progress: undefined,
         theme: "light",
       });
-    } catch (err) {
-      console.log(err.response.data.message);
+    } catch (error) {
+      console.log(error);
     }
   };
   const handleDeleteTrue = (id) => {
@@ -126,7 +130,7 @@ const BrandManage = () => {
       if (showDialog.show && showDialog.id) {
         await axios.delete(`/brand/delete/${showDialog.id}`, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setBrandData(brandData.filter((item) => item.id !== showDialog.id));

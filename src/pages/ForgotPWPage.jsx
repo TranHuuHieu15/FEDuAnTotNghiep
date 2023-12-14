@@ -27,7 +27,6 @@ const ForgotPWPage = () => {
     if (!isValid) return;
     try {
       const response = await verifyEmail({ email }).unwrap();
-      console.log(response);
       if (response.result === true) {
         navigate("/checkmail");
       }

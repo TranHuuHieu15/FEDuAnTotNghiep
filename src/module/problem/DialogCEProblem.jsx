@@ -4,12 +4,10 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@material-tailwind/react";
-// import Heading from "../../components/heading/Heading";
 import PropTypes from "prop-types";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-// import Label from "../../components/label/Label";
 import Button from "../../components/button/Button";
 import Input from "../../components/input/Input";
 import { useEffect } from "react";

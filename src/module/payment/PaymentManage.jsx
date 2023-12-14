@@ -7,10 +7,11 @@ import { BsTrash3 } from "react-icons/bs";
 import DiaLogCEPayment from "./DiaLogCEPayment";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
+import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 
 const PaymentManage = () => {
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
+
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -28,10 +29,13 @@ const PaymentManage = () => {
 
   const [paymentData, setPaymentData] = useState([]);
 
-  //Call api
   const fetchData = async () => {
     try {
-      const response = await axios.get("/payment");
+      const response = await axios.get("/payment", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setPaymentData(response.data);
     } catch (error) {
       console.log(error);
@@ -40,7 +44,7 @@ const PaymentManage = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
@@ -61,14 +65,12 @@ const PaymentManage = () => {
     formData.append("imageFile", data.image);
     formData.append("name", data.name);
     formData.append("description", data.description);
-    //*Tạo mới payment
     try {
-      const response = await axios.post("/payment/create", formData, {
+      await axios.post("/payment/create", formData, {
         headers: {
-          Authorization: `Bearer ${user.accessToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response);
       fetchData();
       handleCloseDialogCE();
       toast.success("🦄 Add new payment successfully", {
@@ -82,15 +84,13 @@ const PaymentManage = () => {
         theme: "light",
       });
     } catch (err) {
-      console.log(err.response.data.message);
+      console.log(err);
     }
   };
 
   //update payment
   const handleUpdateTrue = (id) => {
-    console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
     const dataEdit = paymentData.find((item) => item.id === id);
-    console.log(dataEdit);
     setShowDialogCE({
       show: true,
       id: id,
@@ -109,23 +109,16 @@ const PaymentManage = () => {
     formData.append("id", showDialogCERef.current.id);
     formData.append("name", data.name);
     formData.append("description", data.description);
-    // const payment = {
-    //   id: showDialogCERef.current.id,
-    //   name: data.name,
-    //   description: data.description,
-    // };
-    // formData.append("paymentDto", JSON.stringify(payment));
     try {
-      const response = await axios.put(
+      await axios.put(
         `/payment/update/${showDialogCERef.current.id}`,
         formData,
         {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log("Dữ liệu được hiển thị: ", response.data);
       fetchData();
       handleCloseDialogCE();
       toast.success("🦄 Edit payment successfully", {
@@ -139,10 +132,9 @@ const PaymentManage = () => {
         theme: "light",
       });
     } catch (err) {
-      console.log(err.response.data.message);
+      console.log(err);
     }
   };
-  //delete payment
   const handleDeleteTrue = (id) => {
     setShowDialog({
       show: true,
@@ -154,7 +146,7 @@ const PaymentManage = () => {
       if (showDialog.show && showDialog.id) {
         await axios.delete(`/payment/delete/${showDialog.id}`, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setPaymentData(paymentData.filter((item) => item.id !== showDialog.id));
@@ -175,7 +167,6 @@ const PaymentManage = () => {
       console.log(error);
     }
   };
-  // close dialog
   const handleCloseDialogCE = () => {
     setShowDialogCE({
       show: false,
@@ -194,7 +185,7 @@ const PaymentManage = () => {
   return (
     <>
       <Button
-        className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
+        className="float-right mb-2 mr-2 cursor-pointer bg-light-green-500"
         onClick={handleCreateTrue}
       >
         Add new Payment

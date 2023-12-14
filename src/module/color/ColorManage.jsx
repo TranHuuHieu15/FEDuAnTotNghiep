@@ -9,10 +9,10 @@ import { BsTrash3 } from "react-icons/bs";
 import { CiEdit } from "react-icons/ci";
 import { Button } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice";
+import { selectCurrentToken } from "../../redux/features/authSlice";
 
 const ColorManage = () => {
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
   const [colorData, setColorData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -28,7 +28,11 @@ const ColorManage = () => {
   });
   const fetchData = async () => {
     try {
-      const response = await axios.get("/color");
+      const response = await axios.get("/color", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setColorData(response.data);
     } catch (error) {
       console.log(error);
@@ -36,7 +40,7 @@ const ColorManage = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
@@ -53,12 +57,11 @@ const ColorManage = () => {
   const handleCreate = async (colorDto) => {
     try {
       if (showDialogCERef.current.show) {
-        const response = await axios.post("/color/create", colorDto, {
+        await axios.post("/color/create", colorDto, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response);
         fetchData();
         handleCloseDialogCE();
         toast.success("Create category successfully!", {
@@ -90,16 +93,11 @@ const ColorManage = () => {
     try {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         const endcodeId = showDialogCERef.current.id.replace(/^#/, "%23");
-        const response = await axios.put(
-          `/color/update/${endcodeId}`,
-          colorDto,
-          {
-            headers: {
-              Authorization: `Bearer ${user.accessToken}`,
-            },
-          }
-        );
-        console.log(response);
+        await axios.put(`/color/update/${endcodeId}`, colorDto, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         fetchData();
         handleCloseDialogCE();
         toast.success("Update category successfully!", {
@@ -130,7 +128,7 @@ const ColorManage = () => {
         const endcodeId = showDialog.id.replace(/^#/, "%23");
         await axios.delete(`/color/delete/${endcodeId}`, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setColorData(colorData.filter((item) => item.id !== showDialog.id));

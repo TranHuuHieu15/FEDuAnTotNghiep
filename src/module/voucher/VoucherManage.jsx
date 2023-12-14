@@ -6,8 +6,11 @@ import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import { toast } from "react-toastify";
 import axios from "../../config/axios.js";
 import DialogCEVoucher from "./DialogCEVoucher";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 
 const VoucherManage = () => {
+  const user = useSelector(selectCurrentUser);
   const [voucherData, setVoucherData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -61,7 +64,11 @@ const VoucherManage = () => {
         formData.append("minTotal", data.minTotal);
         formData.append("maxDiscount", data.maxDiscount);
         formData.append("description", data.description);
-        const response = await axios.post("/voucher/create", formData);
+        const response = await axios.post("/voucher/create", formData, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         console.log(response);
         fetchData();
         handleCloseDialogCE();
@@ -109,7 +116,12 @@ const VoucherManage = () => {
         formData.append("description", data.description);
         const response = await axios.put(
           `/voucher/update/${showDialogCERef.current.id}`,
-          formData
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+            },
+          }
         );
         console.log(response);
         fetchData();
@@ -139,7 +151,11 @@ const VoucherManage = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        await axios.delete(`/voucher/delete/${showDialog.id}`);
+        await axios.delete(`/voucher/delete/${showDialog.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         setVoucherData(voucherData.filter((item) => item.id !== showDialog.id));
         handleCloseDialog();
         toast.success("Delete category successfully!", {

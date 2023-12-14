@@ -6,8 +6,11 @@ import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
 import DiaLogCEPayment from "./DiaLogCEPayment";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 
 const PaymentManage = () => {
+  const user = useSelector(selectCurrentUser);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -60,7 +63,11 @@ const PaymentManage = () => {
     formData.append("description", data.description);
     //*Tạo mới payment
     try {
-      const response = await axios.post("/payment/create", formData);
+      const response = await axios.post("/payment/create", formData, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      });
       console.log(response);
       fetchData();
       handleCloseDialogCE();
@@ -111,7 +118,12 @@ const PaymentManage = () => {
     try {
       const response = await axios.put(
         `/payment/update/${showDialogCERef.current.id}`,
-        formData
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        }
       );
       console.log("Dữ liệu được hiển thị: ", response.data);
       fetchData();
@@ -140,7 +152,11 @@ const PaymentManage = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        await axios.delete(`/payment/delete/${showDialog.id}`);
+        await axios.delete(`/payment/delete/${showDialog.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         setPaymentData(paymentData.filter((item) => item.id !== showDialog.id));
         fetchData();
         handleCloseDialog();

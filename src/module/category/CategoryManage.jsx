@@ -6,8 +6,11 @@ import DialogCECategory from "./DialogCECategory";
 import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 
 const CategoryManage = () => {
+  const user = useSelector(selectCurrentUser);
   const [categoryData, setCategoryData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -48,7 +51,11 @@ const CategoryManage = () => {
   const handleCreate = async (categoryDto) => {
     try {
       if (showDialogCERef.current.show) {
-        const response = await axios.post("/category/create", categoryDto);
+        const response = await axios.post("/category/create", categoryDto, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         console.log(response);
         fetchData();
         handleCloseDialogCE();
@@ -84,7 +91,12 @@ const CategoryManage = () => {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         const response = await axios.put(
           `/category/update/${showDialogCERef.current.id}`,
-          categoryDto
+          categoryDto,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+            },
+          }
         );
         console.log(response);
         fetchData();
@@ -114,7 +126,11 @@ const CategoryManage = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        await axios.delete(`/category/delete/${showDialog.id}`);
+        await axios.delete(`/category/delete/${showDialog.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         setCategoryData(
           categoryData.filter((item) => item.id !== showDialog.id)
         );

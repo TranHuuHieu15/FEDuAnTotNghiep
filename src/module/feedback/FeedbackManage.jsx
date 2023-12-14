@@ -4,8 +4,11 @@ import axios from "../../config/axios.js";
 import { toast } from "react-toastify";
 import DialogCEFeedback from "./DialogCEFeedback.jsx";
 import { CiEdit } from "react-icons/ci";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
+import { useSelector } from "react-redux";
 
 const FeedbackManage = () => {
+  const user = useSelector(selectCurrentUser);
   const [feedbackData, setFeedbackData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -49,7 +52,12 @@ const FeedbackManage = () => {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         const response = await axios.put(
           `/feedback/update/${showDialogCERef.current.id}`,
-          FeedbackDto
+          FeedbackDto,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+            },
+          }
         );
         console.log(response);
         fetchData();

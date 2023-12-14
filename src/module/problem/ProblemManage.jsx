@@ -6,8 +6,11 @@ import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import DialogCEProblem from "./DialogCEProblem.jsx";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 
 const ProblemManage = () => {
+  const user = useSelector(selectCurrentUser);
   const [problemData, setProblemData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -47,7 +50,11 @@ const ProblemManage = () => {
   const handleCreate = async (paymentDto) => {
     try {
       if (showDialogCERef.current.show) {
-        const response = await axios.post("/problem/create", paymentDto);
+        const response = await axios.post("/problem/create", paymentDto, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         console.log(response);
         fetchData();
         handleCloseDialogCE();
@@ -83,7 +90,12 @@ const ProblemManage = () => {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         const response = await axios.put(
           `/problem/update/${showDialogCERef.current.id}`,
-          problemDto
+          problemDto,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+            },
+          }
         );
         console.log(response);
         fetchData();
@@ -112,7 +124,11 @@ const ProblemManage = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        await axios.delete(`/problem/delete/${showDialog.id}`);
+        await axios.delete(`/problem/delete/${showDialog.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
         setProblemData(problemData.filter((item) => item.id !== showDialog.id));
         handleCloseDialog();
         toast.success("Delete problem successfully!", {

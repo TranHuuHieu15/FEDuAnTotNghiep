@@ -58,7 +58,11 @@ const OrderManage = () => {
 
   const handleChangeTypeOrder = async (data) => {
     try {
-      await axios.put(`/order/update/${data.id}?typeOrder=${data.typeOrder}`);
+      await axios.put(`/order/update/${data.id}?typeOrder=${data.typeOrder}`, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      });
       toast.success("Order updated successfully", {
         position: "top-right",
         autoClose: 2000,

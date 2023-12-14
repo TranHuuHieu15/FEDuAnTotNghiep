@@ -1,25 +1,23 @@
-import axios from "../../config/axios";
-import { useEffect } from "react";
-import { useRef } from "react";
-import { useState } from "react";
-import DialogDelete from "../../components/dialog/DialogDelete";
+import { useEffect, useRef, useState } from "react";
+import Button from "../../components/button/Button.jsx";
+import axios from "../../config/axios.js";
 import { toast } from "react-toastify";
-import DialogCEColor from "./DialogCEColor";
-import { BsTrash3 } from "react-icons/bs";
+import DialogCEHashtag from "./DialogCEHashtag.jsx";
 import { CiEdit } from "react-icons/ci";
-import { Button } from "@material-tailwind/react";
+import { BsTrash3 } from "react-icons/bs";
+import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 
-const ColorManage = () => {
+const HashtagManage = () => {
   const user = useSelector(selectCurrentUser);
-  const [colorData, setColorData] = useState([]);
+  const [hashtagData, setHashtagData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
     isUpdate: false,
     action: null,
-    dataToEdit: {},
+    hashtagDataToEdit: {},
   });
   const showDialogCERef = useRef(null);
   const [showDialog, setShowDialog] = useState({
@@ -28,8 +26,8 @@ const ColorManage = () => {
   });
   const fetchData = async () => {
     try {
-      const response = await axios.get("/color");
-      setColorData(response.data);
+      const response = await axios.get("/hashtag");
+      setHashtagData(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -46,14 +44,14 @@ const ColorManage = () => {
       id: null,
       isUpdate: false,
       action: handleCreate,
-      dataToEdit: {},
+      hashtagDataToEdit: {},
     });
   };
 
-  const handleCreate = async (colorDto) => {
+  const handleCreate = async (hashtagDto) => {
     try {
       if (showDialogCERef.current.show) {
-        const response = await axios.post("/color/create", colorDto, {
+        const response = await axios.post("/hashtag/create", hashtagDto, {
           headers: {
             Authorization: `Bearer ${user.accessToken}`,
           },
@@ -61,7 +59,7 @@ const ColorManage = () => {
         console.log(response);
         fetchData();
         handleCloseDialogCE();
-        toast.success("Create category successfully!", {
+        toast.success("Create hashtag successfully!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -77,22 +75,23 @@ const ColorManage = () => {
     }
   };
   const handleUpdateTrue = (id) => {
-    const dataEdit = colorData.find((item) => item.id === id);
+    console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
+    const dataEdit = hashtagData.find((item) => item.id === id);
     setShowDialogCE({
       show: true,
       id: id,
       isUpdate: true,
       action: handleUpdate,
-      dataToEdit: dataEdit,
+      hashtagDataToEdit: dataEdit,
     });
   };
-  const handleUpdate = async (colorDto) => {
+  const handleUpdate = async (hashtagDto) => {
+    console.log("In ra id in handleUpdate:", showDialogCERef.current.id);
     try {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
-        const endcodeId = showDialogCERef.current.id.replace(/^#/, "%23");
         const response = await axios.put(
-          `/color/update/${endcodeId}`,
-          colorDto,
+          `/hashtag/update/${showDialogCERef.current.id}`,
+          hashtagDto,
           {
             headers: {
               Authorization: `Bearer ${user.accessToken}`,
@@ -102,7 +101,7 @@ const ColorManage = () => {
         console.log(response);
         fetchData();
         handleCloseDialogCE();
-        toast.success("Update category successfully!", {
+        toast.success("Update hashtag successfully!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -127,15 +126,14 @@ const ColorManage = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        const endcodeId = showDialog.id.replace(/^#/, "%23");
-        await axios.delete(`/color/delete/${endcodeId}`, {
+        await axios.delete(`/hashtag/delete/${showDialog.id}`, {
           headers: {
             Authorization: `Bearer ${user.accessToken}`,
           },
         });
-        setColorData(colorData.filter((item) => item.id !== showDialog.id));
+        setHashtagData(hashtagData.filter((item) => item.id !== showDialog.id));
         handleCloseDialog();
-        toast.success("Delete category successfully!", {
+        toast.success("Delete hashtag successfully!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -157,7 +155,7 @@ const ColorManage = () => {
       id: null,
       isUpdate: false,
       action: null,
-      dataToEdit: {},
+      hashtagDataToEdit: {},
     });
   };
 
@@ -170,35 +168,35 @@ const ColorManage = () => {
   return (
     <>
       <Button
-        className="float-right mb-2 mr-2 cursor-pointer bg-light-green-500"
+        className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
         onClick={handleCreateTrue}
       >
-        Add new color
+        Add new Hashtag
       </Button>
-      <table className="w-full text-center table-auto">
-        <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
+      <table className="w-full table-auto text-center">
+        <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-400">
           <tr>
-            <th className="px-6 py-4 font-medium text-gray-900">Code</th>
-            <th className="px-6 py-4 font-medium text-gray-900">Color</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Name</th>
+            <th className="px-6 py-4 font-medium text-gray-900">Description</th>
             <th className="px-6 py-4 font-medium text-gray-900">Action</th>
           </tr>
         </thead>
-        <tbody className="text-sm divide-y divide-gray-100">
-          {colorData.length > 0 &&
-            colorData.map((item) => (
+        <tbody className="divide-y divide-gray-100 text-sm">
+          {hashtagData.length > 0 &&
+            hashtagData.map((item) => (
               <tr key={item.id}>
-                <td className="p-2 font-medium text-gray-800">{item.id}</td>
-                <td className="p-2">{item.name}</td>
+                <td className="p-2 font-medium text-gray-800">{item.name}</td>
+                <td className="p-2">{item.description}</td>
                 <td className="p-2">
                   <span className="flex items-center justify-center gap-3">
                     <a
-                      className="p-3 text-2xl cursor-pointer hover:text-blue-500"
+                      className="p-3 text-2xl hover:text-blue-500 cursor-pointer"
                       onClick={() => handleUpdateTrue(item.id)}
                     >
                       <CiEdit />
                     </a>
                     <a
-                      className="p-2 ml-2 text-2xl cursor-pointer hover:text-blue-500"
+                      className="ml-2 p-2 text-2xl  hover:text-blue-500 cursor-pointer"
                       onClick={() => handleDeleteTrue(item.id)}
                     >
                       <BsTrash3 />
@@ -211,20 +209,20 @@ const ColorManage = () => {
       </table>
       <DialogDelete
         show={showDialog.show}
-        title="color"
+        title="hashtag"
         confirm={handleDelete}
         cancel={handleCloseDialog}
       />
-      <DialogCEColor
+      <DialogCEHashtag
         show={showDialogCE.show}
         isUpdate={showDialogCE.isUpdate}
-        handleSubmitColor={showDialogCE.action}
+        handleSubmitHashtag={showDialogCE.action}
         cancel={handleCloseDialogCE}
-        title="Color"
-        dataToEdit={showDialogCE.dataToEdit}
+        title="Hashtag"
+        hashtagDataToEdit={showDialogCE.hashtagDataToEdit}
       />
     </>
   );
 };
 
-export default ColorManage;
+export default HashtagManage;

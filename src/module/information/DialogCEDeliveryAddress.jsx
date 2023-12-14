@@ -14,6 +14,8 @@ import axios from "../../config/axios.js";
 import Input from "../../components/input/Input";
 import { useState } from "react";
 import CustomSelect from "../../components/select/CustomSelect";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 
 const DialogCEDeliveryAddress = ({
   show,
@@ -23,6 +25,7 @@ const DialogCEDeliveryAddress = ({
   title,
   dataToEdit,
 }) => {
+  const user = useSelector(selectCurrentUser);
   console.log(dataToEdit);
   //TODO hiển thị lỗi
   const schema = yup.object({

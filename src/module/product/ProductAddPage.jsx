@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 
 // ProductAddPage.jsx
 const ProductAddPage = () => {
-    const [divCount, setDivCount] = useState(1);
+    const [fields, setFields] = useState([{ id: 1 }]);
     const { reset: resetProductForm } = useForm();
     const [categories, setCategories] = useState([]);
     const [fileDatas, setFileDatas] = useState([]);
@@ -41,18 +41,22 @@ const ProductAddPage = () => {
         };
         fetchCategories();
     }, []);
-    console.log("Độ dài: ", productDtoRequest.createProductVariant.length);
-    console.log("Vị trí :", divCount);
-    console.log("data file", fileDatas);
+
+    console.log("tổng form: ", fields);
+
     // 
     const handleProductFormSubmit = async (data) => {
         try {
             // Thực hiện các bước xử lý dữ liệu ở đây
-            console.log("Handling product form data:", data);
+            // console.log("Handling product form data:", data);
 
             setFileDatas((prevFileDatas) => {
                 const newFileDatas = [...prevFileDatas];
                 const imageFile = data.image;
+
+                // Đặt ảnh mới với ID là 0
+                imageFile.id = 0;
+
                 newFileDatas.unshift(imageFile);
                 return newFileDatas;
             });
@@ -82,10 +86,11 @@ const ProductAddPage = () => {
         // Thêm file vào mảng fileDatas
         setFileDatas((prevFileDatas) => {
             const newFileDatas = [...prevFileDatas];
-            // Assuming data.image là file hoặc dữ liệu ảnh
             const imageFile = data['image-' + [index]];
-            console.log(imageFile);
-            // Thêm file vào mảng fileDatas
+
+            // Đặt ID cho ảnh mới là index
+            imageFile.id = index;
+
             newFileDatas.push(imageFile);
             return newFileDatas;
         });
@@ -97,6 +102,7 @@ const ProductAddPage = () => {
                 createProductVariant: [
                     ...prevProductDtoRequest.createProductVariant,
                     {
+                        id: index,
                         colorId: data['colorId-' + index],
                         size: data['size-' + index],
                         quantity: data['quantity-' + index],
@@ -108,36 +114,38 @@ const ProductAddPage = () => {
 
     };
 
-    const handleAddDiv = () => {
-        setDivCount((prevCount) => prevCount + 1);
+
+    console.log("file ảnh: ", fileDatas);
+
+    const handleAddField = () => {
+        const randomNumber = Math.floor(Math.random() * 900) + 100;
+        const newFields = [...fields, { id: randomNumber }];
+        setFields(newFields);
     };
 
-    const handleRemoveDiv = (index) => {
-        console.log(index);
-        let createProductVariant = productDtoRequest.createProductVariant;
-        let files = fileDatas;
-        console.log(createProductVariant.length);
-        console.log(createProductVariant);
-        if (index + 1 > createProductVariant.length) {
-            alert("đã xóa");
-            setDivCount((prevCount) => prevCount - 1);
-            return;
-        } else {
-            createProductVariant.splice(index, 1); // Xóa một phần tử từ mảng
-            files.splice(index, 1);
-            alert("Đã xóa");
-            setDivCount((prevCount) => prevCount - 1);
-            // Cập nhật state hoặc thực hiện các thao tác cần thiết
-            setProductDtoRequest((prevProductDtoRequest) => ({
-                ...prevProductDtoRequest,
-                createProductVariant,
-            }));
+    const handleRemoveField = (index) => {
+        const newFiles = fileDatas.filter((file) => file.id !== index);
+        const newFields = [...fields];
 
-            setFileDatas((prevFileData) => ({
-                ...prevFileData,
-                fileDatas,
-            }))
+        // Xóa đối tượng từ createProductVariant theo Id
+        const newVariants = productDtoRequest.createProductVariant.filter((variant) => variant.id !== index);
+        setProductDtoRequest({
+            ...productDtoRequest,
+            createProductVariant: newVariants,
+        });
+
+        // Tìm vị trí của phần tử cần xóa trong newFields dựa trên id
+        const fieldIndex = newFields.findIndex((field) => field.id === index);
+
+        if (fieldIndex !== -1) {
+            // Xóa phần tử tại vị trí fieldIndex
+            newFields.splice(fieldIndex, 1);
+
+            // Cập nhật state với newFields mới
+            setFields([...newFields]);
         }
+        setFileDatas(newFiles);
+        setFields(newFields);
     };
 
     console.log("data sau khi xóa: ", productDtoRequest.createProductVariant);
@@ -191,14 +199,14 @@ const ProductAddPage = () => {
 
                 <div className="flex-1">
                     <div className="flex flex-col gap-3  max-h-[330px] overflow-y-auto">
-                        {Array.from({ length: divCount }).map((_, index) => (
-                            <div className="flex flex-col border items-center p-5" key={index}>
+                        {fields.map((field) => (
+                            <div className="flex flex-col border items-center p-5" key={field.id}>
                                 <FormProductVariant
-                                    index={index}
+                                    index={field.id}
                                     onSubmitCallback={handleDynamicFormSubmit}
                                 />
                                 <div>
-                                    <Button onClick={() => handleRemoveDiv(index)}>Remove
+                                    <Button onClick={() => handleRemoveField(field.id)}>Remove
                                     </Button>
                                 </div>
                             </div>
@@ -208,7 +216,7 @@ const ProductAddPage = () => {
                         <Button
                             className="w-3/4 text-6xl h-[250px] flex items-center justify-center"
                             outline="outlined"
-                            onClick={handleAddDiv}
+                            onClick={handleAddField}
                         >
                             <IoAdd />
                         </Button>

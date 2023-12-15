@@ -219,7 +219,6 @@ const AccountManage = () => {
             >
               <Option value="CUSTOMER">CUSTOMER</Option>
               <Option value="STAFF">STAFF</Option>
-              <Option value="ADMIN">ADMIN</Option>
             </Select>
             <Button
               className="w-full px-10 bg-light-green-500"
@@ -286,14 +285,12 @@ const AccountManage = () => {
                   <td className="p-3">
                     <div className="flex items-center justify-center">
                       <span
-                        className={`inline-flex items-center justify-center w-2 h-2 font-semibold leading-none text-white bg-${
-                          statusAccountColor[item.typeAccount]
-                        }-500 rounded-full rizzui-badge color`}
+                        className={`inline-flex items-center justify-center w-2 h-2 font-semibold leading-none text-white bg-${statusAccountColor[item.typeAccount]
+                          }-500 rounded-full rizzui-badge color`}
                       ></span>
                       <p
-                        className={`font-medium text-${
-                          statusAccountColor[item.typeAccount]
-                        }-500 ms-2`}
+                        className={`font-medium text-${statusAccountColor[item.typeAccount]
+                          }-500 ms-2`}
                       >
                         {item.typeAccount}
                       </p>

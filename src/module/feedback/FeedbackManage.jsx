@@ -5,10 +5,14 @@ import DialogCEFeedback from "./DialogCEFeedback.jsx";
 import { CiEdit } from "react-icons/ci";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 import { useSelector } from "react-redux";
+import Pagination from "../../components/pagination/Pagination.jsx";
+
 
 const FeedbackManage = () => {
   const token = useSelector(selectCurrentToken);
   const [feedbackData, setFeedbackData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0); // Thêm state trang hiện tại
+  const [totalPages, setTotalPages] = useState(0); // Thêm state tổng số trang
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -19,22 +23,29 @@ const FeedbackManage = () => {
   const showDialogCERef = useRef(null);
   const fetchData = async () => {
     try {
-      const response = await axios.get("/feedback", {
+      const response = await axios.get(`/feedback?page=${currentPage}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setFeedbackData(response.data);
+      const totalPages = Math.ceil(response["all-item"] / response.size);
+      setTotalPages(totalPages); // Cập nhật tổng số trang
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, [token, currentPage]);
+
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
 
   const handleUpdateTrue = (id) => {
     const dataEdit = feedbackData.find((item) => item.id === id);
@@ -134,6 +145,13 @@ const FeedbackManage = () => {
             ))}
         </tbody>
       </table>
+      <div className="flex items-center justify-center">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChange={handleChangePage}
+        ></Pagination>
+      </div>
       <DialogCEFeedback
         show={showDialogCE.show}
         isUpdate={showDialogCE.isUpdate}

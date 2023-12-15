@@ -8,9 +8,13 @@ import DialogCEBrand from "./DialogCEBrand.jsx";
 import Button from "../../components/button/Button.jsx";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import Pagination from "../../components/pagination/Pagination.jsx";
+
 
 const BrandManage = () => {
   const token = useSelector(selectCurrentToken);
+  const [currentPage, setCurrentPage] = useState(0); // Thêm state trang hiện tại
+  const [totalPages, setTotalPages] = useState(0); // Thêm state tổng số trang
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -26,7 +30,7 @@ const BrandManage = () => {
   const [brandData, setBrandData] = useState([]);
   const fetchData = async () => {
     try {
-      const response = await axios.get("/brand", {
+      const response = await axios.get(`/brand?page=${currentPage}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -36,9 +40,16 @@ const BrandManage = () => {
       console.log(error);
     }
   };
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
+
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, [token], [currentPage]);
+
+
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
@@ -217,6 +228,13 @@ const BrandManage = () => {
           ))}
         </tbody>
       </table>
+      <div className="flex items-center justify-center">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChange={handleChangePage}
+        ></Pagination>
+      </div>
       <DialogDelete
         show={showDialog.show}
         title="Brand"

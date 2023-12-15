@@ -8,10 +8,14 @@ import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import Pagination from "../../components/pagination/Pagination.jsx";
+
 
 const CategoryManage = () => {
   const token = useSelector(selectCurrentToken);
   const [categoryData, setCategoryData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0); // Thêm state trang hiện tại
+  const [totalPages, setTotalPages] = useState(0); // Thêm state tổng số trang
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -26,22 +30,30 @@ const CategoryManage = () => {
   });
   const fetchData = async () => {
     try {
-      const response = await axios.get("/category", {
+      const response = await axios.get(`/category?page=${currentPage}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setCategoryData(response.data);
+      const totalPages = Math.ceil(response["all-item"] / response.size);
+      setTotalPages(totalPages); // Cập nhật tổng số trang
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, [token], [currentPage]);
+
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleCreateTrue = () => {
     setShowDialogCE({
       show: true,
@@ -209,6 +221,13 @@ const CategoryManage = () => {
             ))}
         </tbody>
       </table>
+      <div className="flex items-center justify-center">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChange={handleChangePage}
+        ></Pagination>
+      </div>
       <DialogDelete
         show={showDialog.show}
         title="category"

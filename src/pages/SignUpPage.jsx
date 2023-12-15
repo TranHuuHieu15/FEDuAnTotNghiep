@@ -52,13 +52,8 @@ const SignUpPage = () => {
     if (!isValid) return;
     dispatch(registerStart());
     try {
-      const response = await registerMutation(data).unwrap();
-      dispatch(
-        registerSuccess({
-          userInfo: response.data.userInfo,
-          userToken: response.data.userToken,
-        })
-      );
+      await registerMutation(data).unwrap();
+      dispatch(registerSuccess());
       reset({
         username: "",
         fullName: "",
@@ -69,12 +64,22 @@ const SignUpPage = () => {
         term: false,
       });
       navigate("/checkmail");
-    } catch (response) {
-      if (response.status === 500) {
-        dispatch(registerFailure(response.data.message));
-        toast.error("username and email already exist", {
-          position: "top-left",
-          autoClose: 3000,
+    } catch (error) {
+      if (error.status === 400) {
+        toast.error(error.data.message, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else if (error.status === 500) {
+        toast.error("Internal Server Error. Please try again later.", {
+          position: "top-right",
+          autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -83,6 +88,7 @@ const SignUpPage = () => {
           theme: "light",
         });
       }
+      dispatch(registerFailure(error.data.message));
     }
   };
   return (

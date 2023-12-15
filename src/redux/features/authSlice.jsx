@@ -45,10 +45,9 @@ const authSlice = createSlice({
       state.error = null;
       state.success = false;
     },
-    registerSuccess: (state, action) => {
+    registerSuccess: (state) => {
       state.loading = false;
-      state.userInfo = action.payload.userInfo;
-      state.userToken = action.payload.userToken;
+      state.error = null;
       state.success = true;
     },
     registerFailure: (state, action) => {
@@ -62,9 +61,11 @@ const authSlice = createSlice({
       state.success = false;
       localStorage.removeItem("userInfo");
       localStorage.removeItem("userToken");
+      localStorage.removeItem("refreshToken");
     },
     updateUserInfo: (state, action) => {
-      state.userInfo = { ...state.userInfo, ...action.payload };
+      state.userInfo = action.payload;
+      console.log(state.userInfo);
       localStorage.setItem("userInfo", JSON.stringify(state.userInfo));
     },
   },

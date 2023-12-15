@@ -10,7 +10,7 @@ import DialogCEAccount from "./DialogCEAccount";
 import { toast } from "react-toastify";
 import { useRef } from "react";
 import Button from "../../components/button/Button";
-import DialogDelete from "../../components/dialog/DialogDelete";
+import DialogEditTypeAccount from "./DialogEditTypeAccount";
 
 const AccountManage = () => {
   const token = useSelector(selectCurrentToken);
@@ -26,7 +26,7 @@ const AccountManage = () => {
   const showDialogCERef = useRef(null);
   const [showDialog, setShowDialog] = useState({
     show: false,
-    id: null,
+    dataToEdit: {},
   });
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -160,23 +160,23 @@ const AccountManage = () => {
       console.log(error);
     }
   };
-  const handleLockTrue = (id) => {
+  const handleLockTrue = (item) => {
     setShowDialog({
       show: true,
-      id: id,
+      dataToEdit: item,
     });
   };
-  const handleLock = async () => {
+  const handleLock = async ({ typeAccount, id }) => {
     try {
-      if (showDialog.show && showDialog.id) {
-        await axios.put(`/account/lock/LOCKED/${showDialog.id}`, {
+      if (showDialog.show) {
+        await axios.put(`/account/lock/${typeAccount}/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         handleCloseDialog();
         fetchData();
-        toast.success("🦄 Delete brand successfully!", {
+        toast.success("Change type account successfully!", {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -204,7 +204,7 @@ const AccountManage = () => {
   const handleCloseDialog = () => {
     setShowDialog({
       show: false,
-      id: null,
+      dataToEdit: {},
     });
   };
   return (
@@ -309,7 +309,7 @@ const AccountManage = () => {
                       </span>
                       <span
                         className="text-2xl cursor-pointer hover:text-blue-500"
-                        onClick={() => handleLockTrue(item.id)}
+                        onClick={() => handleLockTrue(item)}
                       >
                         <CiLock className="w-8 h-5" />
                       </span>
@@ -330,12 +330,11 @@ const AccountManage = () => {
           </div>
         )}
       </div>
-      <DialogDelete
+      <DialogEditTypeAccount
         show={showDialog.show}
-        title="Account"
-        confirm={handleLock}
-        question="Lock"
-        cancel={handleCloseDialog}
+        dataToEdit={showDialog.dataToEdit}
+        handleCancelClick={handleCloseDialog}
+        handleChangeTypeAccount={handleLock}
       />
       <DialogCEAccount
         show={showDialogCE.show}

@@ -15,24 +15,16 @@ import {
 import Textarea from "../../components/textarea/Textarea.jsx";
 import { updateUserInfo } from "../../redux/features/authSlice.jsx";
 import { useDispatch } from "react-redux";
-import PropTypes from "prop-types";
 
-const AccountInfo = ({ isUpdate }) => {
+const AccountInfo = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
   const token = useSelector(selectCurrentToken);
   const schema = yup
     .object({
-      username: yup.string().required("Please enter your username"),
       fullName: yup.string().required("Please enter your fullname"),
-      email: yup.string().required("Please enter your email"),
-      birthday: yup
-        .date()
-        .transform((originalValue) => {
-          return isNaN(Date.parse(originalValue)) ? undefined : originalValue;
-        })
-        .typeError("Please enter a valid date for birthday")
-        .required("Please enter your birthday"),
+      birthday: yup.date().required("Please enter your birthday"),
+      sex: yup.boolean().required("Please select your gender"),
     })
     .required();
 
@@ -44,7 +36,6 @@ const AccountInfo = ({ isUpdate }) => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      username: user.username,
       fullName: user.fullName,
       email: user.email,
       phoneNumber: user.phoneNumber,
@@ -56,28 +47,12 @@ const AccountInfo = ({ isUpdate }) => {
 
   const onSubmitHandler = async (data) => {
     if (!isValid) return;
-    handleUpdateData(data);
-    reset({
-      image: data.image,
-      phoneNumber: data.phoneNumber,
-      email: data.email,
-      username: data.username,
-      fullName: data.fullName,
-      birthday: data.birthday,
-      address: data.address,
-      sex: data.sex,
-    });
-  };
-
-  const handleUpdateData = async (data) => {
     try {
       const formData = new FormData();
       typeof data.image === "string"
         ? formData.append("image", data.image)
         : formData.append("imageFile", data.image);
-      formData.append("username", data.username);
       formData.append("fullName", data.fullName);
-      formData.append("email", data.email);
       formData.append("phoneNumber", data.phoneNumber);
       formData.append("birthday", data.birthday);
       formData.append("address", data.address);
@@ -87,27 +62,37 @@ const AccountInfo = ({ isUpdate }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      dispatch(
-        updateUserInfo({
-          image: data.image,
-          username: data.username,
-          fullName: data.fullName,
-          email: data.email,
-          phoneNumber: data.phoneNumber,
-          birthday: data.birthday,
-          address: data.address,
-          sex: data.sex,
-        })
-      );
-      toast.success("Update user successfully!", {
+      const formattedBirthday = data.birthday.toISOString().split("T")[0];
+      const userInfo = {
+        image: data.image,
+        username: user.username,
+        typeAccount: user.typeAccount,
+        path: user.path,
+        fullName: data.fullName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        birthday: formattedBirthday,
+        address: data.address,
+        sex: data.sex,
+      };
+      dispatch(updateUserInfo(userInfo));
+      toast.success("Update infomation successfully!", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 2000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
         theme: "light",
+      });
+      reset({
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        birthday: user.birthday,
+        address: user.address,
+        sex: user.sex,
       });
     } catch (error) {
       toast.error("Update user fail! (Do not duplicate phone numbers)", {
@@ -122,6 +107,14 @@ const AccountInfo = ({ isUpdate }) => {
       });
       console.log(error);
     }
+    reset({
+      fullName: user.fullName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      birthday: user.birthday,
+      address: user.address,
+      sex: user.sex,
+    });
   };
 
   return (
@@ -144,16 +137,17 @@ const AccountInfo = ({ isUpdate }) => {
               <ImageUpload
                 name="image"
                 control={control}
-                isUpdate={isUpdate}
+                isUpdate={true}
+                isInfo={true}
                 errors={errors}
               ></ImageUpload>
             </div>
           </div>
-          <div className="flex-1 mr-16 w-[323px]">
+          <div className="flex flex-col items-start justify-start gap-3 w-[323px]">
             <Input
               type="email"
               label="Enter your email"
-              className="w-auto my-4"
+              className="w-full"
               disabled={true}
               name="email"
               control={control}
@@ -161,17 +155,8 @@ const AccountInfo = ({ isUpdate }) => {
             />
             <Input
               type="text"
-              label="Enter your username"
-              disabled={true}
-              className="w-auto my-4"
-              control={control}
-              errors={errors}
-              name="username"
-            />
-            <Input
-              type="text"
               label="Enter your fullname"
-              className="w-auto my-4"
+              className="w-full"
               name="fullName"
               control={control}
               errors={errors}
@@ -179,7 +164,7 @@ const AccountInfo = ({ isUpdate }) => {
             <Input
               type="text"
               label="Enter your phone number"
-              className="w-auto my-4"
+              className="w-full"
               name="phoneNumber"
               control={control}
               errors={errors}
@@ -188,7 +173,7 @@ const AccountInfo = ({ isUpdate }) => {
               type="date"
               name="birthday"
               label="Enter your birthday"
-              className="w-auto my-4"
+              className="w-full"
               control={control}
               errors={errors}
             />
@@ -222,17 +207,11 @@ const AccountInfo = ({ isUpdate }) => {
               <Button className="bg-blue-gray-900" type="submit">
                 Update
               </Button>
-              <Button className="ml-5" outline="outlined">
-                Cancel
-              </Button>
             </div>
           </div>
         </form>
       </div>
     </>
   );
-};
-AccountInfo.propTypes = {
-  isUpdate: PropTypes.bool,
 };
 export default AccountInfo;

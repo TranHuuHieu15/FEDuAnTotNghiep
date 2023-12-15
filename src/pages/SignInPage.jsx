@@ -37,12 +37,8 @@ const SignInPage = () => {
     resolver: yupResolver(schema),
   });
   useEffect(() => {
-    try {
-      if (tokenUrl) {
-        handleLogin({ token: tokenUrl });
-      }
-    } catch (error) {
-      console.log(error);
+    if (tokenUrl) {
+      handleLogin({ token: tokenUrl });
     }
   }, [tokenUrl]);
   const handleOpenGoogle = () => {
@@ -72,6 +68,7 @@ const SignInPage = () => {
         phoneNumber: response?.data.phoneNumber,
         sex: response?.data.sex,
         typeAccount: response?.data.typeAccount,
+        path: response?.data.path,
         address: response?.data.address,
         birthday: response?.data.birthday,
         image: response?.data.image,
@@ -103,8 +100,41 @@ const SignInPage = () => {
         theme: "light",
       });
     } catch (error) {
+      if (error.status == 400) {
+        toast.error("Username or password is incorrect", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else if (error.status === 404) {
+        toast.error("Your account does not exist", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else if (error.status === 500) {
+        toast.error("Internal Server Error. Please try again later.", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
       dispatch(loginFailure());
-      console.log(error);
     }
   };
 

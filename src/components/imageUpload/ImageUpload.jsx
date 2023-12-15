@@ -9,6 +9,7 @@ const ImageUpload = ({
   name,
   errors,
   isUpdate,
+  disabled,
   size = "w-[200px] h-[150px]",
 }) => {
   const inputRef = useRef(null);
@@ -23,7 +24,6 @@ const ImageUpload = ({
   const handleImage = (e) => {
     const file = e.target.files[0];
     if (file) {
-      console.log(file);
       onChange(file);
     }
   };
@@ -59,6 +59,7 @@ const ImageUpload = ({
         Choose the photo
       </Label>
       <input
+        disabled={disabled}
         type="file"
         className="max-w-[100px] hidden"
         onChange={handleImage}
@@ -78,6 +79,7 @@ ImageUpload.propTypes = {
   errors: PropTypes.object,
   isUpdate: PropTypes.bool,
   size: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 export default ImageUpload;

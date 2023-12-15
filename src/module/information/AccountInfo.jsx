@@ -8,7 +8,10 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice.jsx";
 import Textarea from "../../components/textarea/Textarea.jsx";
 import { updateUserInfo } from "../../redux/features/authSlice.jsx";
 import { useDispatch } from "react-redux";
@@ -17,27 +20,12 @@ import PropTypes from "prop-types";
 const AccountInfo = ({ isUpdate }) => {
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
-  console.log(user);
+  const token = useSelector(selectCurrentToken);
   const schema = yup
     .object({
-      //Không cẩn ảnh cũng được
-      // image: yup.mixed().test("file", "Please choose a image file", (value) => {
-      //   if (value instanceof File) {
-      //     const acceptedExtensions = [".jpg", ".jpeg", ".png"];
-      //     const fileExtension = value.name.split(".").pop().toLowerCase();
-      //     return acceptedExtensions.includes(`.${fileExtension}`);
-      //   } else if (typeof value === "string") {
-      //     const imageExtensions = [".jpg", ".jpeg", ".png"];
-      //     return imageExtensions.some((extension) =>
-      //       value.toLowerCase().endsWith(extension)
-      //     );
-      //   }
-      //   return false; // Trường hợp khác không hợp lệ
-      // }),
       username: yup.string().required("Please enter your username"),
       fullName: yup.string().required("Please enter your fullname"),
       email: yup.string().required("Please enter your email"),
-      // phoneNumber: yup.string().required("Please enter your phone number"),
       birthday: yup
         .date()
         .transform((originalValue) => {
@@ -68,8 +56,7 @@ const AccountInfo = ({ isUpdate }) => {
 
   const onSubmitHandler = async (data) => {
     if (!isValid) return;
-    await handleUpdateData(data);
-    // reset form
+    handleUpdateData(data);
     reset({
       image: data.image,
       phoneNumber: data.phoneNumber,
@@ -83,7 +70,6 @@ const AccountInfo = ({ isUpdate }) => {
   };
 
   const handleUpdateData = async (data) => {
-    console.log(data);
     try {
       const formData = new FormData();
       typeof data.image === "string"
@@ -96,13 +82,11 @@ const AccountInfo = ({ isUpdate }) => {
       formData.append("birthday", data.birthday);
       formData.append("address", data.address);
       formData.append("sex", data.sex);
-      const response = await axios.put("/account/update-profile", formData, {
+      await axios.put("/account/update-profile", formData, {
         headers: {
-          Authorization: `Bearer ${user.accessToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response);
-      //Đoạn này là để update lại thông tin user trong redux
       dispatch(
         updateUserInfo({
           image: data.image,

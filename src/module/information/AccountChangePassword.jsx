@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
+import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 import { updateUserInfo } from "../../redux/features/authSlice.jsx";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
@@ -13,7 +13,7 @@ import axios from "../../config/axios.js";
 
 const AccountInfo = () => {
   const dispatch = useDispatch();
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
   const schema = yup
     .object({
       oldPassword: yup.string().required("Please enter your current password"),
@@ -40,7 +40,6 @@ const AccountInfo = () => {
   });
 
   const handleChangePassword = async (data) => {
-    console.log("Dữ liệu của data", data.oldPassword, data.password);
     const lastData = {
       oldPassword: data.oldPassword,
       password: data.password,
@@ -49,7 +48,7 @@ const AccountInfo = () => {
       if (!isValid) return;
       await axios.put("/account/change-password", lastData, {
         headers: {
-          Authorization: `Bearer ${user.accessToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       dispatch(

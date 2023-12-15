@@ -6,8 +6,11 @@ import { BsTrash3 } from "react-icons/bs";
 import { CiEdit } from "react-icons/ci";
 import DialogCEBrand from "./DialogCEBrand.jsx";
 import Button from "../../components/button/Button.jsx";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 
 const BrandManage = () => {
+  const token = useSelector(selectCurrentToken);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -23,7 +26,11 @@ const BrandManage = () => {
   const [brandData, setBrandData] = useState([]);
   const fetchData = async () => {
     try {
-      const response = await axios.get("/brand");
+      const response = await axios.get("/brand", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setBrandData(response.data);
     } catch (error) {
       console.log(error);
@@ -31,7 +38,7 @@ const BrandManage = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
@@ -51,7 +58,11 @@ const BrandManage = () => {
     formData.append("name", data.name);
     formData.append("description", data.description);
     try {
-      await axios.post("/brand/create", formData);
+      await axios.post("/brand/create", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetchData();
       handleCloseDialogCE();
       toast.success("🦄 Add new brand successfully", {
@@ -87,9 +98,13 @@ const BrandManage = () => {
     formData.append("name", data.name);
     formData.append("description", data.description);
     try {
-      await axios.put(`/brand/update/${showDialogCERef.current.id}`, formData);
-      fetchData();
+      await axios.put(`/brand/update/${showDialogCERef.current.id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       handleCloseDialogCE();
+      fetchData();
       toast.success("🦄 Edit brand successfully", {
         position: "top-right",
         autoClose: 3000,
@@ -100,8 +115,8 @@ const BrandManage = () => {
         progress: undefined,
         theme: "light",
       });
-    } catch (err) {
-      console.log(err.response.data.message);
+    } catch (error) {
+      console.log(error);
     }
   };
   const handleDeleteTrue = (id) => {
@@ -113,7 +128,11 @@ const BrandManage = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        await axios.delete(`/brand/delete/${showDialog.id}`);
+        await axios.delete(`/brand/delete/${showDialog.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setBrandData(brandData.filter((item) => item.id !== showDialog.id));
         fetchData();
         handleCloseDialog();

@@ -15,6 +15,8 @@ import { useEffect, useState } from "react";
 import Select from "../../components/select/Select";
 import axios from "../../config/axios.js";
 import SelectDefault from "../../components/select/SelectDefault.jsx";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "../../redux/features/authSlice";
 
 const DialogCEFeedback = ({
   show,
@@ -28,20 +30,23 @@ const DialogCEFeedback = ({
     { id: 1, value: true, name: "Đã được xử lý" },
     { id: 2, value: false, name: "Chưa được xử lý" },
   ];
-  console.log(typeof feedbackEdit[0].value);
-  //?Cái ni hiểu thị cái select củ problem
+  const token = useSelector(selectCurrentToken);
   const [problem, setProblem] = useState([]);
   useEffect(() => {
     const fetchProblem = async () => {
       try {
-        const response = await axios.get("/problem");
+        const response = await axios.get("/problem", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setProblem(response.data);
       } catch (error) {
         console.error("Error fetching problem:", error);
       }
     };
     fetchProblem();
-  }, []);
+  }, [token]);
 
   const schema = yup
     .object({

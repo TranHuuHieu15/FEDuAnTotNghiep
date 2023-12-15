@@ -1,3 +1,4 @@
+// ProductForm.jsx
 import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -12,15 +13,10 @@ import Textarea from "../../components/textarea/Textarea.jsx";
 import DialogHashtag from "../../components/dialog/DialogHashtag.jsx";
 import PropTypes from "prop-types";
 
-const ProductForm = ({
-  onSubmitCallback,
-  onResetForm,
-  initialData,
-  hashtags,
-}) => {
+const ProductForm = ({ category, onSubmitCallback }) => {
   const [brands, setBrands] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [selectHashTag, setSelectHashtag] = useState([]);
+  const [selectedHashtags, setSelectedHashtags] = useState([]);
   const [openDialogHashtag, setDialogHashtag] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
@@ -28,7 +24,6 @@ const ProductForm = ({
     const fetchBrands = async () => {
       try {
         const response = await axios.get("/brand");
-        // console.log(response.data);
         setBrands(response.data);
       } catch (error) {
         console.error("Error fetching brands:", error);
@@ -36,45 +31,34 @@ const ProductForm = ({
     };
     fetchBrands();
   }, []);
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/category");
-        setCategories(response.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    fetchCategories();
-  }, []);
 
-  const schema = yup.object({
-    image: yup
-      .mixed()
-      .test("file", "Please choose a valid image file", (value) => {
-        console.log(typeof value);
-        if (value instanceof File) {
-          const acceptedExtensions = [".jpg", ".jpeg", ".png"];
-          const fileExtension = value.name.split(".").pop().toLowerCase();
-          return acceptedExtensions.includes(`.${fileExtension}`);
-        } else if (typeof value === "string") {
-          const imageExtensions = [".jpg", ".jpeg", ".png"];
-          return imageExtensions.some((extension) =>
-            value.toLowerCase().endsWith(extension)
-          );
-        }
-        return false;
-      }),
-    name: yup.string().required("Please enter product name"),
-    season: yup.string().required("Please enter product season"),
-    gender: yup.string().required("Please enter product gender"),
-    categoryId: yup.string().required("Please enter product category"),
-    brandId: yup.string().required("Please enter product brand"),
-    description: yup.string().required("Please enter product description"),
-  });
+  const schema = yup
+    .object({
+      image: yup
+        .mixed()
+        .test("file", "Please choose a valid image file", (value) => {
+          if (value instanceof File) {
+            const acceptedExtensions = [".jpg", ".jpeg", ".png"];
+            const fileExtension = value.name.split(".").pop().toLowerCase();
+            return acceptedExtensions.includes(`.${fileExtension}`);
+          } else if (typeof value === "string") {
+            const imageExtensions = [".jpg", ".jpeg", ".png"];
+            return imageExtensions.some((extension) =>
+              value.toLowerCase().endsWith(extension)
+            );
+          }
+          return false;
+        }),
+      name: yup.string().required("Please enter product name"),
+      season: yup.string().required("Please enter product season"),
+      gender: yup.string().required("Please enter product gender"),
+      categoryId: yup.string().required("Please enter product category"),
+      brandId: yup.string().required("Please enter product brand"),
+    })
+    .required();
 
   const {
-    formState: { errors },
+    formState: { errors, isValid: dynamicForm },
     control,
     handleSubmit: handleSubmit,
     reset,
@@ -122,7 +106,11 @@ const ProductForm = ({
       hashtags: extractedData,
     };
     onSubmitCallback(finalData);
-    setIsSaved(true); // Đặt trạng thái đã lưu khi nút "Save" được nhấn
+  };
+
+  const handleChangeSave = () => {
+    if (!dynamicForm) return;
+    setIsSaved(!isSaved);
   };
 
   const handleOpenDialogHashtag = () => {
@@ -136,6 +124,7 @@ const ProductForm = ({
   const handleUseHashtag = (useHashtag) => {
     // Thêm hashtag vào trạng thái của component
     setSelectHashtag([...selectHashTag, useHashtag]);
+    setSelectedHashtags([...selectedHashtags, useHashtag]);
   };
 
   const handleDeleteHashtag = (useHashtag) => {
@@ -143,20 +132,10 @@ const ProductForm = ({
     setSelectHashtag((prevSelectHashtag) =>
       prevSelectHashtag.filter((item) => item.id !== useHashtag.id)
     );
+    setSelectedHashtags((prevSelectedHashtags) =>
+      prevSelectedHashtags.filter((item) => item.id !== useHashtag.id)
+    );
   };
-
-  // Trong component con (ProductForm.jsx)
-  useEffect(() => {
-    if (initialData) {
-      // Đặt dữ liệu vào các trường form tương ứng
-      reset(initialData);
-      // Đặt các trạng thái khác nếu cần
-      if (hashtags && hashtags.length > 0) {
-        // Chèn các hashtag từ props vào trạng thái của component
-        setSelectHashtag([...selectHashTag, ...hashtags]);
-      }
-    }
-  }, [initialData, reset]);
 
   return (
     <div className="flex-none w-[500px]">
@@ -183,6 +162,7 @@ const ProductForm = ({
               mainClassName="flex flex-col"
               className2="text-sm ml-1 font-normal"
               className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
+              selectDefault="Select season"
               title="Season"
               name="season"
               options={typeSeason}
@@ -194,6 +174,7 @@ const ProductForm = ({
               mainClassName="flex flex-col"
               className2="text-sm ml-1 font-normal"
               className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
+              selectDefault="Select gender"
               title="Gender"
               name="gender"
               options={typeGender}
@@ -207,17 +188,19 @@ const ProductForm = ({
               mainClassName="flex flex-col"
               className2="text-sm ml-1 font-normal"
               className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
+              selectDefault="Select category"
               title="Category"
               name="categoryId"
               control={control}
               errors={errors}
-              options={categories}
+              options={category}
               disabled={isSaved}
             />
             <Select
               mainClassName="flex flex-col"
               className2="text-sm ml-1 font-normal"
               className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
+              selectDefault="Select brand"
               title="Brands"
               name="brandId"
               control={control}
@@ -258,9 +241,15 @@ const ProductForm = ({
               disabled={isSaved}
             />
           </div>
-          <Button type="Submit" disabled={isSaved}>
-            {isSaved ? "Saved" : "Save"}
-          </Button>
+          <div className="flex items-center justify-center">
+            <Button
+              className="w-[100px]"
+              type="submit"
+              onClick={handleChangeSave}
+            >
+              {!isSaved ? "Save" : "Edit"}
+            </Button>
+          </div>
         </div>
       </form>
       <DialogHashtag
@@ -275,10 +264,7 @@ const ProductForm = ({
 };
 
 ProductForm.propTypes = {
-  //   category: PropTypes.array,
+  category: PropTypes.array,
   onSubmitCallback: PropTypes.func,
-  onResetForm: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
-  initialData: PropTypes.object,
-  hashtags: PropTypes.array,
 };
 export default ProductForm;

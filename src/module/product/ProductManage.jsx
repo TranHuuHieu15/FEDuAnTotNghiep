@@ -30,7 +30,7 @@ const ProductManage = () => {
     <>
       <Button
         className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
-      // onClick={handleCreateTrue}
+        // onClick={handleCreateTrue}
       >
         Add new product
       </Button>
@@ -72,7 +72,7 @@ const ProductManage = () => {
                     </a>
                     <a
                       className="ml-2 p-2 text-2xl  hover:text-blue-500 cursor-pointer"
-                    // onClick={() => handleDeleteTrue(item.id)}
+                      // onClick={() => handleDeleteTrue(item.id)}
                     >
                       <BsTrash3 />
                     </a>

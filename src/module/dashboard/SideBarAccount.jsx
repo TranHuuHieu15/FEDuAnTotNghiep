@@ -1,16 +1,5 @@
-import {
-  Card,
-  List,
-  ListItem,
-  ListItemPrefix,
-  ListItemSuffix,
-  Chip,
-} from "@material-tailwind/react";
-import {
-  UserCircleIcon,
-  InboxIcon,
-  PowerIcon,
-} from "@heroicons/react/24/solid";
+import { List, ListItem, ListItemPrefix } from "@material-tailwind/react";
+import { UserCircleIcon, PowerIcon } from "@heroicons/react/24/solid";
 import logo from "../../assets/images/about-02.jpg";
 import { BiSolidCartAdd } from "react-icons/bi";
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";

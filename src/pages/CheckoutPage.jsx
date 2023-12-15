@@ -10,7 +10,7 @@ import StepLine from "../components/step/StepLine";
 import { MdOutlinePlace } from "react-icons/md";
 import { BiSolidDiscount } from "react-icons/bi";
 import DialogVoucher from "../components/dialog/DialogVoucher";
-import { selectCurrentUser } from "../redux/features/authSlice";
+import { selectCurrentToken } from "../redux/features/authSlice";
 import DialogDeliveryAddressPayment from "../components/dialog/DialogDeliveryAddressPayment";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +23,7 @@ const deliveryMethods = [
 ];
 
 const CheckoutPage = () => {
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [paymentData, setPaymentData] = useState([]);
@@ -48,14 +48,18 @@ const CheckoutPage = () => {
   useEffect(() => {
     const fetchPayment = async () => {
       try {
-        const response = await axios.get(`/payment`);
+        const response = await axios.get(`/payment`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setPaymentData(response.data);
       } catch (error) {
         console.log(error);
       }
     };
     fetchPayment();
-  }, []);
+  }, [token]);
   useEffect(() => {
     const matchDiscount = () => {
       let discountValue = 0;
@@ -113,7 +117,7 @@ const CheckoutPage = () => {
     try {
       const response = await axios.post(`/order/create`, orderItem, {
         headers: {
-          Authorization: `Bearer ${user.accessToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       if (selectedPaymentMethod.name === "VN PAY") {
@@ -123,7 +127,7 @@ const CheckoutPage = () => {
           `order/payment?orderId=${orderDtoId}`,
           {
             headers: {
-              Authorization: `Bearer ${user.accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );

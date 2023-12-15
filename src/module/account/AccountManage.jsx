@@ -3,7 +3,7 @@ import axios from "../../config/axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice";
+import { selectCurrentToken } from "../../redux/features/authSlice";
 import Pagination from "../../components/pagination/Pagination";
 import { CiEdit, CiLock } from "react-icons/ci";
 import DialogCEAccount from "./DialogCEAccount";
@@ -13,7 +13,7 @@ import Button from "../../components/button/Button";
 import DialogDelete from "../../components/dialog/DialogDelete";
 
 const AccountManage = () => {
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
   const [accountData, setAccountData] = useState([]);
   const [selectRole, setSelectRole] = useState("STAFF");
   const [showDialogCE, setShowDialogCE] = useState({
@@ -35,28 +35,27 @@ const AccountManage = () => {
     UNVERIFIED: "blue",
     LOCKED: "red",
   };
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `/account/${selectRole}?page=${currentPage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const totalPage = Math.ceil(response["all-item"] / response.size);
+      setTotalPages(totalPage);
+      setAccountData(response.data);
+    } catch (error) {
+      setAccountData([]);
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `/account/${selectRole}?page=${currentPage}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.accessToken}`,
-            },
-          }
-        );
-        console.log(response.data);
-        const totalPage = Math.ceil(response["all-item"] / response.size);
-        setTotalPages(totalPage);
-        setAccountData(response.data);
-      } catch (error) {
-        setAccountData([]);
-        console.log(error);
-      }
-    };
     fetchData();
-  }, [currentPage, selectRole, user.accessToken]);
+  }, [currentPage, selectRole, token]);
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
@@ -100,10 +99,11 @@ const AccountManage = () => {
       if (showDialogCERef.current.show) {
         await axios.post("/account/create", formData, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         handleCloseDialogCE();
+        fetchData();
         toast.success("Create account successfully!", {
           position: "top-right",
           autoClose: 2000,
@@ -139,11 +139,12 @@ const AccountManage = () => {
           formData,
           {
             headers: {
-              Authorization: `Bearer ${user.accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
         handleCloseDialogCE();
+        fetchData();
         toast.success("Update account successfully!", {
           position: "top-right",
           autoClose: 2000,
@@ -170,10 +171,11 @@ const AccountManage = () => {
       if (showDialog.show && showDialog.id) {
         await axios.put(`/account/lock/LOCKED/${showDialog.id}`, {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         handleCloseDialog();
+        fetchData();
         toast.success("🦄 Delete brand successfully!", {
           position: "top-right",
           autoClose: 2000,

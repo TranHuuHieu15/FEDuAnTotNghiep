@@ -1,33 +1,28 @@
 import { useEffect, useState } from "react";
 import ProductForm from "./ProductForm";
 import axios from "../../config/axios.js";
-// import * as yup from 'yup';
-import { yupResolver } from "@hookform/resolvers/yup";
 import FormProductVariant from "./FormProductVariant.jsx";
 import Button from "../../components/button/Button.jsx";
 import { useForm } from "react-hook-form";
-import { IoAdd } from "react-icons/io5";
+import { FcPlus } from "react-icons/fc";
+import { AiTwotoneDelete } from "react-icons/ai";
 import { toast } from "react-toastify";
-import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
+import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 import { useSelector } from "react-redux";
 
-// import { useSelector } from "react-redux";
-
-// ProductAddPage.jsx
 const ProductAddPage = () => {
     const [fields, setFields] = useState([{ id: 1 }]);
     const { reset: resetProductForm } = useForm();
     const [categories, setCategories] = useState([]);
     const [fileDatas, setFileDatas] = useState([]);
-    const user = useSelector(selectCurrentUser);
+    const token = useSelector(selectCurrentToken);
 
-    // const user = useSelector(selectCurrentUser);
     const [productDtoRequest, setProductDtoRequest] = useState({
         productDto: {}, // Assuming fixed form data structure
         hashtagOfProductsDto: [],
         createProductVariant: [],
-        deleteProductVariant: [null],
-        updateProductVariant: [null],
+        deleteProductVariant: [],
+        updateProductVariant: [],
     });
 
     useEffect(() => {
@@ -41,9 +36,6 @@ const ProductAddPage = () => {
         };
         fetchCategories();
     }, []);
-
-    console.log("tổng form: ", fields);
-
     // 
     const handleProductFormSubmit = async (data) => {
         try {
@@ -57,10 +49,18 @@ const ProductAddPage = () => {
                 // Đặt ảnh mới với ID là 0
                 imageFile.id = 0;
 
-                newFileDatas.unshift(imageFile);
+                const existingIndex = newFileDatas.findIndex((item) => item.id === imageFile.id);
+
+                if (existingIndex !== -1) {
+                    // Nếu đã tồn tại, thay thế nó
+                    newFileDatas[existingIndex] = imageFile;
+                } else {
+                    // Nếu không, thêm mới
+                    newFileDatas.unshift(imageFile);
+                }
                 return newFileDatas;
             });
-            // console.log("đấy file", fileDatas);
+
             // Lưu trữ phần còn lại của dữ liệu vào productDto trong productDtoRequest
             setProductDtoRequest((prevData) => ({
                 ...prevData,
@@ -82,7 +82,6 @@ const ProductAddPage = () => {
     };
 
     const handleDynamicFormSubmit = async (data, index) => {
-        // console.log("Data Product Variant:", data);
         // Thêm file vào mảng fileDatas
         setFileDatas((prevFileDatas) => {
             const newFileDatas = [...prevFileDatas];
@@ -90,37 +89,63 @@ const ProductAddPage = () => {
 
             // Đặt ID cho ảnh mới là index
             imageFile.id = index;
+            // Kiểm tra xem có phần tử nào có cùng ID không
+            const existingIndex = newFileDatas.findIndex((item) => item.id === imageFile.id);
 
-            newFileDatas.push(imageFile);
+            if (existingIndex !== -1) {
+                // Nếu đã tồn tại, thay thế nó
+                newFileDatas[existingIndex] = imageFile;
+            } else {
+                // Nếu không, thêm mới
+                newFileDatas.push(imageFile);
+            }
             return newFileDatas;
         });
 
 
         setProductDtoRequest((prevProductDtoRequest) => {
-            return {
-                ...prevProductDtoRequest,
-                createProductVariant: [
-                    ...prevProductDtoRequest.createProductVariant,
-                    {
-                        id: index,
-                        colorId: data['colorId-' + index],
-                        size: data['size-' + index],
-                        quantity: data['quantity-' + index],
-                        price: data['price-' + index],
-                    },
-                ],
-            };
+            const existingIndex = prevProductDtoRequest.createProductVariant.findIndex((variant) => variant.id === index);
+
+            if (existingIndex !== -1) {
+                // Nếu tồn tại, cập nhật dữ liệu
+                const updatedVariants = [...prevProductDtoRequest.createProductVariant];
+                updatedVariants[existingIndex] = {
+                    ...updatedVariants[existingIndex],
+                    colorId: data['colorId-' + index],
+                    size: data['size-' + index],
+                    quantity: data['quantity-' + index],
+                    price: data['price-' + index],
+                };
+
+                return {
+                    ...prevProductDtoRequest,
+                    createProductVariant: updatedVariants,
+                };
+            } else {
+                // Nếu không tồn tại, thêm mới
+                return {
+                    ...prevProductDtoRequest,
+                    createProductVariant: [
+                        ...prevProductDtoRequest.createProductVariant,
+                        {
+                            id: index,
+                            colorId: data['colorId-' + index],
+                            size: data['size-' + index],
+                            quantity: data['quantity-' + index],
+                            price: data['price-' + index],
+                        },
+                    ],
+                };
+            }
         });
 
     };
-
-
-    console.log("file ảnh: ", fileDatas);
 
     const handleAddField = () => {
         const randomNumber = Math.floor(Math.random() * 900) + 100;
         const newFields = [...fields, { id: randomNumber }];
         setFields(newFields);
+
     };
 
     const handleRemoveField = (index) => {
@@ -146,15 +171,22 @@ const ProductAddPage = () => {
         }
         setFileDatas(newFiles);
         setFields(newFields);
+        toast.success("Delete ProductVariant successfully!", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
     };
 
-    console.log("data sau khi xóa: ", productDtoRequest.createProductVariant);
+
     const postData = async () => {
-        // console.log("dataa form: ", productDtoRequest);
         const formData = new FormData();
         formData.append('productDtoRequest', JSON.stringify(productDtoRequest));
-        // Thêm toàn bộ fileDatas vào FormData với tên 'files'
-        // console.log("file ảnh: ", fileDatas);
         fileDatas.forEach((fileData) => {
             formData.append('files', fileData);
         });
@@ -163,7 +195,7 @@ const ProductAddPage = () => {
             const response = await axios.post('/product/create', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${user.accessToken}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
             if (response.status === 200) {
@@ -177,11 +209,23 @@ const ProductAddPage = () => {
                     progress: undefined,
                     theme: "light",
                 });
-
+                setFields([]);
+                setFileDatas([]);
                 setProductDtoRequest();
             }
         } catch (response) {
-            console.log(response);
+            toast.error("Create new product fail!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+            setFileDatas([]);
+            setProductDtoRequest();
         }
     }
 
@@ -193,36 +237,36 @@ const ProductAddPage = () => {
                     category={categories}
                     onSubmitCallback={handleProductFormSubmit}
                     onResetForm={resetProductForm}
-                // control={productFormControl}
-                // errors={productFormErrors}
                 />
 
                 <div className="flex-1">
-                    <div className="flex flex-col gap-3  max-h-[330px] overflow-y-auto">
+                    <div className="flex flex-col gap-3 h-[450px]  max-h-[600px] overflow-y-auto">
                         {fields.map((field) => (
-                            <div className="flex flex-col border items-center p-5" key={field.id}>
+                            <div className="flex flex-row border p-5" key={field.id}>
                                 <FormProductVariant
                                     index={field.id}
                                     onSubmitCallback={handleDynamicFormSubmit}
                                 />
-                                <div>
-                                    <Button onClick={() => handleRemoveField(field.id)}>Remove
-                                    </Button>
-                                </div>
+                                <Button className="h-[40px] text-2xl" outline="text" onClick={() => handleRemoveField(field.id)}>
+                                    <AiTwotoneDelete />
+                                </Button>
                             </div>
+
                         ))}
                     </div>
-                    <div className="flex items-end justify-center p-2">
-                        <Button
-                            className="w-3/4 text-6xl h-[250px] flex items-center justify-center"
-                            outline="outlined"
-                            onClick={handleAddField}
-                        >
-                            <IoAdd />
-                        </Button>
-                    </div>
-                    <div className="flex items-center justify-center p-0">
-                        <Button onClick={postData}>Add New Product</Button>
+                    <div className="flex justify-between">
+                        <div className="flex items-center w-1/4 pt-[100px]">
+                            <Button
+                                className="w-3/4 text-lg flex items-center justify-center"
+                                outline="outlined"
+                                onClick={handleAddField}
+                            >
+                                <FcPlus />
+                            </Button>
+                        </div>
+                        <div className="flex items-end justify-end pt-[100px] pr-10">
+                            <Button className="text-sm" onClick={postData}>Add New Product</Button>
+                        </div>
                     </div>
                 </div>
             </div>

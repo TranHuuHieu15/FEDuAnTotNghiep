@@ -14,7 +14,6 @@ import axios from "../config/axios.js";
 import { toast } from "react-toastify";
 
 const ContactPage = () => {
-  //! Lấy dữ liệu từ problem
   const [problems, setProblems] = useState([]);
   useEffect(() => {
     // Gọi API để lấy danh sách problem
@@ -60,8 +59,7 @@ const ContactPage = () => {
 
   const handleCreateData = async (data) => {
     try {
-      const response = await axios.post("/feedback/create", data);
-      console.log(response);
+      await axios.post("/feedback/create", data);
       toast.success("Create feedback successfully!", {
         position: "top-right",
         autoClose: 3000,
@@ -72,8 +70,6 @@ const ContactPage = () => {
         progress: undefined,
         theme: "light",
       });
-
-      // Thực hiện các hành động khác sau khi tạo dữ liệu thành công
     } catch (error) {
       console.error("Error creating feedback:", error);
     }
@@ -89,7 +85,7 @@ const ContactPage = () => {
         </div>
         <div className="flex justify-center gap-5">
           <div className="flex flex-col gap-10 w-[585px] h-auto border p-16">
-            <h1 className="text-center text-2xl text-blue-gray-700">
+            <h1 className="text-2xl text-center text-blue-gray-700">
               Send Us A Message
             </h1>
             <form onSubmit={handleSubmit(onSubmitHandler)}>
@@ -140,7 +136,7 @@ const ContactPage = () => {
               <MdOutlinePlace className="w-6 h-6 text-blue-gray-700" />
               <div className="flex flex-col gap-2">
                 <span className="text-xl text-blue-gray-700">Address</span>
-                <p className="text-md text-gray-600">
+                <p className="text-gray-600 text-md">
                   Coza Store Center 8th floor, 379 Hudson St, New York, NY 10018
                   US
                 </p>
@@ -150,14 +146,14 @@ const ContactPage = () => {
               <BsTelephone className="w-6 h-6 text-blue-gray-700" />
               <div className="flex flex-col gap-2">
                 <span className="text-xl text-blue-gray-700">Lets Talk</span>
-                <p className="text-md text-blue-300">+1 800 1236879</p>
+                <p className="text-blue-300 text-md">+1 800 1236879</p>
               </div>
             </div>
             <div className="flex gap-3">
               <AiOutlineMail className="w-6 h-6 text-blue-gray-700" />
               <div className="flex flex-col gap-2">
                 <span className="text-xl text-blue-gray-700">Sale Support</span>
-                <p className="text-md text-blue-300">contact@example.com</p>
+                <p className="text-blue-300 text-md">contact@example.com</p>
               </div>
             </div>
           </div>

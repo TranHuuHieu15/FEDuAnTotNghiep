@@ -6,8 +6,11 @@ import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import DialogCEDiscount from "./DialogCEDiscount.jsx";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 
 const DiscountManage = () => {
+  const token = useSelector(selectCurrentToken);
   const [discountData, setDiscountData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -23,7 +26,11 @@ const DiscountManage = () => {
   });
   const fetchData = async () => {
     try {
-      const response = await axios.get("/discount");
+      const response = await axios.get("/discount", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setDiscountData(response.data);
     } catch (error) {
       console.log(error);
@@ -31,7 +38,7 @@ const DiscountManage = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
@@ -57,8 +64,11 @@ const DiscountManage = () => {
         formData.append("quantity", data.quantity);
         formData.append("categoryId", data.categoryId);
         formData.append("description", data.description);
-        const response = await axios.post("/discount/create", formData);
-        console.log(response);
+        await axios.post("/discount/create", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         fetchData();
         handleCloseDialogCE();
         toast.success("Create discount successfully!", {
@@ -77,7 +87,6 @@ const DiscountManage = () => {
     }
   };
   const handleUpdateTrue = (id) => {
-    console.log("ID for update:", id); // In ra ID trước khi cập nhật showDialogCE
     const dataEdit = discountData.find((item) => item.id === id);
     setShowDialogCE({
       show: true,
@@ -88,7 +97,6 @@ const DiscountManage = () => {
     });
   };
   const handleUpdate = async (data) => {
-    console.log("In ra id in handleUpdate:", showDialogCERef.current.id);
     try {
       const formData = new FormData();
       typeof data.image === "string"
@@ -101,11 +109,15 @@ const DiscountManage = () => {
       formData.append("categoryId", data.categoryId);
       formData.append("description", data.description);
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
-        const response = await axios.put(
+        await axios.put(
           `/discount/update/${showDialogCERef.current.id}`,
-          formData
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        console.log(response);
         fetchData();
         handleCloseDialogCE();
         toast.success("Update discount successfully!", {
@@ -132,7 +144,11 @@ const DiscountManage = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        await axios.delete(`/discount/delete/${showDialog.id}`);
+        await axios.delete(`/discount/delete/${showDialog.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setDiscountData(
           discountData.filter((item) => item.id !== showDialog.id)
         );
@@ -172,13 +188,13 @@ const DiscountManage = () => {
   return (
     <>
       <Button
-        className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
+        className="float-right mb-2 mr-2 cursor-pointer bg-light-green-500"
         onClick={handleCreateTrue}
       >
         Add new discount
       </Button>
-      <table className="w-full table-auto text-center">
-        <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-400">
+      <table className="w-full text-center table-auto">
+        <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
           <tr>
             <th className="px-6 py-4 font-medium text-gray-900">Discount</th>
             <th className="px-6 py-4 font-medium text-gray-900">
@@ -194,7 +210,7 @@ const DiscountManage = () => {
             <th className="px-6 py-4 font-medium text-gray-900">Action</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100 text-sm">
+        <tbody className="text-sm divide-y divide-gray-100">
           {discountData.length > 0 &&
             discountData.map((item) => (
               <tr key={item.id}>
@@ -226,13 +242,13 @@ const DiscountManage = () => {
                 <td className="p-2">
                   <span className="flex items-center justify-center gap-3">
                     <a
-                      className="p-3 text-2xl hover:text-blue-500 cursor-pointer"
+                      className="p-3 text-2xl cursor-pointer hover:text-blue-500"
                       onClick={() => handleUpdateTrue(item.id)}
                     >
                       <CiEdit />
                     </a>
                     <a
-                      className="ml-2 p-2 text-2xl  hover:text-blue-500 cursor-pointer"
+                      className="p-2 ml-2 text-2xl cursor-pointer hover:text-blue-500"
                       onClick={() => handleDeleteTrue(item.id)}
                     >
                       <BsTrash3 />

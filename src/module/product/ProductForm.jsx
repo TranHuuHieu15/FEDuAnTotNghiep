@@ -25,7 +25,6 @@ const ProductForm = ({ category, onSubmitCallback }) => {
         const fetchBrands = async () => {
             try {
                 const response = await axios.get("/brand");
-                // console.log(response.data);
                 setBrands(response.data);
             } catch (error) {
                 console.error("Error fetching brands:", error);
@@ -38,7 +37,6 @@ const ProductForm = ({ category, onSubmitCallback }) => {
         image: yup
             .mixed()
             .test("file", "Please choose a valid image file", (value) => {
-                console.log(typeof value);
                 if (value instanceof File) {
                     const acceptedExtensions = [".jpg", ".jpeg", ".png"];
                     const fileExtension = value.name.split(".").pop().toLowerCase();
@@ -61,7 +59,7 @@ const ProductForm = ({ category, onSubmitCallback }) => {
 
 
     const {
-        formState: { errors },
+        formState: { errors, isValid: dynamicForm },
         control,
         handleSubmit: handleSubmit,
         reset,
@@ -110,8 +108,13 @@ const ProductForm = ({ category, onSubmitCallback }) => {
             hashtags: extractedData,
         };
         onSubmitCallback(finalData);
-        setIsSaved(true); // Đặt trạng thái đã lưu khi nút "Save" được nhấn
     }
+
+
+    const handleChangeSave = () => {
+        if (!dynamicForm) return;
+        setIsSaved(!isSaved);
+    };
 
     const handleOpenDialogHashtag = () => {
         setDialogHashtag(true);
@@ -241,7 +244,15 @@ const ProductForm = ({ category, onSubmitCallback }) => {
                             disabled={isSaved}
                         />
                     </div>
-                    <Button type="Submit" disabled={isSaved}>{isSaved ? "Saved" : "Save"}</Button>
+                    <div className="flex items-center justify-center">
+                        <Button
+                            className="w-[100px]"
+                            type="submit"
+                            onClick={handleChangeSave}
+                        >
+                            {!isSaved ? "Save" : "Edit"}
+                        </Button>
+                    </div>
                 </div>
             </form>
             <DialogHashtag

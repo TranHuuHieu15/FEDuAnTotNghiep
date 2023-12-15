@@ -33,7 +33,6 @@ const EnterNewPWPage = () => {
     };
     try {
       const response = await forgotPW(lastData).unwrap();
-      console.log(response);
       if (response.result === true) {
         navigate("/login");
       }

@@ -1,23 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import Button from "../../components/button/Button";
+import Button from "../../components/button/Button.jsx";
 import axios from "../../config/axios.js";
 import { toast } from "react-toastify";
-import DialogCECategory from "./DialogCECategory";
+import DialogCEHashtag from "./DialogCEHashtag.jsx";
 import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 
-const CategoryManage = () => {
+const HashtagManage = () => {
   const token = useSelector(selectCurrentToken);
-  const [categoryData, setCategoryData] = useState([]);
+  const [hashtagData, setHashtagData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
     isUpdate: false,
     action: null,
-    categoryDataToEdit: {},
+    hashtagDataToEdit: {},
   });
   const showDialogCERef = useRef(null);
   const [showDialog, setShowDialog] = useState({
@@ -26,12 +26,12 @@ const CategoryManage = () => {
   });
   const fetchData = async () => {
     try {
-      const response = await axios.get("/category", {
+      const response = await axios.get("/hashtag", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setCategoryData(response.data);
+      setHashtagData(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -48,21 +48,21 @@ const CategoryManage = () => {
       id: null,
       isUpdate: false,
       action: handleCreate,
-      categoryDataToEdit: {},
+      hashtagDataToEdit: {},
     });
   };
 
-  const handleCreate = async (categoryDto) => {
+  const handleCreate = async (hashtagDto) => {
     try {
       if (showDialogCERef.current.show) {
-        await axios.post("/category/create", categoryDto, {
+        await axios.post("/hashtag/create", hashtagDto, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         fetchData();
         handleCloseDialogCE();
-        toast.success("Create category successfully!", {
+        toast.success("Create hashtag successfully!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -78,21 +78,21 @@ const CategoryManage = () => {
     }
   };
   const handleUpdateTrue = (id) => {
-    const dataEdit = categoryData.find((item) => item.id === id);
+    const dataEdit = hashtagData.find((item) => item.id === id);
     setShowDialogCE({
       show: true,
       id: id,
       isUpdate: true,
       action: handleUpdate,
-      categoryDataToEdit: dataEdit,
+      hashtagDataToEdit: dataEdit,
     });
   };
-  const handleUpdate = async (categoryDto) => {
+  const handleUpdate = async (hashtagDto) => {
     try {
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         await axios.put(
-          `/category/update/${showDialogCERef.current.id}`,
-          categoryDto,
+          `/hashtag/update/${showDialogCERef.current.id}`,
+          hashtagDto,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -101,7 +101,7 @@ const CategoryManage = () => {
         );
         fetchData();
         handleCloseDialogCE();
-        toast.success("Update category successfully!", {
+        toast.success("Update hashtag successfully!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -126,16 +126,14 @@ const CategoryManage = () => {
   const handleDelete = async () => {
     try {
       if (showDialog.show && showDialog.id) {
-        await axios.delete(`/category/delete/${showDialog.id}`, {
+        await axios.delete(`/hashtag/delete/${showDialog.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setCategoryData(
-          categoryData.filter((item) => item.id !== showDialog.id)
-        );
+        setHashtagData(hashtagData.filter((item) => item.id !== showDialog.id));
         handleCloseDialog();
-        toast.success("Delete category successfully!", {
+        toast.success("Delete hashtag successfully!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -157,7 +155,7 @@ const CategoryManage = () => {
       id: null,
       isUpdate: false,
       action: null,
-      categoryDataToEdit: {},
+      hashtagDataToEdit: {},
     });
   };
 
@@ -173,7 +171,7 @@ const CategoryManage = () => {
         className="float-right mb-2 mr-2 cursor-pointer bg-light-green-500"
         onClick={handleCreateTrue}
       >
-        Add new Category
+        Add new Hashtag
       </Button>
       <table className="w-full text-center table-auto">
         <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
@@ -184,8 +182,8 @@ const CategoryManage = () => {
           </tr>
         </thead>
         <tbody className="text-sm divide-y divide-gray-100">
-          {categoryData.length > 0 &&
-            categoryData.map((item) => (
+          {hashtagData.length > 0 &&
+            hashtagData.map((item) => (
               <tr key={item.id}>
                 <td className="p-2 font-medium text-gray-800">{item.name}</td>
                 <td className="p-2">{item.description}</td>
@@ -211,20 +209,20 @@ const CategoryManage = () => {
       </table>
       <DialogDelete
         show={showDialog.show}
-        title="category"
+        title="hashtag"
         confirm={handleDelete}
         cancel={handleCloseDialog}
       />
-      <DialogCECategory
+      <DialogCEHashtag
         show={showDialogCE.show}
         isUpdate={showDialogCE.isUpdate}
-        handleSubmitCategory={showDialogCE.action}
+        handleSubmitHashtag={showDialogCE.action}
         cancel={handleCloseDialogCE}
-        title="Category"
-        categoryDataToEdit={showDialogCE.categoryDataToEdit}
+        title="Hashtag"
+        hashtagDataToEdit={showDialogCE.hashtagDataToEdit}
       />
     </>
   );
 };
 
-export default CategoryManage;
+export default HashtagManage;

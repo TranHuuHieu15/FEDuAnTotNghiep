@@ -28,8 +28,6 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
         fetchColors();
     }, []);
 
-    console.log(colors);
-
     const schema = yup.object({
         [`image-${index}`]: yup.mixed().test("file", "Please choose a image file", (value) => {
             if (value instanceof File) {
@@ -51,7 +49,7 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
     });
 
     const {
-        formState: { errors: dynamicFormErrors },
+        formState: { errors: dynamicFormErrors, isValid: dynamicForm },
         control: dynamicFormControl,
         handleSubmit: handleSubmit,
     } = useForm({
@@ -60,14 +58,18 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
 
     const productVariant = (data, index) => {
         onSubmitCallback(data, index); // Truyền dữ liệu về component gọi ProductVariantForm
-        setIsSaved(true);
+    };
+
+    const handleChangeSave = () => {
+        if (!dynamicForm) return;
+        setIsSaved(!isSaved);
     };
 
     return (
         <>
             <form onSubmit={handleSubmit((data) => productVariant(data, index))} className="flex flex-row items-center">
                 <ImageUpload name={`image-${index}`} className="w-full" control={dynamicFormControl} errors={dynamicFormErrors} disabled={isSaved} />
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 p-1">
                     <div className="flex flex-row gap-3">
                         <SelectDefault
                             mainClassName="flex flex-col"
@@ -118,11 +120,20 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
                         />
                     </div>
                 </div>
-                <div className="p-5 gap-3">
+                <div className="p-2 gap-3">
                     <div className="p-1">
-                        <Button className="w-[100px]" type="Submit" disabled={isSaved}>{isSaved ? "Saved" : "Save"}
-                        </Button>
+                        <div className="p-1">
+                            <Button
+                                className="w-[100px]"
+                                type="submit"
+                                onClick={handleChangeSave}
+                            >
+                                {isSaved ? "Edit" : "Save"}
+                            </Button>
+                        </div>
+
                     </div>
+
                 </div>
             </form>
         </>

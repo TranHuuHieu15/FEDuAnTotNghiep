@@ -1,20 +1,27 @@
 import axios from "../../config/axios.js";
 import { useEffect } from "react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 
 const EvalueateManage = () => {
+  const token = useSelector(selectCurrentToken);
   const [evaluateData, setEvaluateData] = useState([]);
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("/evaluate");
-      setEvaluateData(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("/evaluate", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setEvaluateData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     fetchData();
-  }, []);
+  }, [token]);
   return (
     <>
       <table className="w-full text-center table-auto">

@@ -61,15 +61,6 @@ const CartCard = ({ cartData }) => {
           </div>
           <div className="flex items-start gap-5">
             <div className="flex gap-2 p-2 py-2 rounded-md shadow-3xl">
-              {/* <Select
-                title="Size: "
-                className="mr-2 outline-none hover:cursor-pointer"
-              >
-                <option value="option1">S</option>
-                <option value="option2">M</option>
-                <option value="option3">L</option>
-                <option value="option4">XL</option>
-              </Select> */}
               <h5 className="text-base not-italic font-semibold font-eculid">
                 Size:{" "}
               </h5>

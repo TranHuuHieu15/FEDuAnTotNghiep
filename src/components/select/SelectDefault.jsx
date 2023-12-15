@@ -14,10 +14,6 @@ const SelectDefault = ({
   selectDefault,
 }) => {
   const selectClasses = `border ${className}`;
-  // console.log(name);
-  // console.log(errors);
-  console.log(errors);
-  // console.log(errors?.name?.message);
   const { field } = useController({
     control,
     name,

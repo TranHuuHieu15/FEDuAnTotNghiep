@@ -15,6 +15,8 @@ import { useEffect, useState } from "react";
 import Textarea from "../../components/textarea/Textarea";
 import ImageUpload from "../../components/imageUpload/ImageUpload";
 import Select from "../../components/select/Select";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 
 const DialogCEDiscount = ({
   show,
@@ -26,11 +28,16 @@ const DialogCEDiscount = ({
 }) => {
   //* Lấy dữ liệu từ category
   const [categories, setCategories] = useState([]);
+  const token = useSelector(selectCurrentToken);
   useEffect(() => {
     // Gọi API để lấy danh sách category
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("/category");
+        const response = await axios.get("/category", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -38,7 +45,7 @@ const DialogCEDiscount = ({
     };
 
     fetchCategories();
-  }, []);
+  }, [token]);
 
   const schema = yup
     .object({
@@ -113,8 +120,6 @@ const DialogCEDiscount = ({
   const onSubmitHandler = (data) => {
     if (!isValid) return;
     handleSubmitDiscount(data);
-    console.log(data);
-    console.log(typeof data);
     reset({
       discount: "",
       registerDate: "",

@@ -9,20 +9,21 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import Button from "../../components/button/Button";
+import Textarea from "../../components/textarea/Textarea";
 import Input from "../../components/input/Input";
 import { useEffect } from "react";
 
-const DialogCEProblem = ({
+const DialogCEHashtag = ({
   show,
   isUpdate,
-  handleSubmitProblem,
+  handleSubmitHashtag,
   cancel,
   title,
-  dataToEdit,
+  hashtagDataToEdit,
 }) => {
   const schema = yup
     .object({
-      name: yup.string().required("Please enter problem name"),
+      name: yup.string().required("Please enter hashtag name"),
     })
     .required();
   const {
@@ -37,16 +38,18 @@ const DialogCEProblem = ({
     if (!show) {
       reset({
         name: "",
+        description: "",
       });
     } else {
-      reset(dataToEdit);
+      reset(hashtagDataToEdit);
     }
-  }, [dataToEdit, show, reset]);
+  }, [hashtagDataToEdit, show, reset]);
   const onSubmitHandler = (data) => {
     if (!isValid) return;
-    handleSubmitProblem(data);
+    handleSubmitHashtag(data);
     reset({
       name: "",
+      description: "",
     });
   };
   return (
@@ -63,14 +66,19 @@ const DialogCEProblem = ({
         )}
         <DialogBody>
           <form onSubmit={handleSubmit(onSubmitHandler)}>
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center gap-3">
               <Input
                 name="name"
                 label="Name"
-                placeholder="Enter name problem"
+                placeholder="Enter name hashtag"
                 className="w-full"
                 control={control}
                 errors={errors}
+              />
+              <Textarea
+                name="description"
+                label="Description"
+                control={control}
               />
             </div>
             <DialogFooter className="float-right">
@@ -94,13 +102,13 @@ const DialogCEProblem = ({
   );
 };
 
-DialogCEProblem.propTypes = {
+DialogCEHashtag.propTypes = {
   isUpdate: PropTypes.bool,
-  handleSubmitProblem: PropTypes.func,
+  handleSubmitHashtag: PropTypes.func,
   cancel: PropTypes.func,
   show: PropTypes.bool,
   title: PropTypes.string,
-  dataToEdit: PropTypes.object,
+  hashtagDataToEdit: PropTypes.object,
 };
 
-export default DialogCEProblem;
+export default DialogCEHashtag;

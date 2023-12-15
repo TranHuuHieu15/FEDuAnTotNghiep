@@ -1,4 +1,6 @@
 import axios from "axios";
+import { loginSuccess } from "../redux/features/authSlice";
+import store from "../redux/store";
 
 const instance = axios.create({
   baseURL: "http://localhost:8080/api/ttf",
@@ -6,11 +8,9 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   function (config) {
-    // Do something before request is sent
     return config;
   },
   function (error) {
-    // Do something with request error
     return Promise.reject(error);
   }
 );
@@ -18,13 +18,47 @@ instance.interceptors.request.use(
 // Add a response interceptor
 instance.interceptors.response.use(
   function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
+    console.log("response.data");
     return response.data;
   },
-  function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+  async function (error) {
+    console.log(error);
+    const originalRequest = error.config;
+    const refreshToken = localStorage.getItem("refreshToken");
+    // Check if the error is due to an expired token
+    if (error.code && error.code === "ERR_NETWORK") {
+      // Make a request to refresh the token
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/ttf/auth/refresh-token",
+          {
+            refreshToken,
+          }
+        );
+        const newAccessToken = response.data.data;
+        const userInfo = store.getState().auth.userInfo;
+        store.dispatch(
+          loginSuccess({
+            userInfo: userInfo,
+            userToken: newAccessToken,
+            refreshToken: refreshToken,
+          })
+        );
+        // Update the original request with the new access token
+        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
+        // Retry the original request
+        return instance(originalRequest);
+      } catch (refreshError) {
+        // Handle refresh error, e.g., logout user
+        console.error("Failed to refresh token:", refreshError);
+        // Redirect to logout or handle in your app's way
+        localStorage.removeItem("userToken");
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("refreshToken");
+      }
+    }
+
     return Promise.reject(error);
   }
 );

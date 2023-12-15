@@ -11,10 +11,10 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import axios from "../../config/axios";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/features/authSlice";
+import { selectCurrentToken } from "../../redux/features/authSlice";
 
 const DialogRating = ({ show, handleClose, productId, orderDetailId }) => {
-  const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrentToken);
   const [ratingValue, setRatingValue] = useState(0);
   const [reviewText, setReviewText] = useState("");
 
@@ -39,16 +39,15 @@ const DialogRating = ({ show, handleClose, productId, orderDetailId }) => {
       rate: ratingValue,
     };
     try {
-      const response = await axios.post(
+      await axios.post(
         `/evaluate/create?orderDetailId=${orderDetailId}`,
         data,
         {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log(response);
     } catch (error) {
       console.log(error);
     }

@@ -3,23 +3,20 @@ import Input from "../../components/input/Input";
 import RadioButton from "../../components/radioButton/RadioButton";
 import { useForm } from "react-hook-form";
 import ImageUpload from "../../components/imageUpload/ImageUpload";
-import axios from "../../config/axios.js";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import {
-  selectCurrentToken,
-  selectCurrentUser,
-} from "../../redux/features/authSlice.jsx";
+import { selectCurrentUser } from "../../redux/features/authSlice.jsx";
 import Textarea from "../../components/textarea/Textarea.jsx";
 import { updateUserInfo } from "../../redux/features/authSlice.jsx";
 import { useDispatch } from "react-redux";
+import { useUpdateInfoMutation } from "../../redux/api/authApi";
 
 const AccountInfo = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
-  const token = useSelector(selectCurrentToken);
+  const [updateInfo] = useUpdateInfoMutation();
   const schema = yup
     .object({
       fullName: yup.string().required("Please enter your fullname"),
@@ -30,12 +27,12 @@ const AccountInfo = () => {
 
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isDirty },
     control,
-    reset,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
+      image: user.image,
       fullName: user.fullName,
       email: user.email,
       phoneNumber: user.phoneNumber,
@@ -44,7 +41,6 @@ const AccountInfo = () => {
       sex: user.sex,
     },
   });
-
   const onSubmitHandler = async (data) => {
     if (!isValid) return;
     try {
@@ -57,14 +53,14 @@ const AccountInfo = () => {
       formData.append("birthday", data.birthday);
       formData.append("address", data.address);
       formData.append("sex", data.sex);
-      await axios.put("/account/update-profile", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      updateInfo(formData).unwrap();
       const formattedBirthday = data.birthday.toISOString().split("T")[0];
+
       const userInfo = {
-        image: data.image,
+        image:
+          typeof data.image === "string"
+            ? data.image
+            : URL.createObjectURL(data.image),
         username: user.username,
         typeAccount: user.typeAccount,
         path: user.path,
@@ -86,18 +82,10 @@ const AccountInfo = () => {
         progress: undefined,
         theme: "light",
       });
-      reset({
-        fullName: user.fullName,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        birthday: user.birthday,
-        address: user.address,
-        sex: user.sex,
-      });
     } catch (error) {
-      toast.error("Update user fail! (Do not duplicate phone numbers)", {
+      toast.error("Update user fail!", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 2000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -107,14 +95,6 @@ const AccountInfo = () => {
       });
       console.log(error);
     }
-    reset({
-      fullName: user.fullName,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      birthday: user.birthday,
-      address: user.address,
-      sex: user.sex,
-    });
   };
 
   return (
@@ -138,7 +118,6 @@ const AccountInfo = () => {
                 name="image"
                 control={control}
                 isUpdate={true}
-                isInfo={true}
                 errors={errors}
               ></ImageUpload>
             </div>
@@ -204,7 +183,11 @@ const AccountInfo = () => {
               ></RadioButton>
             </div>
             <div className="mt-2">
-              <Button className="bg-blue-gray-900" type="submit">
+              <Button
+                className="bg-blue-gray-900"
+                type="submit"
+                disabled={!isDirty}
+              >
                 Update
               </Button>
             </div>

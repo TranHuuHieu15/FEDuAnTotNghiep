@@ -47,7 +47,8 @@ const DialogDeliveryAddressPayment = ({
     fetchData();
   }, [token]);
   const handleUseDeliveryAddress = (usedDeliveryAddress) => {
-    onUseDeliveryAddress(usedDeliveryAddress);
+    const username = user.fullName;
+    onUseDeliveryAddress(usedDeliveryAddress, username);
     handleCloseDeliveryAddress();
   };
   return (

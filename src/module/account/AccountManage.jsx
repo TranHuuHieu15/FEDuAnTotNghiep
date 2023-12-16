@@ -3,7 +3,10 @@ import axios from "../../config/axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../../redux/features/authSlice";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice";
 import Pagination from "../../components/pagination/Pagination";
 import { CiEdit, CiLock } from "react-icons/ci";
 import DialogCEAccount from "./DialogCEAccount";
@@ -11,9 +14,11 @@ import { toast } from "react-toastify";
 import { useRef } from "react";
 import Button from "../../components/button/Button";
 import DialogEditTypeAccount from "./DialogEditTypeAccount";
+import DialogAlert from "../../components/dialog/DialogAlert";
 
 const AccountManage = () => {
   const token = useSelector(selectCurrentToken);
+  const user = useSelector(selectCurrentUser);
   const [accountData, setAccountData] = useState([]);
   const [selectRole, setSelectRole] = useState("STAFF");
   const [showDialogCE, setShowDialogCE] = useState({
@@ -30,6 +35,7 @@ const AccountManage = () => {
   });
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [showAlert, setShowAlert] = useState(false);
   const statusAccountColor = {
     ACTIVE: "green",
     UNVERIFIED: "blue",
@@ -66,22 +72,30 @@ const AccountManage = () => {
     setCurrentPage(page);
   };
   const handleCreateTrue = () => {
-    setShowDialogCE({
-      show: true,
-      id: null,
-      isUpdate: false,
-      action: handleCreate,
-      dataToEdit: {},
-    });
+    if (user.path === 0) {
+      setShowDialogCE({
+        show: true,
+        id: null,
+        isUpdate: false,
+        action: handleCreate,
+        dataToEdit: {},
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleUpdateTrue = (data) => {
-    setShowDialogCE({
-      show: true,
-      id: data.id,
-      isUpdate: true,
-      action: handleUpdate,
-      dataToEdit: data,
-    });
+    if (user.path === 0) {
+      setShowDialogCE({
+        show: true,
+        id: data.id,
+        isUpdate: true,
+        action: handleUpdate,
+        dataToEdit: data,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleCreate = async (data) => {
     const formData = new FormData();
@@ -161,10 +175,14 @@ const AccountManage = () => {
     }
   };
   const handleLockTrue = (item) => {
-    setShowDialog({
-      show: true,
-      dataToEdit: item,
-    });
+    if (user.path === 0) {
+      setShowDialog({
+        show: true,
+        dataToEdit: item,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleLock = async ({ typeAccount, id }) => {
     try {
@@ -206,6 +224,9 @@ const AccountManage = () => {
       show: false,
       dataToEdit: {},
     });
+  };
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
   return (
     <>
@@ -336,6 +357,7 @@ const AccountManage = () => {
         handleCancelClick={handleCloseDialog}
         handleChangeTypeAccount={handleLock}
       />
+      <DialogAlert show={showAlert} cancel={handleCloseAlert} />
       <DialogCEAccount
         show={showDialogCE.show}
         handleSubmitData={showDialogCE.action}

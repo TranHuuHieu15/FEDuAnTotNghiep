@@ -4,10 +4,11 @@ import Tabs from "../../components/tabs/Tabs";
 import axios from "../../config/axios";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../../redux/features/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const AccountOrder = () => {
   const token = useSelector(selectCurrentToken);
-
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("PENDING");
   const [orders, setOrders] = useState([]);
 
@@ -36,7 +37,11 @@ const AccountOrder = () => {
         }
       }
     };
-    fetchOrdersByStatus();
+    if (!token) {
+      navigate("/login");
+    } else {
+      fetchOrdersByStatus();
+    }
   }, [activeTab, token]);
 
   return (

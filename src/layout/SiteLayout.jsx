@@ -1,6 +1,6 @@
 import Footer from "../components/footer/Footer";
 import Navbar from "../components/navbar/Navbar";
-import propTypes from "prop-types";
+import PropTypes from "prop-types";
 
 const SiteLayout = ({ children }) => {
   return (
@@ -13,7 +13,7 @@ const SiteLayout = ({ children }) => {
 };
 
 SiteLayout.propTypes = {
-  children: propTypes.any,
+  children: PropTypes.any,
 };
 
 export default SiteLayout;

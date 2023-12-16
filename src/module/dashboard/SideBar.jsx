@@ -136,6 +136,14 @@ const SideBar = () => {
                       Voucher
                     </ListItem>
                   </Link>
+                  <Link to="/admin/hashtag">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Hashtag
+                    </ListItem>
+                  </Link>
                   <Link to="/admin/discount">
                     <ListItem>
                       <ListItemPrefix>
@@ -150,6 +158,14 @@ const SideBar = () => {
                         <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
                       </ListItemPrefix>
                       Evaluate
+                    </ListItem>
+                  </Link>
+                  <Link to="/admin/color">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Color
                     </ListItem>
                   </Link>
                   <Link to="/admin/feedback">

@@ -9,11 +9,13 @@ const HomePage = () => {
   return (
     <>
       <SiteLayout>
-        <HomeBanner></HomeBanner>
-        <HomeHighlight></HomeHighlight>
-        <HomeCard></HomeCard>
-        <HomeBrand></HomeBrand>
-        <HomeProfile></HomeProfile>
+        <div className="flex flex-col gap-5">
+          <HomeBanner></HomeBanner>
+          <HomeHighlight></HomeHighlight>
+          <HomeCard></HomeCard>
+          <HomeBrand></HomeBrand>
+          <HomeProfile></HomeProfile>
+        </div>
       </SiteLayout>
     </>
   );

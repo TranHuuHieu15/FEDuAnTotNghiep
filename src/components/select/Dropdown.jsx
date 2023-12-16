@@ -32,7 +32,7 @@ const Dropdown = ({ user }) => {
         </MenuHandler>
         <MenuList>
           <MenuItem>
-            {user && user?.path === 0 ? (
+            {user && user?.path === 2 ? (
               <Link to="/user">My Profile</Link>
             ) : (
               <Link to="/admin/profile">My Profile</Link>

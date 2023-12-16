@@ -2,13 +2,19 @@ import axios from "../config/axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../redux/features/authSlice";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../redux/features/authSlice";
 import { Option, Select } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
+import Heading from "../components/heading/Heading";
 
 const DashboardPage = () => {
   const token = useSelector(selectCurrentToken);
+  const user = useSelector(selectCurrentUser);
   const [statisticByYear, setStatisticDataByYear] = useState([]);
+  const [topAccount, setTopAccount] = useState([]);
   const [totalCustomer, setTotalCustomer] = useState(0);
   const [totalSale, setTotalTotalSale] = useState(0);
   const [totalOrder, setTotalTotalOrder] = useState(0);
@@ -35,7 +41,6 @@ const DashboardPage = () => {
     };
     fetchData();
   }, [month, token, year]);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,17 +60,33 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/order/SUCESSFULLY`, {
+        const response = await axios.get(`/order?type=SUCCESSFUL`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        const totalAmount = response.data.reduce(
-          (total, order) => total + order.orderDto.total,
-          0
-        );
+        const totalAmount = response.data
+          .reduce((total, order) => total + order.orderDto.total, 0)
+          .toFixed(2);
         setTotalTotalSale(totalAmount);
         setTotalTotalOrder(response["all-item"]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [token]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`/statistic/top-account`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log(response);
+        setTopAccount(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -95,7 +116,7 @@ const DashboardPage = () => {
   };
   return (
     <>
-      <div className="flex flex-col justify-center lg:mr-16">
+      <div className="flex flex-col justify-center gap-3 lg:mr-16">
         <div className="flex flex-row flex-wrap">
           <div className="flex-shrink w-full max-w-full px-4">
             <p className="mt-3 mb-5 text-xl font-bold text-blue-gray-900">
@@ -173,7 +194,7 @@ const DashboardPage = () => {
                 </div>
                 <h2 className="self-center text-3xl">
                   <span>$</span>
-                  {totalSale}
+                  {user.path === 0 ? totalSale : "0"}
                 </h2>
               </div>
               <div className="px-6 pb-6">
@@ -256,83 +277,168 @@ const DashboardPage = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-5">
-          <div className="flex flex-col items-end justify-center gap-3">
-            <div className="flex items-center justify-center gap-3 mr-10">
-              <Select
-                label="Select year"
-                value={year}
-                onChange={handleChangeYear}
-              >
-                {generateYearOptions()}
-              </Select>
-              <Select
-                label="Select month"
-                value={month}
-                onChange={handleChangeMonth}
-              >
-                <Option value="0">All</Option>
-                <Option value="1">1</Option>
-                <Option value="2">2</Option>
-                <Option value="3">3</Option>
-                <Option value="4">4</Option>
-                <Option value="5">5</Option>
-                <Option value="5">5</Option>
-                <Option value="6">6</Option>
-                <Option value="7">7</Option>
-                <Option value="8">8</Option>
-                <Option value="9">9</Option>
-                <Option value="10">10</Option>
-                <Option value="11">11</Option>
-                <Option value="12">12</Option>
-              </Select>
-            </div>
+        <div className="flex flex-col gap-8">
+          {user.path === 0 && (
+            <>
+              <Heading className="text-center">
+                Monthly or Annual Revenue Statistics
+              </Heading>
+              <div className="flex flex-col items-end justify-center gap-3">
+                <div className="flex items-center justify-center gap-3 mr-10">
+                  <Select
+                    label="Select year"
+                    value={year}
+                    onChange={handleChangeYear}
+                  >
+                    {generateYearOptions()}
+                  </Select>
+                  <Select
+                    label="Select month"
+                    value={month}
+                    onChange={handleChangeMonth}
+                  >
+                    <Option value="0">All</Option>
+                    <Option value="1">1</Option>
+                    <Option value="2">2</Option>
+                    <Option value="3">3</Option>
+                    <Option value="4">4</Option>
+                    <Option value="5">5</Option>
+                    <Option value="5">5</Option>
+                    <Option value="6">6</Option>
+                    <Option value="7">7</Option>
+                    <Option value="8">8</Option>
+                    <Option value="9">9</Option>
+                    <Option value="10">10</Option>
+                    <Option value="11">11</Option>
+                    <Option value="12">12</Option>
+                  </Select>
+                </div>
+                <table className="w-full table-auto">
+                  <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
+                    <tr>
+                      <th className="px-6 py-4 font-medium text-gray-900">
+                        ID
+                      </th>
+                      <th className="px-6 py-4 font-medium text-gray-900">
+                        Total Product
+                      </th>
+                      <th className="px-6 py-4 font-medium text-gray-900">
+                        Total Price
+                      </th>
+                      <th className="px-6 py-4 font-medium text-gray-900">
+                        Total Order
+                      </th>
+                      <th className="px-6 py-4 font-medium text-gray-900">
+                        {typeof month === "string" && month !== null
+                          ? "Date"
+                          : "Month"}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm divide-y divide-gray-100">
+                    {statisticByYear.map((item, index) => (
+                      <tr key={index + 1}>
+                        <td className="rc-table-cell">
+                          <p className="flex items-center justify-center font-medium text-gray-700">
+                            {index + 1}
+                          </p>
+                        </td>
+                        <td className="p-3">
+                          <p className="flex items-center justify-center font-medium text-gray-700">
+                            {item.totalProducts}
+                          </p>
+                        </td>
+                        <td className="p-3">
+                          <p className="flex items-center justify-center font-medium text-gray-700">
+                            {item.totalIncome}
+                          </p>
+                        </td>
+                        <td className="p-3">
+                          <p className="flex items-center justify-center font-medium text-gray-700">
+                            {item.totalOrder}
+                          </p>
+                        </td>
+                        <td className="p-3">
+                          <p className="flex items-center justify-center font-medium text-gray-700">
+                            {item.month ? item.month : item.date}
+                          </p>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1072 2"
+            fill="none"
+            className="w-full h-1"
+          >
+            <path d="M0 1L1072 0.999887" stroke="#D1D5DB" />
+          </svg>
+          <Heading className="text-center">
+            Top 10 Customers with the Highest Purchase Frequency
+          </Heading>
+          <div className="flex flex-col items-center justify-center gap-3">
             <table className="w-full table-auto">
               <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
                 <tr>
                   <th className="px-6 py-4 font-medium text-gray-900">ID</th>
                   <th className="px-6 py-4 font-medium text-gray-900">
-                    Total Product
+                    Information
+                  </th>
+                  <th className="px-6 py-4 font-medium text-gray-900">
+                    Username
                   </th>
                   <th className="px-6 py-4 font-medium text-gray-900">
                     Total Price
                   </th>
                   <th className="px-6 py-4 font-medium text-gray-900">
-                    Total Order
-                  </th>
-                  <th className="px-6 py-4 font-medium text-gray-900">
-                    {typeof month === "string" && month !== null
-                      ? "Date"
-                      : "Month"}
+                    Total Product
                   </th>
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-gray-100">
-                {statisticByYear.map((item, index) => (
-                  <tr key={index}>
+                {topAccount.map((item) => (
+                  <tr key={item.id}>
                     <td className="rc-table-cell">
                       <p className="flex items-center justify-center font-medium text-gray-700">
-                        {index}
+                        {item.id}
+                      </p>
+                    </td>
+                    <td className="rc-table-cell">
+                      <div className="flex items-center justify-center gap-2">
+                        <img
+                          src={item.image}
+                          alt="avatar"
+                          className="object-cover w-10 h-10 rounded-full "
+                          loading="lazy"
+                        />
+                        <div className="grid gap-0.5">
+                          <p className="text-sm font-medium text-gray-900 font-lexend dark:text-gray-700">
+                            {item.fullName}
+                          </p>
+                          <p className="text-[13px] text-gray-500">
+                            {item.email}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.username}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <p className="flex items-center justify-center font-medium text-gray-700">
+                        {item.totalOrders}
                       </p>
                     </td>
                     <td className="p-3">
                       <p className="flex items-center justify-center font-medium text-gray-700">
                         {item.totalProducts}
-                      </p>
-                    </td>
-                    <td className="p-3">
-                      <p className="flex items-center justify-center font-medium text-gray-700">
-                        {item.totalIncome}
-                      </p>
-                    </td>
-                    <td className="p-3">
-                      <p className="flex items-center justify-center font-medium text-gray-700">
-                        {item.totalOrder}
-                      </p>
-                    </td>
-                    <td className="p-3">
-                      <p className="flex items-center justify-center font-medium text-gray-700">
-                        {item.month ? item.month : item.date}
                       </p>
                     </td>
                   </tr>

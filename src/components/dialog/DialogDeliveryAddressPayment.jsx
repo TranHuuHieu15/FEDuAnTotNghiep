@@ -8,7 +8,10 @@ import {
 } from "@material-tailwind/react";
 import { IoMdClose } from "react-icons/io";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../../redux/features/authSlice";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice";
 import { useEffect, useState } from "react";
 import axios from "../../config/axios";
 import { MdOutlinePlace } from "react-icons/md";
@@ -23,6 +26,7 @@ const DialogDeliveryAddressPayment = ({
   handleCloseDeliveryAddress,
 }) => {
   const token = useSelector(selectCurrentToken);
+  const user = useSelector(selectCurrentUser);
   const navigate = useNavigate();
   const [deliveryAddressData, setDeliveryAddressData] = useState([]);
 
@@ -63,11 +67,16 @@ const DialogDeliveryAddressPayment = ({
                   <div className="flex items-center justify-between gap-5">
                     <div className="flex items-center justify-center gap-2">
                       <MdOutlinePlace className="w-8 h-8" />
-                      <p className="w-[407px]">
-                        {" "}
-                        {item.apartmentNumber}, {item.ward}, {item.district},{" "}
-                        {item.city},{" "}
-                      </p>
+                      <div className="flex flex-col items-start justify-start">
+                        <p className="text-gray-700">
+                          {user.fullName}, {item.phoneNumber}
+                        </p>
+                        <p className="w-[407px]">
+                          {" "}
+                          {item.apartmentNumber}, {item.ward}, {item.district},{" "}
+                          {item.city},{" "}
+                        </p>
+                      </div>
                     </div>
                     <Button
                       variant="outlined"

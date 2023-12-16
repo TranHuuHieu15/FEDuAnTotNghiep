@@ -17,7 +17,7 @@ const SideBarAccount = () => {
           <img
             src={user && user.image ? user.image : avatar}
             alt="avatar"
-            className="object-cover object-center rounded-full h-28 w-28"
+            className="object-cover rounded-full h-28 w-28"
           />
         </div>
         <div className="overflow-auto scrollbar scrollbar-thin scrollbar-thumb-blue-gray-100 max-h-[calc(100vh-72px">

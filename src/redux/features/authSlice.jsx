@@ -65,7 +65,6 @@ const authSlice = createSlice({
     },
     updateUserInfo: (state, action) => {
       state.userInfo = action.payload;
-      console.log(state.userInfo);
       localStorage.setItem("userInfo", JSON.stringify(state.userInfo));
     },
   },

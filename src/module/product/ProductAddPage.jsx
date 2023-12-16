@@ -9,6 +9,7 @@ import { AiTwotoneDelete } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 import { useSelector } from "react-redux";
+import { MdOutlineNavigateNext } from "react-icons/md";
 
 const ProductAddPage = () => {
     const [fields, setFields] = useState([{ id: 1 }]);
@@ -105,7 +106,6 @@ const ProductAddPage = () => {
 
         setProductDtoRequest((prevProductDtoRequest) => {
             const existingIndex = prevProductDtoRequest.createProductVariant.findIndex((variant) => variant.id === index);
-
             if (existingIndex !== -1) {
                 // Nếu tồn tại, cập nhật dữ liệu
                 const updatedVariants = [...prevProductDtoRequest.createProductVariant];
@@ -211,7 +211,13 @@ const ProductAddPage = () => {
                 });
                 setFields([]);
                 setFileDatas([]);
-                setProductDtoRequest();
+                setProductDtoRequest({
+                    productDto: {}, // Assuming fixed form data structure
+                    hashtagOfProductsDto: [],
+                    createProductVariant: [],
+                    deleteProductVariant: [],
+                    updateProductVariant: [],
+                });
             }
         } catch (response) {
             toast.error("Create new product fail!", {
@@ -224,14 +230,12 @@ const ProductAddPage = () => {
                 progress: undefined,
                 theme: "light",
             });
-            setFileDatas([]);
-            setProductDtoRequest();
         }
     }
 
     return (
         <>
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-col items-center gap-2">
                 {/* form product  */}
                 <ProductForm
                     category={categories}
@@ -239,34 +243,39 @@ const ProductAddPage = () => {
                     onResetForm={resetProductForm}
                 />
 
-                <div className="flex-1">
-                    <div className="flex flex-col gap-3 h-[450px]  max-h-[600px] overflow-y-auto">
+                <div className="relative text-base font-regular px-4 py-4 text-black w-full bg-white  justify-start  rounded-none flex shadow">
+                    <span className="p-2 font-medium cursor-pointer" >add new ProductVariants</span>
+                </div>
+
+                <div className="float-none w-full p-10">
+                    <div className="flex scrollbar scrollbar-thin flex-col border-spacing-y-1.5 mb-3 gap-3 w-full shadow-md rounded shadow-blue-gray-100 h-[350px] overflow-y-auto">
                         {fields.map((field) => (
-                            <div className="flex flex-row border p-5" key={field.id}>
+                            <div className="flex flex-col p-5 shadow shadow-blue-gray-400" key={field.id}>
+                                <div className="flex items-end justify-end"><Button className="w-[70px] text-2xl justify-end" outline="text" onClick={() => handleRemoveField(field.id)}>
+                                    <AiTwotoneDelete />
+                                </Button></div>
+
                                 <FormProductVariant
                                     index={field.id}
                                     onSubmitCallback={handleDynamicFormSubmit}
                                 />
-                                <Button className="h-[40px] text-2xl" outline="text" onClick={() => handleRemoveField(field.id)}>
-                                    <AiTwotoneDelete />
-                                </Button>
                             </div>
-
                         ))}
-                    </div>
-                    <div className="flex justify-between">
-                        <div className="flex items-center w-1/4 pt-[100px]">
+                        <div className="flex items- justify-center">
                             <Button
-                                className="w-3/4 text-lg flex items-center justify-center"
-                                outline="outlined"
+                                className="text-lg flex justify-center"
                                 onClick={handleAddField}
                             >
                                 <FcPlus />
                             </Button>
                         </div>
-                        <div className="flex items-end justify-end pt-[100px] pr-10">
-                            <Button className="text-sm" onClick={postData}>Add New Product</Button>
-                        </div>
+                    </div>
+
+                </div>
+
+                <div className="flex justify-between">
+                    <div className="flex items-end justify-end">
+                        <Button className="text-sm" onClick={postData}>Add New Product</Button>
                     </div>
                 </div>
             </div>

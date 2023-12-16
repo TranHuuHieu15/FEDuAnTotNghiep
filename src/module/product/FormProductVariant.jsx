@@ -9,18 +9,18 @@ import ImageUpload from "../../components/imageUpload/ImageUpload";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PropTypes from "prop-types";
 import axios from "../../config/axios.js";
-import Select from "../../components/select/Select.jsx";
+import Color from "../../components/color/Color.jsx";
 
 const FormProductVariant = ({ index, onSubmitCallback }) => {
-
     const [colors, setColors] = useState([]);
+    const [color, setColor] = useState(null)
     const [isSaved, setIsSaved] = useState(false);
 
     useEffect(() => {
         const fetchColors = async () => {
             try {
                 const response = await axios.get("/color");
-                setColors(response.data);
+                setColors(response.data.map(color => color.id));
             } catch (error) {
                 console.error("Error fetching colors:", error);
             }
@@ -43,9 +43,9 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
             return false; // Trường hợp khác không hợp lệ
         }),
         [`size-${index}`]: yup.string().required("Please choose size"),
-        [`colorId-${index}`]: yup.string().required("Please choose color"),
-        [`quantity-${index}`]: yup.string().required("Please enter quantity"),
-        [`price-${index}`]: yup.string().required("Please enter price"),
+        // [`colorId-${index}`]: yup.string().required("Please choose color"),
+        [`quantity-${index}`]: yup.number().required("Please enter quantity"),
+        [`price-${index}`]: yup.number().required("Please enter price"),
     });
 
     const {
@@ -57,7 +57,12 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
     });
 
     const productVariant = (data, index) => {
-        onSubmitCallback(data, index); // Truyền dữ liệu về component gọi ProductVariantForm
+        const lastData = {
+            ...data,
+            [`colorId-${index}`]: color,
+        }
+        console.log(lastData);
+        onSubmitCallback(lastData, index); // Truyền dữ liệu về component gọi ProductVariantForm
     };
 
     const handleChangeSave = () => {
@@ -65,62 +70,81 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
         setIsSaved(!isSaved);
     };
 
+    const handleColorChange = (color) => {
+        console.log(color);
+        setColor(color);
+    };
+
     return (
         <>
-            <form onSubmit={handleSubmit((data) => productVariant(data, index))} className="flex flex-row items-center">
-                <ImageUpload name={`image-${index}`} className="w-full" control={dynamicFormControl} errors={dynamicFormErrors} disabled={isSaved} />
-                <div className="flex flex-col gap-3 p-1">
-                    <div className="flex flex-row gap-3">
-                        <SelectDefault
-                            mainClassName="flex flex-col"
-                            className2="text-sm ml-1 font-normal"
-                            className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
-                            title="Size"
-                            selectDefault="Select size"
-                            name={`size-${index}`}
-                            options={[
-                                { id: 0, name: "S", value: "S" },
-                                { id: 1, name: "M", value: "M" },
-                            ]}
-                            control={dynamicFormControl}
-                            errors={dynamicFormErrors}
-                            disabled={isSaved}
-                        />
-                        <Select
-                            mainClassName="flex flex-col"
-                            className2="text-sm ml-1 font-normal"
-                            className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
-                            title="Color"
-                            selectDefault="Select color"
-                            name={`colorId-${index}`} // Đặt tên khác nhau cho từng biểu mẫu động
-                            control={dynamicFormControl}
-                            errors={dynamicFormErrors}
-                            options={colors}
-                            disabled={isSaved}
-                        />
+            <form onSubmit={handleSubmit((data) => productVariant(data, index))} className="flex flex-col items-center">
+                <div className="flex flex-row gap-3">
+                    <div className="flex-col">
+                        <ImageUpload name={`image-${index}`} size="w-[350px] h-[200px]" className="w-full" control={dynamicFormControl} errors={dynamicFormErrors} disabled={isSaved} />
                     </div>
-                    <div className="flex flex-row gap-28">
-                        <Input
-                            label="Quantity"
-                            name={`quantity-${index}`}
-                            placeholder="Enter quantity product variant"
-                            className="w-[100px]"
-                            control={dynamicFormControl}
-                            errors={dynamicFormErrors}
-                            disabled={isSaved}
-                        />
-                        <Input
-                            label="Price"
-                            name={`price-${index}`}
-                            placeholder="Enter price product variant"
-                            className="w-20"
-                            control={dynamicFormControl}
-                            errors={dynamicFormErrors}
-                            disabled={isSaved}
-                        />
+                    <div className="flex flex-col min-w-[635px] max-w-[635px]">
+                        <div className="flex flex-col gap-3 p-1">
+                            <div className="flex flex-col gap-3">
+                                <div className="flex flex-col">
+                                    <div className="flex flex-row items-start justify-start gap-3">
+                                        <Input
+                                            label="Quantity"
+                                            name={`quantity-${index}`}
+                                            placeholder="Enter quantity product variant"
+                                            className="w-[40%]"
+                                            control={dynamicFormControl}
+                                            errors={dynamicFormErrors}
+                                            disabled={isSaved}
+                                        />
+                                        <Input
+                                            label="Price"
+                                            name={`price-${index}`}
+                                            placeholder="Enter price product variant"
+                                            className="w-[40%]"
+                                            control={dynamicFormControl}
+                                            errors={dynamicFormErrors}
+                                            disabled={isSaved}
+                                        />
+                                    </div>
+                                    <SelectDefault
+                                        mainClassName="flex flex-col"
+                                        className2="text-sm ml-1 font-normal"
+                                        className="p-2 rounded-lg border-blue-gray-300 w-2/5"
+                                        title="Size"
+                                        selectDefault="Select size"
+                                        name={`size-${index}`}
+                                        options={[
+                                            { id: 0, name: "S", value: "S" },
+                                            { id: 1, name: "M", value: "M" },
+                                            { id: 2, name: "L", value: "L" },
+                                            { id: 3, name: "XL", value: "XL" },
+                                            { id: 4, name: "XXL", value: "XXL" },
+                                        ]}
+                                        control={dynamicFormControl}
+                                        errors={dynamicFormErrors}
+                                        disabled={isSaved}
+                                    />
+
+                                </div>
+                                <div className="flex flex-col">
+                                    <div className="text-sm font-normal">
+                                        Color:
+                                    </div>
+                                    <div className="flex">
+                                        <Color
+                                            color={[]}
+                                            name={`colorId-${index}`}
+                                            selectedColor={color}
+                                            availableColors={colors}
+                                            onColorChange={handleColorChange}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="p-2 gap-3">
+                <div className="p-2">
                     <div className="p-1">
                         <div className="p-1">
                             <Button
@@ -131,9 +155,7 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
                                 {isSaved ? "Edit" : "Save"}
                             </Button>
                         </div>
-
                     </div>
-
                 </div>
             </form>
         </>

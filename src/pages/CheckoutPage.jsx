@@ -6,7 +6,6 @@ import Button from "../components/button/Button";
 import { useDispatch, useSelector } from "react-redux";
 import CheckoutList from "../components/list/CheckoutList";
 import axios from "../config/axios";
-import StepLine from "../components/step/StepLine";
 import { MdOutlinePlace } from "react-icons/md";
 import { BiSolidDiscount } from "react-icons/bi";
 import DialogVoucher from "../components/dialog/DialogVoucher";
@@ -154,8 +153,12 @@ const CheckoutPage = () => {
   const handleUseVoucher = (usedVoucher) => {
     setSelectVoucher(usedVoucher);
   };
-  const handleUseDeliveryAddress = (usedDeliveryAddress) => {
-    setSelectDeliveryAddress(usedDeliveryAddress);
+  const handleUseDeliveryAddress = (usedDeliveryAddress, username) => {
+    const deliveryAddress = {
+      username,
+      ...usedDeliveryAddress,
+    };
+    setSelectDeliveryAddress(deliveryAddress);
   };
   const handleMethodClick = (id) => {
     const selectDelivery = deliveryMethods.find(
@@ -191,7 +194,6 @@ const CheckoutPage = () => {
   return (
     <>
       <SiteLayout>
-        <StepLine />
         <div className="flex items-start justify-center gap-5 mx-auto">
           <div className="flex flex-col w-[570px] gap-2">
             <Heading className="px-2 text-2xl font-eculid">
@@ -205,12 +207,18 @@ const CheckoutPage = () => {
                 <div className="flex items-center justify-between gap-5">
                   <div className="flex items-center justify-center gap-2">
                     <MdOutlinePlace className="w-8 h-8" />
-                    <p className="w-[407px]">
-                      {selectDeliveryAddress?.apartmentNumber},
-                      {selectDeliveryAddress?.ward},
-                      {selectDeliveryAddress?.district},
-                      {selectDeliveryAddress?.city},
-                    </p>
+                    <div className="flex flex-col items-start justify-start">
+                      <p className="text-gray-700">
+                        {selectDeliveryAddress?.username},{" "}
+                        {selectDeliveryAddress?.phoneNumber}
+                      </p>
+                      <p className="w-[407px]">
+                        {selectDeliveryAddress?.apartmentNumber},{" "}
+                        {selectDeliveryAddress?.ward},{" "}
+                        {selectDeliveryAddress?.district},{" "}
+                        {selectDeliveryAddress?.city},
+                      </p>
+                    </div>
                   </div>
                   <span
                     className="text-red-700 outline-none cursor-pointer"

@@ -2,7 +2,6 @@ import Button from "../components/button/Button";
 import SiteLayout from "../layout/SiteLayout";
 import CartList from "../components/list/CartList";
 import { useSelector } from "react-redux";
-import StepLine from "../components/step/StepLine";
 import { useNavigate } from "react-router-dom";
 const CartPage = () => {
   const cartData = useSelector((state) => state.cart.products);
@@ -17,7 +16,6 @@ const CartPage = () => {
     <>
       <SiteLayout>
         <div className="flex flex-col items-center justify-center">
-          <StepLine />
           <div className="flex gap-20">
             <div className="flex flex-col items-center justify-center">
               <CartList></CartList>

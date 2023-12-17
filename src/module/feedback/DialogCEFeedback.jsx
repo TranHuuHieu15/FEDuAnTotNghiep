@@ -114,6 +114,7 @@ const DialogCEFeedback = ({
                 className="w-full"
                 control={control}
                 errors={errors}
+                disabled={true}
               />
               <Input
                 name="email"
@@ -122,6 +123,7 @@ const DialogCEFeedback = ({
                 className="w-full"
                 control={control}
                 errors={errors}
+                disabled={true}
               />
               <Input
                 name="date"
@@ -130,6 +132,7 @@ const DialogCEFeedback = ({
                 placeholder="Enter date"
                 className="w-full"
                 control={control}
+                disabled={true}
                 errors={errors}
               />
               <Select
@@ -140,6 +143,7 @@ const DialogCEFeedback = ({
                 control={control}
                 errors={errors}
                 options={problem}
+                disabled={true}
               >
                 {problem.map((problem) => (
                   <option key={problem.id} value={problem.id}>
@@ -161,6 +165,7 @@ const DialogCEFeedback = ({
                 name="description"
                 label="Description"
                 control={control}
+                disabled={true}
               />
             </div>
             <DialogFooter className="float-right">

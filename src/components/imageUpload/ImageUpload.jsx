@@ -39,9 +39,11 @@ const ImageUpload = ({
             src={
               isUpdate && typeof value === "string"
                 ? value
-                : URL.createObjectURL(value)
+                : typeof value === "object" && value !== null
+                ? URL.createObjectURL(value)
+                : null
             }
-            alt="Image available"
+            alt=""
             className={`object-cover rounded-md ${size}`}
           />
         ) : (

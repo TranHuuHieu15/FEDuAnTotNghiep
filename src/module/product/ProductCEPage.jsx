@@ -1,386 +1,299 @@
-import ImageUpload from "../../components/imageUpload/ImageUpload";
-import * as yup from "yup";
-import { useParams } from "react-router";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { set, useForm } from "react-hook-form";
-import SelectDefault from "../../components/select/SelectDefault";
 import { useEffect, useState } from "react";
+import ProductForm from "./update/ProductForm";
 import axios from "../../config/axios.js";
-import Select from "../../components/select/Select.jsx";
-import Textarea from "../../components/textarea/Textarea.jsx";
-import Input from "../../components/input/Input.jsx";
-import DialogHashtag from "../../components/dialog/DialogHashtag.jsx";
-import Button from "../../components/button/Button";
-import { IoAdd } from "react-icons/io5";
+import FormProductVariant from "./update/FormProductVariant";
+import Button from "../../components/button/Button.jsx";
+import { FcPlus } from "react-icons/fc";
+import { AiTwotoneDelete } from "react-icons/ai";
+import { toast } from "react-toastify";
+import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
 const ProductCEPage = () => {
-  const [openDialogHashtag, setDialogHashtag] = useState(false);
-  const [selectHashtag, setSelectHashtag] = useState([]);
-  const [productData, setProductData] = useState({});
-  const [productVariantDatas, setProductVariantDatas] = useState([]);
   const { id } = useParams();
-  // const [handleRemoveHashtag, setHandleRemoveHashtag] = useState([]);
-  const [hashtagData, setHashtagData] = useState([]);
-  const typeGender = [
-    {
-      id: 1,
-      name: "MALE",
-      value: "MALE",
-    },
-    {
-      id: 2,
-      name: "FEMALE",
-      value: "FEMALE",
-    },
-    {
-      id: 3,
-      name: "OTHER",
-      value: "OTHER",
-    },
-  ];
-  const typeSeason = [
-    {
-      id: 1,
-      name: "SUMMER",
-      value: "SUMMER",
-    },
-    {
-      id: 2,
-      name: "WINTER",
-      value: "WINTER",
-    },
-  ];
-
-  const typeSize = [
-    {
-      id: 1,
-      name: "S",
-      value: "S",
-    },
-    {
-      id: 2,
-      name: "M",
-      value: "M",
-    },
-    {
-      id: 3,
-      name: "L",
-      value: "L",
-    },
-    {
-      id: 4,
-      name: "XL",
-      value: "XL",
-    },
-    {
-      id: 5,
-      name: "XXL",
-      value: "XXL",
-    },
-  ];
-  // * Lấy dữ liệu từ api của category
+  const [isUpdate, setIsUpdate] = useState(false);
   const [categories, setCategories] = useState([]);
-  useEffect(() => {
-    // Gọi API để lấy danh sách category
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/category");
-        setCategories(response.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
+  const [productData, setProductData] = useState({});
+  const [hashtags, setHashtags] = useState([]);
+  const [productVariantData, setProductVariantsData] = useState([]);
+  const [selectedSizesByColor, setSelectedSizesByColor] = useState([]);
+  const token = useSelector(selectCurrentToken);
 
-    fetchCategories();
-  }, []);
-
-  const [brands, setBrands] = useState([]);
-  useEffect(() => {
-    // Gọi API để lấy danh sách category
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/brand");
-        setBrands(response.data);
-      } catch (error) {
-        console.error("Error fetching brands:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  const [colors, setColors] = useState([]);
-  useEffect(() => {
-    // Gọi API để lấy danh sách category
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/color");
-        setColors(response.data);
-      } catch (error) {
-        console.error("Error fetching colors:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  //*   call api hashtag
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get("/hashtag");
-  //       // console.log(response.data);
-  //       setHashtagData(response.data);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
-  //*   call api hashtag
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`/product/id/${id}`);
-        console.log(response.data);
-        setProductData(response.data.productDto);
-        setSelectHashtag(response.data.hashtagDtos);
-        setProductVariantDatas(response.data.productVariantsDto);
-        reset(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, [id]);
-
-  useEffect;
-  const schema = yup
-    .object({
-      image: yup.mixed().test("file", "Please choose a image file", (value) => {
-        if (value instanceof File) {
-          const acceptedExtensions = [".jpg", ".jpeg", ".png"];
-          const fileExtension = value.name.split(".").pop().toLowerCase();
-          return acceptedExtensions.includes(`.${fileExtension}`);
-        } else if (typeof value === "string") {
-          const imageExtensions = [".jpg", ".jpeg", ".png"];
-          return imageExtensions.some((extension) =>
-            value.toLowerCase().endsWith(extension)
-          );
-        }
-        return false; // Trường hợp khác không hợp lệ
-      }),
-      name: yup.string().required("Please enter payment name"),
-    })
-    .required();
-  const {
-    handleSubmit,
-    formState: { errors, isValid, isSubmitting },
-    control,
-    reset,
-  } = useForm({
-    resolver: yupResolver(schema),
+  const [dataProductAll, setDataProductAll] = useState({
+    productDto: {},
+    hashtagOfProducts: {},
   });
 
-  const handleOpenDialogHashtag = () => {
-    setDialogHashtag(true);
-  };
+  const [dataProductVariantAll, setDataProductVariantAll] = useState({
+    PVRequest: [],
+  });
 
-  const handleUseHashtag = (useHashtag) => {
-    setSelectHashtag([...selectHashtag, useHashtag]);
-  };
-  // console.log("lo", selectHashtag);
-  const handleCloseDialogHashtag = () => {
-    setDialogHashtag(false);
-  };
-
-  const handleDeleteHashtag = (useHashtag) => {
-    setSelectHashtag((prevSelectHashtag) =>
-      prevSelectHashtag.filter((item) => item.id !== useHashtag.id)
-    );
-  };
-
+  //!Đổ dữ liệu thông qua id lấy trên url
   useEffect(() => {
-    // console.log("Select Hashtags:", selectHashtag);
-  }, [selectHashtag]);
-  // console.log(typeof productVariantDatas[0].price);
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(`product/id/${id}`);
+        setIsUpdate(true);
+        setHashtags(response.data.hashtagDtos);
+        setCategories(response.data.categoryDto);
+        setProductVariantsData(response.data.productVariantsDto);
+        setProductData(response.data.productDto);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+
+  //Tách ra để lưu ảnh của mainImage
+  const [fileImageDatas, setFileImageDatas] = useState([]);
+  console.log("Ảnh của product: ", fileImageDatas);
+  const [fileImageDatasVar, setFileImageDatasVar] = useState([]);
+  console.log("Ảnh của productVariant: ", fileImageDatasVar);
+
+  //*Thêm variant mới khi click vào nút add +
+  const handleAddDiv = () => {
+    setProductVariantsData((prevData) => {
+      const newData = [...prevData, createEmptyVariant()];
+      return newData;
+    });
+  };
+
+  const handleRemoveDiv = (index) => {
+    // Xóa productVariant tại vị trí index
+    const updatedVariants = [...productVariantData];
+    updatedVariants.splice(index, 1);
+    setProductVariantsData(updatedVariants);
+
+    // Xóa tương ứng trong dataProductAll.PVRequest
+    setDataProductVariantAll((prevData) => {
+      const updatedPVRequest = [...prevData.PVRequest];
+      updatedPVRequest.splice(index, 1);
+      return {
+        ...prevData,
+        PVRequest: updatedPVRequest,
+      };
+    });
+    toast.success("delete product variant successfully!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
+
+  const handleDynamicFormSubmit = async (data) => {
+    try {
+      const selectedColorSize = selectedSizesByColor.find(
+        (item) => item.colorId === data.colorId && item.size === data.size
+      );
+      if (selectedColorSize) {
+        toast.warning("This color and size combination is already selected!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else {
+        setFileImageDatasVar((prevFileDatas) => {
+          const newFileDatas = [...prevFileDatas];
+          const imageFile = data.image;
+          newFileDatas.push(imageFile);
+          test(data);
+          // Thêm màu và size mới vào mảng selectedSizesByColor
+          setSelectedSizesByColor((prevSelectedSizes) => [
+            ...prevSelectedSizes,
+            { colorId: data.colorId, size: data.size },
+          ]);
+          return newFileDatas;
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  function test(data) {
+    setDataProductVariantAll((prevData) => ({
+      // ...prevData, //FIXME: Nếu lỗi xem lại chỗ này
+      PVRequest: [
+        ...prevData.PVRequest,
+        {
+          data: {
+            id: data.id,
+            colorId: data.colorId,
+            size: data.size,
+            quantity: data.quantity,
+            price: data.price,
+            image: "",
+            productId: data.productId,
+          },
+          imageFile: data.image,
+        },
+      ],
+    }));
+  }
+  console.log(dataProductVariantAll);
+  const handleProductFormSubmit = async (data) => {
+    try {
+      setFileImageDatas((prevFileDatas) => {
+        const newFileDatas = [...prevFileDatas];
+        const imageFile = data.image;
+        newFileDatas.unshift(imageFile);
+        callSetDataProductAndProductVariant(data, imageFile);
+        return newFileDatas;
+      });
+    } catch (error) {
+      console.error("Error handling product form:", error);
+    }
+  };
+  function callSetDataProductAndProductVariant(data, imageFile) {
+    setDataProductAll((prevData) => ({
+      ...prevData,
+      productDto: {
+        id: id,
+        name: data.name,
+        season: data.season,
+        gender: data.gender,
+        categoryId: data.categoryId,
+        brandId: data.brandId,
+        description: data.description,
+        image: productData ? productData.image : "", // Kiểm tra trước khi sử dụng,
+      },
+      hashtagOfProducts: data.hashtags,
+      mainImage: imageFile,
+    }));
+  }
+
+  const createEmptyVariant = () => ({
+    index: productVariantData.length + 1,
+    image: "http://product-variant/nothing.png",
+    colorId: "#333",
+    size: "S",
+    quantity: 1,
+    price: 1,
+    productId: Number.parseInt(id),
+    // Thêm các trường khác nếu cần
+  });
+
+  const updateData = async () => {
+    try {
+      const formData = new FormData();
+      dataProductVariantAll.PVRequest.forEach((data, index) => {
+        formData.append(`pvRequests[${index}].data`, JSON.stringify(data.data));
+        console.log("cái chi ri: ", data.imageFile);
+        if (data.imageFile && data.imageFile instanceof File) {
+          formData.append(`pvRequests[${index}].imageFile`, data.imageFile);
+        }
+        //FIXME: cái ni không thẻ bỏ nỉ
+        // const imageFile = fileImageDatasVar[index];
+        // if (imageFile && imageFile instanceof File) {
+        //   formData.append(`pvRequests[${index}].imageFile`, imageFile);
+        // }
+      });
+      console.log(dataProductAll.productDto);
+      formData.append("productDto", JSON.stringify(dataProductAll.productDto));
+      fileImageDatas.forEach((fileData) => {
+        formData.append("mainImage", fileData);
+      });
+      formData.append(
+        "hashtagOfProducts",
+        JSON.stringify(dataProductAll.hashtagOfProducts)
+      );
+      console.log(formData.getAll("productDto"));
+      await axios.put(`product/update/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("update product and product variant successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("update product and product variant fail!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
 
   return (
     <>
-      <div className="flex flex-row gap-3 items-center">
-        {/* form đầu tiên */}
-        <div className="border flex-none w-[500px]">
-          <form>
-            <div className="flex flex-col gap-3 items-center">
-              <ImageUpload
-                name="image"
-                className="w-full"
-                control={control}
-                // isUpdate={isUpdate}
-                errors={errors}
-              />
-              <Input
-                label="Name"
-                name="name"
-                placeholder="Enter name product"
-                className="w-[58%]"
-                control={control}
-                errors={errors}
-              />
-              <div className="flex flex-row items-center justify-center gap-3">
-                <SelectDefault
-                  mainClassName="flex flex-col"
-                  className2="text-sm ml-1 font-normal"
-                  className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
-                  title="Season"
-                  name="season"
-                  options={typeSeason}
-                  control={control}
-                  errors={errors}
-                />
-                <SelectDefault
-                  mainClassName="flex flex-col"
-                  className2="text-sm ml-1 font-normal"
-                  className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
-                  title="Gender"
-                  name="gender"
-                  options={typeGender}
-                  control={control}
-                  errors={errors}
-                />
-              </div>
-              <div className="flex flex-row items-center justify-center gap-3">
-                <Select
-                  mainClassName="flex flex-col"
-                  className2="text-sm ml-1 font-normal"
-                  className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
-                  title="Category"
-                  name="categoryId"
-                  control={control}
-                  errors={errors}
-                  options={categories}
-                />
-                <Select
-                  mainClassName="flex flex-col"
-                  className2="text-sm ml-1 font-normal"
-                  className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
-                  title="Brands"
-                  name="brandId"
-                  control={control}
-                  errors={errors}
-                  options={brands}
-                />
-              </div>
-              <div className="flex flex-col gap-3">
-                <div className="flex w-[350px] flex-wrap gap-3">
-                  {selectHashtag.map((item) => (
-                    <Button
-                      className="w-auto rounded-full"
-                      onClick={() => handleDeleteHashtag(item)}
-                      key={item.id}
-                      variant="outlined"
-                    >
-                      {item.name}
-                    </Button>
-                  ))}
-                  <Button
-                    className="w-[100px] rounded-full"
-                    variant="outlined"
-                    onClick={handleOpenDialogHashtag}
-                  >
-                    +
-                  </Button>
-                </div>
-              </div>
-              <div className="mt-2 w-[58%]">
-                <Textarea
-                  label="Description"
-                  name="description"
-                  control={control}
-                />
-              </div>
-            </div>
-          </form>
-        </div>
-        {/* form thứ 2 gồm các form nhỏ */}
-        <div className="flex-1 mr-3">
-          <div className="flex flex-col gap-3">
-            {productVariantDatas.map((item) => (
-              <div
-                className="flex flex-row border items-center p-5"
-                key={item.id}
-              >
-                <ImageUpload
-                  name="image"
-                  className="w-full"
-                  control={control}
-                  // isUpdate={isUpdate}
-                  errors={errors}
-                />
-                <div className="flex flex-col gap-3">
-                  <div className="flex flex-row gap-3">
-                    <SelectDefault
-                      mainClassName="flex flex-col"
-                      className2="text-sm ml-1 font-normal"
-                      className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
-                      title="Size"
-                      name="size"
-                      options={typeSize}
-                      control={control}
-                      errors={errors}
-                    />
-                    <Select
-                      mainClassName="flex flex-col"
-                      className2="text-sm ml-1 font-normal"
-                      className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
-                      title="Category"
-                      name="categoryId"
-                      control={control}
-                      errors={errors}
-                      options={categories}
-                    />
-                  </div>
-                  <div className="flex flex-row gap-28">
-                    <Input
-                      label="Quantity"
-                      name="khsf"
-                      placeholder="Enter quantity product variant"
-                      className="w-[100px]"
-                      control={control}
-                      errors={errors}
-                    />
-                    <Input
-                      label="Price"
-                      name="price"
-                      placeholder="Enter price product variant"
-                      className="w-20"
-                      control={control}
-                      errors={errors}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
+      <div className="flex flex-col items-center gap-2">
+        <ProductForm
+          hashtags={hashtags}
+          category={categories}
+          onSubmitCallback={handleProductFormSubmit}
+          initialData={productData}
+          isUpdate={isUpdate}
+        />
 
-            <Button
-              className="w-full text-6xl h-[250px] flex items-center justify-center"
-              outline="outlined"
-            >
-              <IoAdd />
-            </Button>
+        <div className="float-none w-full">
+          <div className="grid grid-cols-2 scrollbar scrollbar-thin border-spacing-y-1.5 mb-3 gap-3 w-full h-[350px] overflow-y-auto">
+            {productVariantData &&
+              productVariantData.map((variant, index) => (
+                <div
+                  className="border border-gray-400 rounded-lg"
+                  key={`${variant.id}-${index}`}
+                >
+                  <div className="grid items-end justify-end">
+                    <Button
+                      className="w-[70px] text-2xl justify-end"
+                      outline="outlined"
+                      onClick={() => handleRemoveDiv(index)}
+                    >
+                      <AiTwotoneDelete />
+                    </Button>
+                  </div>
+                  <FormProductVariant
+                    index={variant.id}
+                    onSubmitCallback={handleDynamicFormSubmit}
+                    initialData={variant}
+                    isUpdate={isUpdate}
+                  />
+                </div>
+              ))}
+          </div>
+          <div className="flex flex-row gap-3 items-center">
+            <div className="flex items-center justify-start">
+              <Button
+                className="text-sm"
+                outline="outlined"
+                onClick={handleAddDiv}
+              >
+                Add new product variant
+              </Button>
+            </div>
+            <div className="flex justify-end">
+              <Button className="text-sm" onClick={updateData}>
+                Update Product
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-      <DialogHashtag
-        show={openDialogHashtag}
-        handleCloseDialogHashtag={handleCloseDialogHashtag}
-        onUseDialogHashtag={handleOpenDialogHashtag}
-        onSelectHashtag={handleUseHashtag}
-        selectedHashtag={hashtagData}
-      />
     </>
   );
 };

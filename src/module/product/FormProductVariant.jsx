@@ -57,74 +57,79 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
     });
 
     const productVariant = (data, index) => {
+        if (isSaved === true) return;
         const lastData = {
             ...data,
             [`colorId-${index}`]: color,
         }
-        console.log(lastData);
-        onSubmitCallback(lastData, index); // Truyền dữ liệu về component gọi ProductVariantForm
+        onSubmitCallback(lastData, index);
+        // Truyền dữ liệu về component gọi ProductVariantForm
     };
 
-    const handleChangeSave = () => {
+    const onSubmit = (data) => {
+
         if (!dynamicForm) return;
         setIsSaved(!isSaved);
+        productVariant(data, index)
     };
 
     const handleColorChange = (color) => {
-        console.log(color);
         setColor(color);
     };
 
     return (
         <>
-            <form onSubmit={handleSubmit((data) => productVariant(data, index))} className="flex flex-col items-center">
-                <div className="flex flex-row gap-3">
-                    <div className="flex-col">
-                        <ImageUpload name={`image-${index}`} size="w-[350px] h-[200px]" className="w-full" control={dynamicFormControl} errors={dynamicFormErrors} disabled={isSaved} />
+            <form onSubmit={handleSubmit(onSubmit)} className="grid items-center justify-center">
+                <div className="grid grid-row items-center justify-center gap-3">
+                    <div className="grip-col">
+                        <ImageUpload name={`image-${index}`} className="w-full" control={dynamicFormControl} errors={dynamicFormErrors} disabled={isSaved} />
                     </div>
-                    <div className="flex flex-col min-w-[635px] max-w-[635px]">
+                    <div className="grid grid-flow-col">
                         <div className="flex flex-col gap-3 p-1">
                             <div className="flex flex-col gap-3">
                                 <div className="flex flex-col">
-                                    <div className="flex flex-row items-start justify-start gap-3">
+                                    <div className="grid grid-flow-col gap-3">
                                         <Input
                                             label="Quantity"
                                             name={`quantity-${index}`}
                                             placeholder="Enter quantity product variant"
-                                            className="w-[40%]"
+                                            className="w-full"
                                             control={dynamicFormControl}
                                             errors={dynamicFormErrors}
                                             disabled={isSaved}
                                         />
+
+
+                                    </div>
+                                    <div className="grid grid-cols-2 items-end gap-3">
                                         <Input
                                             label="Price"
                                             name={`price-${index}`}
                                             placeholder="Enter price product variant"
-                                            className="w-[40%]"
+                                            className=""
+                                            control={dynamicFormControl}
+                                            errors={dynamicFormErrors}
+                                            disabled={isSaved}
+                                        />
+                                        <SelectDefault
+                                            mainClassName=""
+                                            className2="text-sm ml-1 font-normal"
+                                            className="p-2 rounded-lg border-blue-gray-300 w-full"
+                                            title="Size"
+                                            selectDefault="Select size"
+                                            name={`size-${index}`}
+                                            options={[
+                                                { id: 0, name: "S", value: "S" },
+                                                { id: 1, name: "M", value: "M" },
+                                                { id: 2, name: "L", value: "L" },
+                                                { id: 3, name: "XL", value: "XL" },
+                                                { id: 4, name: "XXL", value: "XXL" },
+                                            ]}
                                             control={dynamicFormControl}
                                             errors={dynamicFormErrors}
                                             disabled={isSaved}
                                         />
                                     </div>
-                                    <SelectDefault
-                                        mainClassName="flex flex-col"
-                                        className2="text-sm ml-1 font-normal"
-                                        className="p-2 rounded-lg border-blue-gray-300 w-2/5"
-                                        title="Size"
-                                        selectDefault="Select size"
-                                        name={`size-${index}`}
-                                        options={[
-                                            { id: 0, name: "S", value: "S" },
-                                            { id: 1, name: "M", value: "M" },
-                                            { id: 2, name: "L", value: "L" },
-                                            { id: 3, name: "XL", value: "XL" },
-                                            { id: 4, name: "XXL", value: "XXL" },
-                                        ]}
-                                        control={dynamicFormControl}
-                                        errors={dynamicFormErrors}
-                                        disabled={isSaved}
-                                    />
-
                                 </div>
                                 <div className="flex flex-col">
                                     <div className="text-sm font-normal">
@@ -143,18 +148,14 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="p-2">
-                    <div className="p-1">
-                        <div className="p-1">
-                            <Button
-                                className="w-[100px]"
-                                type="submit"
-                                onClick={handleChangeSave}
-                            >
-                                {isSaved ? "Edit" : "Save"}
-                            </Button>
-                        </div>
+                    <div className="p-2 flex items-center justify-center">
+                        <Button
+                            className="w-[100px] items-center justify-end"
+                            type="submit"
+                        >
+                            {isSaved ? "Edit" : "Save"}
+                        </Button>
+
                     </div>
                 </div>
             </form>

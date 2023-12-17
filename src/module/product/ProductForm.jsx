@@ -143,7 +143,7 @@ const ProductForm = ({ category, onSubmitCallback }) => {
         <div className="flex rounded w-full p-10">
             <form onSubmit={handleSubmit(handleFormSubmit)}>
                 <div className="flex flex-row gap-3">
-                    <div className="flex-col">
+                    <div className="flex-col p-2">
                         <ImageUpload
                             name="image"
                             className="w-[200px]"
@@ -172,7 +172,7 @@ const ProductForm = ({ category, onSubmitCallback }) => {
                         <div className="flex items-center justify-center">
                             <div className="flex items-center justify-center p-2">
                                 <SelectDefault
-                                    mainClassName="flex flex-col"
+                                    mainClassName="flex flex-col m-1"
                                     className2="text-sm ml-1 font-normal"
                                     className="p-2 rounded-lg border-blue-gray-300 w-full"
                                     selectDefault="Select season"
@@ -198,7 +198,7 @@ const ProductForm = ({ category, onSubmitCallback }) => {
                             </div>
                             <div className="flex items-center justify-center p-2">
                                 <Select
-                                    mainClassName="flex flex-col"
+                                    mainClassName="flex flex-col m-1"
                                     className2="text-sm ml-1 font-normal"
                                     className="p-2 rounded-lg border-blue-gray-300 w-full"
                                     selectDefault="Select category"
@@ -259,15 +259,15 @@ const ProductForm = ({ category, onSubmitCallback }) => {
                             />
                         </div>
                     </div>
-                    <div className="flex items-center justify-center">
-                        <Button
-                            className="w-[100px]"
-                            type="submit"
-                            onClick={handleChangeSave}
-                        >
-                            {!isSaved ? "Save" : "Edit"}
-                        </Button>
-                    </div>
+                </div>
+                <div className="flex items-center justify-center">
+                    <Button
+                        className="w-[100px]"
+                        type="submit"
+                        onClick={handleChangeSave}
+                    >
+                        {!isSaved ? "Save" : "Edit"}
+                    </Button>
                 </div>
             </form>
             <DialogHashtag

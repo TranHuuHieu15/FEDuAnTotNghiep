@@ -12,6 +12,7 @@ import {
   selectCurrentUser,
 } from "../../redux/features/authSlice.jsx";
 import DialogAlert from "../../components/dialog/DialogAlert";
+import Pagination from "../../components/pagination/Pagination.jsx";
 
 const CategoryManage = () => {
   const [loading, setLoading] = useState(false);
@@ -19,6 +20,8 @@ const CategoryManage = () => {
   const user = useSelector(selectCurrentUser);
   const [showAlert, setShowAlert] = useState(false);
   const [categoryData, setCategoryData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0); // Thêm state trang hiện tại
+  const [totalPages, setTotalPages] = useState(0); // Thêm state tổng số trang
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -33,22 +36,30 @@ const CategoryManage = () => {
   });
   const fetchData = async () => {
     try {
-      const response = await axios.get("/category", {
+      const response = await axios.get(`/category?page=${currentPage}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setCategoryData(response.data);
+      const totalPages = Math.ceil(response["all-item"] / response.size);
+      setTotalPages(totalPages); // Cập nhật tổng số trang
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, [token], [currentPage]);
+
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleCreateTrue = () => {
     if (user.path === 0) {
       setShowDialogCE({
@@ -235,6 +246,13 @@ const CategoryManage = () => {
             ))}
         </tbody>
       </table>
+      <div className="flex items-center justify-center">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChange={handleChangePage}
+        ></Pagination>
+      </div>
       <DialogDelete
         show={showDialog.show}
         title="category"

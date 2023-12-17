@@ -12,6 +12,7 @@ import {
   selectCurrentUser,
 } from "../../redux/features/authSlice.jsx";
 import DialogAlert from "../../components/dialog/DialogAlert";
+import Pagination from "../../components/pagination/Pagination.jsx";
 
 const VoucherManage = () => {
   const [loading, setLoading] = useState(false);
@@ -19,6 +20,8 @@ const VoucherManage = () => {
   const user = useSelector(selectCurrentUser);
   const [showAlert, setShowAlert] = useState(false);
   const [voucherData, setVoucherData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0); // Thêm state trang hiện tại
+  const [totalPages, setTotalPages] = useState(0); // Thêm state tổng số trang
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -33,19 +36,21 @@ const VoucherManage = () => {
   });
   const fetchData = async () => {
     try {
-      const response = await axios.get("/voucher", {
+      const response = await axios.get(`/voucher?page=${currentPage}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setVoucherData(response.data);
+      const totalPages = Math.ceil(response["all-item"] / response.size);
+      setTotalPages(totalPages); // Cập nhật tổng số <trang></trang>
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, [token, currentPage]);
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
@@ -61,6 +66,10 @@ const VoucherManage = () => {
     } else {
       setShowAlert(true);
     }
+  };
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
   };
 
   const handleCreate = async (data) => {
@@ -285,6 +294,13 @@ const VoucherManage = () => {
             ))}
         </tbody>
       </table>
+      <div className="flex items-center justify-center">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChange={handleChangePage}
+        ></Pagination>
+      </div>
       <DialogDelete
         show={showDialog.show}
         title="voucher"

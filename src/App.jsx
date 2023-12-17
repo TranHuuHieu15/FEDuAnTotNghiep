@@ -31,7 +31,10 @@ const FeedbackManage = lazy(() => import("./module/feedback/FeedbackManage"));
 const EvalueateManage = lazy(() => import("./module/evaluate/EvalueateManage"));
 const ColorManage = lazy(() => import("./module/color/ColorManage"));
 const VoucherPage = lazy(() => import("./pages/VoucherPage"));
+const ProductManagePage = lazy(() => import("./module/product/ProductManage"));
+const ProductCEPage = lazy(() => import("./module/product/ProductCEPage"));
 const OrderManage = lazy(() => import("./module/order/OrderManage"));
+const ProductAddPage = lazy(() => import("./module/product/ProductAddPage"));
 const AccountManage = lazy(() => import("./module/account/AccountManage"));
 const HashtagManage = lazy(() => import("./module/hashtag/HashtagManage"));
 const Information = lazy(() => import("./module/dashboard/Information"));
@@ -82,6 +85,73 @@ function App() {
             }
           ></Route>
           <Route path="/voucher" element={<VoucherPage></VoucherPage>}></Route>
+
+          <Route element={<AdminLayout></AdminLayout>}>
+            <Route
+              path="/admin"
+              element={<DashboardPage></DashboardPage>}
+            ></Route>
+            <Route
+              path="/admin/product"
+              element={<ProductManagePage></ProductManagePage>}
+            ></Route>
+            <Route
+              path="/admin/product/add"
+              element={<ProductAddPage></ProductAddPage>}
+            ></Route>
+            <Route
+              path="/admin/product/edit/:id"
+              element={<ProductCEPage></ProductCEPage>}
+            ></Route>
+            <Route
+              path="/admin/account"
+              element={<AccountManage></AccountManage>}
+            ></Route>
+            <Route
+              path="/admin/category"
+              element={<CategoryManage></CategoryManage>}
+            ></Route>
+            <Route
+              path="/admin/brand"
+              element={<BrandManage></BrandManage>}
+            ></Route>
+            <Route
+              path="/admin/payment"
+              element={<PaymentManage></PaymentManage>}
+            ></Route>
+            <Route
+              path="/admin/problem"
+              element={<ProblemManage></ProblemManage>}
+            ></Route>
+            <Route
+              path="/admin/feedback"
+              element={<FeedbackManage></FeedbackManage>}
+            ></Route>
+            <Route
+              path="/admin/discount"
+              element={<DiscountManage></DiscountManage>}
+            ></Route>
+            <Route
+              path="/admin/evaluate"
+              element={<EvalueateManage></EvalueateManage>}
+            ></Route>
+            <Route
+              path="/admin/order"
+              element={<OrderManage></OrderManage>}
+            ></Route>
+            <Route
+              path="/admin/color"
+              element={<ColorManage></ColorManage>}
+            ></Route>
+            <Route
+              path="/admin/profile"
+              element={<Information></Information>}
+            ></Route>
+            <Route
+              path="/admin/hashtag"
+              element={<HashtagManage></HashtagManage>}
+            ></Route>
+          </Route>
           <Route element={<AccountLayout></AccountLayout>}>
             <Route
               path="/user"

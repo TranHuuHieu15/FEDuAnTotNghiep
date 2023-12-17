@@ -6,12 +6,13 @@ import {
   MenuList,
 } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { logout } from "../../redux/features/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { logout, selectCurrentUser } from "../../redux/features/authSlice";
 import avatar from "../../assets/images/avatar.jpg";
 import PropTypes from "prop-types";
 
-const Dropdown = ({ user }) => {
+const Dropdown = () => {
+  const user = useSelector(selectCurrentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = () => {

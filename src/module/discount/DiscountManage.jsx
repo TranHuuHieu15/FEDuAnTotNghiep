@@ -38,6 +38,7 @@ const DiscountManage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(response);
       setDiscountData(response.data);
     } catch (error) {
       console.log(error);
@@ -224,7 +225,6 @@ const DiscountManage = () => {
             <th className="px-6 py-4 font-medium text-gray-900">
               Expiration Date
             </th>
-            <th className="px-6 py-4 font-medium text-gray-900">Quantity</th>
             <th className="px-6 py-4 font-medium text-gray-900">Image</th>
             <th className="px-6 py-4 font-medium text-gray-900">Description</th>
             <th className="px-6 py-4 font-medium text-gray-900">Category</th>
@@ -243,9 +243,6 @@ const DiscountManage = () => {
                 </td>
                 <td className="p-2 font-medium text-gray-800">
                   {item.expirationDate}
-                </td>
-                <td className="p-2 font-medium text-gray-800">
-                  {item.quantity}
                 </td>
                 <td className="p-2 font-medium text-gray-800">
                   <img

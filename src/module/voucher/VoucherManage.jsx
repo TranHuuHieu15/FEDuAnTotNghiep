@@ -7,10 +7,16 @@ import { toast } from "react-toastify";
 import axios from "../../config/axios.js";
 import DialogCEVoucher from "./DialogCEVoucher";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice.jsx";
+import DialogAlert from "../../components/dialog/DialogAlert";
 
 const VoucherManage = () => {
   const token = useSelector(selectCurrentToken);
+  const user = useSelector(selectCurrentUser);
+  const [showAlert, setShowAlert] = useState(false);
   const [voucherData, setVoucherData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -43,13 +49,17 @@ const VoucherManage = () => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
   const handleCreateTrue = () => {
-    setShowDialogCE({
-      show: true,
-      id: null,
-      isUpdate: false,
-      action: handleCreate,
-      dataToEdit: {},
-    });
+    if (user.path === 0) {
+      setShowDialogCE({
+        show: true,
+        id: null,
+        isUpdate: false,
+        action: handleCreate,
+        dataToEdit: {},
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
 
   const handleCreate = async (data) => {
@@ -92,14 +102,18 @@ const VoucherManage = () => {
   };
 
   const handleUpdateTrue = (id) => {
-    const dataEdit = voucherData.find((item) => item.id === id);
-    setShowDialogCE({
-      show: true,
-      id: id,
-      isUpdate: true,
-      action: handleUpdate,
-      dataToEdit: dataEdit,
-    });
+    if (user.path === 0) {
+      const dataEdit = voucherData.find((item) => item.id === id);
+      setShowDialogCE({
+        show: true,
+        id: id,
+        isUpdate: true,
+        action: handleUpdate,
+        dataToEdit: dataEdit,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleUpdate = async (data) => {
     try {
@@ -145,10 +159,14 @@ const VoucherManage = () => {
   };
 
   const handleDeleteTrue = (id) => {
-    setShowDialog({
-      show: true,
-      id: id,
-    });
+    if (user.path === 0) {
+      setShowDialog({
+        show: true,
+        id: id,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleDelete = async () => {
     try {
@@ -190,6 +208,9 @@ const VoucherManage = () => {
       show: false,
       id: null,
     });
+  };
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
   return (
     <>
@@ -277,6 +298,7 @@ const VoucherManage = () => {
         title="Voucher"
         dataToEdit={showDialogCE.dataToEdit}
       />
+      <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>
   );
 };

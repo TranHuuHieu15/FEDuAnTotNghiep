@@ -12,8 +12,10 @@ import Select from "../components/select/Select";
 import { useEffect, useState } from "react";
 import axios from "../config/axios.js";
 import { toast } from "react-toastify";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const ContactPage = () => {
+  const [loading, setLoading] = useState(false);
   const [problems, setProblems] = useState([]);
   useEffect(() => {
     // Gọi API để lấy danh sách problem
@@ -59,6 +61,7 @@ const ContactPage = () => {
 
   const handleCreateData = async (data) => {
     try {
+      setLoading(true);
       await axios.post("/feedback/create", data);
       toast.success("Create feedback successfully!", {
         position: "top-right",
@@ -70,6 +73,7 @@ const ContactPage = () => {
         progress: undefined,
         theme: "light",
       });
+      setLoading(false);
     } catch (error) {
       console.error("Error creating feedback:", error);
     }
@@ -126,7 +130,16 @@ const ContactPage = () => {
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  Submit
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      size={15}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </div>
             </form>

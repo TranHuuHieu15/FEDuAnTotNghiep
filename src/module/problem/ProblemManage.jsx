@@ -14,6 +14,7 @@ import {
 import DialogAlert from "../../components/dialog/DialogAlert";
 
 const ProblemManage = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const [showAlert, setShowAlert] = useState(false);
@@ -63,6 +64,7 @@ const ProblemManage = () => {
   };
   const handleCreate = async (paymentDto) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show) {
         await axios.post("/problem/create", paymentDto, {
           headers: {
@@ -82,6 +84,7 @@ const ProblemManage = () => {
           theme: "light",
         });
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -102,6 +105,7 @@ const ProblemManage = () => {
   };
   const handleUpdate = async (problemDto) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         await axios.put(
           `/problem/update/${showDialogCERef.current.id}`,
@@ -125,6 +129,7 @@ const ProblemManage = () => {
           theme: "light",
         });
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -236,6 +241,7 @@ const ProblemManage = () => {
         cancel={handleCloseDialogCE}
         title="Problem"
         dataToEdit={showDialogCE.dataToEdit}
+        loading={loading}
       />
       <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>

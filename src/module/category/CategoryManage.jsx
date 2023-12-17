@@ -14,6 +14,7 @@ import {
 import DialogAlert from "../../components/dialog/DialogAlert";
 
 const CategoryManage = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const [showAlert, setShowAlert] = useState(false);
@@ -64,6 +65,7 @@ const CategoryManage = () => {
 
   const handleCreate = async (categoryDto) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show) {
         await axios.post("/category/create", categoryDto, {
           headers: {
@@ -82,6 +84,7 @@ const CategoryManage = () => {
           progress: undefined,
           theme: "light",
         });
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -103,6 +106,7 @@ const CategoryManage = () => {
   };
   const handleUpdate = async (categoryDto) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         await axios.put(
           `/category/update/${showDialogCERef.current.id}`,
@@ -126,6 +130,7 @@ const CategoryManage = () => {
           theme: "light",
         });
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -242,6 +247,7 @@ const CategoryManage = () => {
         handleSubmitCategory={showDialogCE.action}
         cancel={handleCloseDialogCE}
         title="Category"
+        loading={loading}
         categoryDataToEdit={showDialogCE.categoryDataToEdit}
       />
       <DialogAlert show={showAlert} cancel={handleCloseAlert} />

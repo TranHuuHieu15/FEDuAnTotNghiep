@@ -14,6 +14,7 @@ import {
 import DialogAlert from "../../components/dialog/DialogAlert.jsx";
 
 const BrandManage = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const [showAlert, setShowAlert] = useState(false);
@@ -53,7 +54,6 @@ const BrandManage = () => {
       setShowDialogCE({
         show: true,
         id: null,
-        isUpdate: false,
         action: handleCreate,
         brandDataToEdit: {},
       });
@@ -67,6 +67,7 @@ const BrandManage = () => {
     formData.append("imageFile", data.image);
     formData.append("name", data.name);
     formData.append("description", data.description);
+    setLoading(true);
     try {
       await axios.post("/brand/create", formData, {
         headers: {
@@ -85,6 +86,7 @@ const BrandManage = () => {
         progress: undefined,
         theme: "light",
       });
+      setLoading(false);
     } catch (err) {
       console.log(err.response.data.message);
     }
@@ -111,6 +113,7 @@ const BrandManage = () => {
       : formData.append("imageFile", data.image);
     formData.append("name", data.name);
     formData.append("description", data.description);
+    setLoading(true);
     try {
       await axios.put(`/brand/update/${showDialogCERef.current.id}`, formData, {
         headers: {
@@ -129,6 +132,7 @@ const BrandManage = () => {
         progress: undefined,
         theme: "light",
       });
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -251,6 +255,7 @@ const BrandManage = () => {
         cancel={handleCloseDialogCE}
         title="Brand"
         brandDataToEdit={showDialogCE.brandDataToEdit}
+        loading={loading}
       />
       <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>

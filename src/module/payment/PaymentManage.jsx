@@ -14,6 +14,7 @@ import {
 import DialogAlert from "../../components/dialog/DialogAlert";
 
 const PaymentManage = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const [showAlert, setShowAlert] = useState(false);
@@ -75,6 +76,7 @@ const PaymentManage = () => {
     formData.append("name", data.name);
     formData.append("description", data.description);
     try {
+      setLoading(true);
       await axios.post("/payment/create", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -92,6 +94,7 @@ const PaymentManage = () => {
         progress: undefined,
         theme: "light",
       });
+      setLoading(false);
     } catch (err) {
       console.log(err);
     }
@@ -122,6 +125,7 @@ const PaymentManage = () => {
     formData.append("name", data.name);
     formData.append("description", data.description);
     try {
+      setLoading(true);
       await axios.put(
         `/payment/update/${showDialogCERef.current.id}`,
         formData,
@@ -143,6 +147,7 @@ const PaymentManage = () => {
         progress: undefined,
         theme: "light",
       });
+      setLoading(false);
     } catch (err) {
       console.log(err);
     }
@@ -264,6 +269,7 @@ const PaymentManage = () => {
         cancel={handleCloseDialogCE}
         title="Payment"
         paymentDataToEdit={showDialogCE.paymentDataToEdit}
+        loading={loading}
       />
       <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>

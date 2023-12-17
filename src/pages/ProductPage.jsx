@@ -8,6 +8,7 @@ import Filter from "../components/filter/Filter";
 import { Card, CardBody, CardHeader } from "@material-tailwind/react";
 import LoadingSkeleton from "../components/loading/LoadingSkeleton";
 import useDebounce from "../hook/useDebounce";
+import { CarouselTransition } from "../components/carousel/Carousel";
 
 const ProductPage = () => {
   const [productData, setProductData] = useState([]);
@@ -69,6 +70,7 @@ const ProductPage = () => {
   return (
     <>
       <SiteLayout>
+        <CarouselTransition></CarouselTransition>
         <div className="flex justify-center gap-10 mx-20 my-10">
           <div className="mx-6 w-96">
             <Filter

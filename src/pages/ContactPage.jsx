@@ -12,8 +12,10 @@ import Select from "../components/select/Select";
 import { useEffect, useState } from "react";
 import axios from "../config/axios.js";
 import { toast } from "react-toastify";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const ContactPage = () => {
+  const [loading, setLoading] = useState(false);
   const [problems, setProblems] = useState([]);
   useEffect(() => {
     // Gọi API để lấy danh sách problem
@@ -30,8 +32,15 @@ const ContactPage = () => {
 
   const schema = yup
     .object({
-      email: yup.string().required("Please enter your email"),
-      phoneNumber: yup.string().required("Please enter your phone number"),
+      email: yup
+        .string()
+        .email("Invalid email!")
+        .required("Please enter your email"),
+      phoneNumber: yup
+        .string()
+        .min(10)
+        .max(10)
+        .required("Please enter your phone number"),
       description: yup.string().required("Please enter description"),
     })
     .required();
@@ -59,6 +68,7 @@ const ContactPage = () => {
 
   const handleCreateData = async (data) => {
     try {
+      setLoading(true);
       await axios.post("/feedback/create", data);
       toast.success("Create feedback successfully!", {
         position: "top-right",
@@ -70,6 +80,7 @@ const ContactPage = () => {
         progress: undefined,
         theme: "light",
       });
+      setLoading(false);
     } catch (error) {
       console.error("Error creating feedback:", error);
     }
@@ -91,6 +102,7 @@ const ContactPage = () => {
             <form onSubmit={handleSubmit(onSubmitHandler)}>
               <div className="flex flex-col gap-5">
                 <Input
+                  type="email"
                   name="email"
                   label="Email"
                   control={control}
@@ -126,7 +138,16 @@ const ContactPage = () => {
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  Submit
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      size={15}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </div>
             </form>
@@ -137,8 +158,7 @@ const ContactPage = () => {
               <div className="flex flex-col gap-2">
                 <span className="text-xl text-blue-gray-700">Address</span>
                 <p className="text-gray-600 text-md">
-                  Coza Store Center 8th floor, 379 Hudson St, New York, NY 10018
-                  US
+                  Hoa Khanh Bac, Lien Chieu, Da Nang
                 </p>
               </div>
             </div>
@@ -146,14 +166,14 @@ const ContactPage = () => {
               <BsTelephone className="w-6 h-6 text-blue-gray-700" />
               <div className="flex flex-col gap-2">
                 <span className="text-xl text-blue-gray-700">Lets Talk</span>
-                <p className="text-blue-300 text-md">+1 800 1236879</p>
+                <p className="text-blue-300 text-md">+84 886 004 864</p>
               </div>
             </div>
             <div className="flex gap-3">
               <AiOutlineMail className="w-6 h-6 text-blue-gray-700" />
               <div className="flex flex-col gap-2">
                 <span className="text-xl text-blue-gray-700">Sale Support</span>
-                <p className="text-blue-300 text-md">contact@example.com</p>
+                <p className="text-blue-300 text-md">adtiembanh@gmail.com</p>
               </div>
             </div>
           </div>

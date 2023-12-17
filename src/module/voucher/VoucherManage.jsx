@@ -15,6 +15,7 @@ import DialogAlert from "../../components/dialog/DialogAlert";
 import Pagination from "../../components/pagination/Pagination.jsx";
 
 const VoucherManage = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const [showAlert, setShowAlert] = useState(false);
@@ -73,6 +74,7 @@ const VoucherManage = () => {
 
   const handleCreate = async (data) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show) {
         const formData = new FormData();
         typeof data.image === "string"
@@ -105,6 +107,7 @@ const VoucherManage = () => {
           theme: "light",
         });
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -126,6 +129,7 @@ const VoucherManage = () => {
   };
   const handleUpdate = async (data) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         const formData = new FormData();
         typeof data.image === "string"
@@ -162,6 +166,7 @@ const VoucherManage = () => {
           theme: "light",
         });
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -229,7 +234,7 @@ const VoucherManage = () => {
       >
         Add new voucher
       </Button>
-      <table className="w-full text-center table-auto">
+      <table className="w-full table-auto text-start">
         <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
           <tr>
             <th className="px-6 py-4 font-medium text-gray-900">Image</th>
@@ -258,11 +263,7 @@ const VoucherManage = () => {
             voucherData.map((item) => (
               <tr key={item.id}>
                 <td className="p-2 font-medium text-gray-800">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    style={{ width: "70px" }}
-                  />
+                  <img src={item.image} alt={item.name} className="h-24 w-96" />
                 </td>
                 <td className="p-2">{item.name}</td>
                 <td className="p-2">{item.discount}</td>
@@ -313,6 +314,7 @@ const VoucherManage = () => {
         cancel={handleCloseDialogCE}
         title="Voucher"
         dataToEdit={showDialogCE.dataToEdit}
+        loading={loading}
       />
       <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>

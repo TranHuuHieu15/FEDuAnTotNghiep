@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const AccountAddress = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const navigate = useNavigate();
@@ -63,6 +64,7 @@ const AccountAddress = () => {
   };
   const handleCreate = async (data) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show) {
         const dataDTO = {
           phoneNumber: data.phoneNumber,
@@ -91,6 +93,7 @@ const AccountAddress = () => {
           progress: undefined,
           theme: "light",
         });
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -128,6 +131,7 @@ const AccountAddress = () => {
       wardCode: data.wardCode,
     };
     try {
+      setLoading(true);
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         await axios.put(
           `/deliveryAddress/update/${showDialogCERef.current.id}`,
@@ -151,6 +155,7 @@ const AccountAddress = () => {
           theme: "light",
         });
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -284,6 +289,7 @@ const AccountAddress = () => {
           cancel={handleCloseDialogCE}
           title="Delivery Address"
           dataToEdit={showDialogCE.dataToEdit}
+          loading={loading}
         />
       </div>
     </>

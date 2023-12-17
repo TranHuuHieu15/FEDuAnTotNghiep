@@ -14,6 +14,7 @@ import Input from "../../components/input/Input";
 import { useEffect } from "react";
 import ImageUpload from "../../components/imageUpload/ImageUpload";
 import SelectDefault from "../../components/select/SelectDefault";
+import ClipLoader from "react-spinners/ClipLoader";
 const DialogCEVoucher = ({
   show,
   isUpdate,
@@ -21,6 +22,7 @@ const DialogCEVoucher = ({
   cancel,
   title,
   dataToEdit,
+  loading,
 }) => {
   const typeDiscount = [
     {
@@ -246,7 +248,16 @@ const DialogCEVoucher = ({
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  Submit
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      size={15}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </div>
             </DialogFooter>
@@ -264,6 +275,7 @@ DialogCEVoucher.propTypes = {
   show: PropTypes.bool,
   title: PropTypes.string,
   dataToEdit: PropTypes.object,
+  loading: PropTypes.bool,
 };
 
 export default DialogCEVoucher;

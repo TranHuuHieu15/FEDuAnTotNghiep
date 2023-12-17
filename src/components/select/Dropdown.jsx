@@ -32,18 +32,27 @@ const Dropdown = () => {
           />
         </MenuHandler>
         <MenuList>
-          <MenuItem>
-            {user && user?.path === 2 ? (
-              <Link to="/user">My Profile</Link>
-            ) : (
-              <Link to="/admin/profile">My Profile</Link>
-            )}
-          </MenuItem>
-          <MenuItem>
-            <Link to="/help">Help</Link>
-          </MenuItem>
-          <MenuItem>
-            <span onClick={handleLogout}>Log out</span>
+          {user && user?.path === 2 ? (
+            <Link to="/user">
+              <MenuItem>
+                <span>My Profile</span>
+              </MenuItem>
+            </Link>
+          ) : (
+            <Link to="/admin/profile">
+              <MenuItem>
+                <span>My Profile</span>
+              </MenuItem>
+            </Link>
+          )}
+
+          <Link to="/contact">
+            <MenuItem>
+              <span>Help</span>
+            </MenuItem>
+          </Link>
+          <MenuItem onClick={handleLogout}>
+            <span>Log out</span>
           </MenuItem>
         </MenuList>
       </Menu>

@@ -1,16 +1,18 @@
 import { Dialog, DialogHeader, DialogBody } from "@material-tailwind/react";
-import Buttons from "../button/Button";
+import Button from "../button/Button";
 import PropTypes from "prop-types";
 import { IoMdClose } from "react-icons/io";
 import axios from "../../config/axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../../redux/features/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher, total }) => {
   const token = useSelector(selectCurrentToken);
+  const navigate = useNavigate();
   const [voucherData, setVoucherData] = useState([]);
-  const [isVoucher, setIsVoucher] = useState(false);
+  const [selectedVoucherId, setSelectedVoucherId] = useState(null);
   useEffect(() => {
     const fetchVoucher = async () => {
       try {
@@ -28,7 +30,6 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher, total }) => {
           }
           return 0;
         });
-
         setVoucherData(sortedVouchers);
       } catch (error) {
         setVoucherData([]);
@@ -54,7 +55,11 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher, total }) => {
   };
   const handleUseVoucher = (usedVoucher) => {
     onUseVoucher(usedVoucher);
-    setIsVoucher(!isVoucher);
+    if (usedVoucher) {
+      setSelectedVoucherId(usedVoucher.id);
+    } else {
+      setSelectedVoucherId(null);
+    }
     handleCloseVoucher();
   };
   return (
@@ -93,21 +98,26 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher, total }) => {
                       </div>
                     </div>
                     <div className="flex items-center justify-center">
-                      {isVoucher ? (
-                        <Buttons
-                          className="text-center bg-black"
+                      {selectedVoucherId === item.id ? (
+                        <Button
+                          className="w-[100px] text-center bg-black"
                           onClick={() => handleUseVoucher(null)}
+                          disabled={!selectedVoucherId}
                         >
                           Cancel
-                        </Buttons>
+                        </Button>
                       ) : (
-                        <Buttons
-                          className="text-center bg-black"
+                        <Button
+                          className="w-[100px] text-center bg-black "
                           onClick={() => handleUseVoucher(item)}
-                          disabled={item.minTotal > total}
+                          disabled={
+                            item.minTotal > total ||
+                            (item.registerDate &&
+                              new Date() < new Date(item.registerDate))
+                          }
                         >
                           Use
-                        </Buttons>
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -117,6 +127,16 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher, total }) => {
                 </div>
               ))}
           </div>
+          {voucherData.length === 0 && (
+            <div className="flex items-center justify-center">
+              <Button
+                className="text-center bg-black"
+                onClick={() => navigate("/voucher")}
+              >
+                Get Voucher
+              </Button>
+            </div>
+          )}
         </DialogBody>
       </Dialog>
     </>

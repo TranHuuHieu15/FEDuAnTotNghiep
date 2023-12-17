@@ -23,18 +23,23 @@ const VoucherPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/voucher/is-active`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          `/voucher/is-active`,
+          token
+            ? {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            : {}
+        );
         setVoucherData(response.data);
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
-  }, []);
+  }, [token]);
 
   const handleSave = async (voucherId) => {
     if (!token) {
@@ -103,7 +108,7 @@ const VoucherPage = () => {
                       />
                     </div>
                     <div className="col-span-2">
-                      <div className="text-xl font-medium font-eculid">
+                      <div className="text-2xl font-medium font-eculid">
                         {voucher.name}
                       </div>
                       <div className="text-lg font-eculid">

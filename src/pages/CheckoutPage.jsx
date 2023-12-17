@@ -14,6 +14,7 @@ import DialogDeliveryAddressPayment from "../components/dialog/DialogDeliveryAdd
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { resetCart } from "../redux/features/cartSlice";
+import { CarouselTransition } from "../components/carousel/Carousel";
 
 const deliveryMethods = [
   { id: 1, name: "Standard", description: "4-10 business days", price: 5.0 },
@@ -119,20 +120,21 @@ const CheckoutPage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (selectedPaymentMethod.name === "VN PAY") {
-        console.log("run vn pay");
+      if (selectedPaymentMethod.id === 2) {
         const orderDtoId = response.data.orderDto.id;
         const responseVNPay = await axios.get(
-          `order/payment?orderId=${orderDtoId}`,
+          `/order/payment?orderId=${orderDtoId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        const paymentUrl = responseVNPay.data;
-        // Mở URL trong trình duyệt mới
-        window.open(paymentUrl, "_blank"); //"_blank là mở một cửa sổ mới"
+        if (responseVNPay) {
+          const paymentUrl = responseVNPay.data;
+          // Mở URL trong trình duyệt mới
+          window.open(paymentUrl, "_blank"); //"_blank là mở một cửa sổ mới"
+        }
       }
       dispatch(resetCart());
       navigate("/product");
@@ -194,7 +196,8 @@ const CheckoutPage = () => {
   return (
     <>
       <SiteLayout>
-        <div className="flex items-start justify-center gap-5 mx-auto">
+        <CarouselTransition></CarouselTransition>
+        <div className="flex items-start justify-center gap-5 mx-auto mt-3">
           <div className="flex flex-col w-[570px] gap-2">
             <Heading className="px-2 text-2xl font-eculid">
               Shipping information
@@ -280,19 +283,18 @@ const CheckoutPage = () => {
                     onClick={() => handlePaymentMethodClick(payment.id)}
                   >
                     <img
-                      src={payment.img}
+                      src={payment.image}
                       alt="image"
                       className="object-cover w-12 h-12"
                     />
                     <p className="flex flex-col items-start justify-center col-span-3 gap-1">
                       <span>{payment.name}</span>
-                      <span>{payment.description}</span>
                     </p>
                     <div>
                       {selectedPaymentMethod &&
                         selectedPaymentMethod.id === payment.id && (
                           <AiOutlineCheck
-                            className="mt-1 ml-auto bg-green-500 rounded-full justify-self-end"
+                            className="ml-auto bg-green-500 rounded-full "
                             color="white"
                           />
                         )}

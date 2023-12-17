@@ -17,6 +17,7 @@ import axios from "../../config/axios.js";
 import SelectDefault from "../../components/select/SelectDefault.jsx";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../../redux/features/authSlice";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const DialogCEFeedback = ({
   show,
@@ -25,6 +26,7 @@ const DialogCEFeedback = ({
   cancel,
   title,
   feedbackDataToEdit,
+  loading,
 }) => {
   const feedbackEdit = [
     { id: 1, value: true, name: "Đã được xử lý" },
@@ -173,7 +175,16 @@ const DialogCEFeedback = ({
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  Submit
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      size={15}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </div>
             </DialogFooter>
@@ -191,6 +202,7 @@ DialogCEFeedback.propTypes = {
   show: PropTypes.bool,
   title: PropTypes.string,
   feedbackDataToEdit: PropTypes.object,
+  loading: PropTypes.bool,
 };
 
 export default DialogCEFeedback;

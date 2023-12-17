@@ -14,6 +14,7 @@ import axios from "../../config/axios.js";
 import Input from "../../components/input/Input";
 import { useState } from "react";
 import CustomSelect from "../../components/select/CustomSelect";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const DialogCEDeliveryAddress = ({
   show,
@@ -22,6 +23,7 @@ const DialogCEDeliveryAddress = ({
   cancel,
   title,
   dataToEdit,
+  loading,
 }) => {
   const host = "https://provinces.open-api.vn/api/";
   const [selectedCity, setSelectedCity] = useState("");
@@ -234,7 +236,16 @@ const DialogCEDeliveryAddress = ({
                 type="submit"
                 disabled={isSubmitting}
               >
-                Submit
+                {loading ? (
+                  <ClipLoader
+                    color="#fff"
+                    size={15}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                ) : (
+                  "Submit"
+                )}
               </Button>
             </DialogFooter>
           </form>
@@ -250,6 +261,7 @@ DialogCEDeliveryAddress.propTypes = {
   show: PropTypes.bool,
   title: PropTypes.string,
   dataToEdit: PropTypes.object,
+  loading: PropTypes.bool,
 };
 
 export default DialogCEDeliveryAddress;

@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import SelectDefault from "../../components/select/SelectDefault";
 import { useEffect } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const typeOrder = [
   {
@@ -53,6 +54,7 @@ const DialogEditTypeOrder = ({
   handleCancelClick,
   dataToEdit,
   handleChangeTypeOrder,
+  loading,
 }) => {
   const {
     handleSubmit,
@@ -116,7 +118,18 @@ const DialogEditTypeOrder = ({
               type="submit"
               disabled={isSubmitting}
             >
-              <span>Change</span>
+              <span>
+                {loading ? (
+                  <ClipLoader
+                    color="#fff"
+                    size={15}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                ) : (
+                  "Change"
+                )}
+              </span>
             </Button>
           </DialogFooter>
         </form>
@@ -130,6 +143,7 @@ DialogEditTypeOrder.propTypes = {
   handleCancelClick: PropTypes.func,
   handleChangeTypeOrder: PropTypes.func,
   dataToEdit: PropTypes.object.isRequired,
+  loading: PropTypes.bool,
 };
 
 export default DialogEditTypeOrder;

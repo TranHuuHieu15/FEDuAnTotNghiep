@@ -18,8 +18,11 @@ import {
 } from "../redux/features/authSlice";
 import { toast } from "react-toastify";
 import Label from "../components/label/Label";
+import ClipLoader from "react-spinners/ClipLoader";
+import { useState } from "react";
 
 const SignUpPage = () => {
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [registerMutation] = useRegisterMutation();
@@ -54,6 +57,7 @@ const SignUpPage = () => {
     if (!isValid) return;
     dispatch(registerStart());
     try {
+      setLoading(true);
       await registerMutation(data).unwrap();
       dispatch(registerSuccess());
       reset({
@@ -66,6 +70,7 @@ const SignUpPage = () => {
         term: false,
       });
       navigate("/checkmail");
+      setLoading(false);
     } catch (error) {
       if (error.status === 400) {
         toast.error(error.data.message, {
@@ -206,7 +211,16 @@ const SignUpPage = () => {
                       className="w-[400px] bg-[#F7C59F] text-gray-800"
                       disabled={isSubmitting}
                     >
-                      Sign up
+                      {loading ? (
+                        <ClipLoader
+                          color="#fff"
+                          size={15}
+                          aria-label="Loading Spinner"
+                          data-testid="loader"
+                        />
+                      ) : (
+                        "Sign up"
+                      )}
                     </Button>
                   </div>
                 </form>

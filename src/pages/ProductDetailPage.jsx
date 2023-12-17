@@ -25,6 +25,7 @@ const ProductDetailPage = () => {
   const [currentImage, setCurrentImage] = useState(null);
   const [selectedColors, setSelectedColors] = useState([]);
   const [quantity, setQuantity] = useState(1);
+  const [visibleReviews, setVisibleReviews] = useState(5);
   const toggleOpen = () => setOpen((cur) => !cur);
   const { productId } = useParams();
   const dispatch = useDispatch();
@@ -95,8 +96,9 @@ const ProductDetailPage = () => {
   const handleSizeChange = (size) => {
     setSelectedSize(size);
     // Lấy ảnh mới tương ứng với kích thước đã chọn
-    const image = productVariantsDto.find((variant) => variant.size === size)
-      ?.imageProductDto?.url;
+    const image = productVariantsDto.find(
+      (variant) => variant.size === size
+    )?.image;
     if (image) {
       // Cập nhật ảnh hiện tại
       setCurrentImage(image);
@@ -119,12 +121,16 @@ const ProductDetailPage = () => {
     setSelectedColor(firstColorForSelectedSize || null);
   };
 
+  const handleLoadMore = () => {
+    setVisibleReviews((prev) => prev + 3); // Tăng số lượng đánh giá hiển thị
+  };
+
   const handleColorChange = (color) => {
     setSelectedColor(color);
     // Lấy ảnh mới tương ứng với màu sắc đã chọn
     const image = productVariantsDto.find(
       (variant) => variant.colorId === color
-    )?.imageProductDto?.url;
+    )?.imageProductDto?.image;
     if (image) {
       // Cập nhật ảnh hiện tại
       setCurrentImage(image);
@@ -144,7 +150,7 @@ const ProductDetailPage = () => {
     if (selectedVariant) {
       const cartItem = {
         productVariantId: selectedVariant.id,
-        image: productDto.imageProductDto.url,
+        image: productDto.image,
         name: productDto.name,
         price: selectedVariant.price,
         quantity,
@@ -180,14 +186,14 @@ const ProductDetailPage = () => {
               .map((variant) => (
                 <img
                   key={variant.id}
-                  src={variant.url}
+                  src={variant.image}
                   alt="Image"
                   className="w-[146px] h-[130px] object-fill flex-shrink-0 rounded-md"
                 />
               ))}
           </div>
           <img
-            src={currentImage || productDto?.url}
+            src={currentImage || productDto?.image}
             alt=""
             className="w-[476px] h-[567px] object-fill hover:scale-105 hover:duration-500 flex-shrink-0 rounded-md"
           />
@@ -200,7 +206,7 @@ const ProductDetailPage = () => {
                 {productDto?.name}
               </p>
               <span className="text-2xl not-italic font-bold leading-normal font-eculid">
-                ${selectedVariant?.price || "12"}
+                ${selectedVariant?.price}
               </span>
             </div>
             <div className="inline-flex flex-col items-start gap-2">
@@ -249,19 +255,12 @@ const ProductDetailPage = () => {
               {selectedVariant && selectedVariant.quantity < 0 && <p>Hi</p>}
             </div>
           </div>
-          <div className="flex gap-4">
-            <Button
-              onClick={handleAddToCart}
-              className={`w-[264px] shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}
-            >
-              Add to Cart
-            </Button>
-            <Button
-              className={`w-[264px] shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}
-            >
-              Buy Now
-            </Button>
-          </div>
+          <Button
+            onClick={handleAddToCart}
+            className={`w-full shadow-none 'bg-[#1F2937]'} text-[#FFF] hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100`}
+          >
+            Add to Cart
+          </Button>
           <div className="flex flex-col items-start gap-14">
             <div className="flex gap-3 px-4 py-8 bg-[#F3F4F6] w-[560px]">
               <div className="flex flex-col gap-2">
@@ -311,13 +310,15 @@ const ProductDetailPage = () => {
       </div>
       <div className="flex flex-col justify-center mx-40">
         <h3 className="text-2xl font-semibold font-eculid">Customer Reviews</h3>
-        {evaluateData?.length > 0 &&
-          evaluateData.map((item) => (
-            <Comment key={item.id} items={item}></Comment>
-          ))}
-        {evaluateData?.length > 0 && (
+        {evaluateData.slice(0, visibleReviews).map((item) => (
+          <Comment key={item.id} items={item}></Comment>
+        ))}
+        {visibleReviews < evaluateData?.length && (
           <div className="flex items-center justify-center my-8">
-            <Button className="text-base font-semibold w-60 bg-blue-gray-800 hover:scale-105">
+            <Button
+              className="text-base font-semibold w-60 bg-blue-gray-800 hover:scale-105"
+              onClick={handleLoadMore}
+            >
               Load More
             </Button>
           </div>

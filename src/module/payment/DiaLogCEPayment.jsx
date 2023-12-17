@@ -13,6 +13,7 @@ import Input from "../../components/input/Input";
 import ImageUpload from "../../components/imageUpload/ImageUpload";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const DialogCEPayment = ({
   show,
@@ -21,6 +22,7 @@ const DialogCEPayment = ({
   cancel,
   title,
   paymentDataToEdit,
+  loading,
 }) => {
   const schema = yup
     .object({
@@ -114,7 +116,16 @@ const DialogCEPayment = ({
                 type="submit"
                 disabled={isSubmitting}
               >
-                Submit
+                {loading ? (
+                  <ClipLoader
+                    color="#fff"
+                    size={15}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                ) : (
+                  "Submit"
+                )}
               </Button>
             </DialogFooter>
           </form>
@@ -131,6 +142,7 @@ DialogCEPayment.propTypes = {
   show: PropTypes.bool,
   title: PropTypes.string,
   paymentDataToEdit: PropTypes.object,
+  loading: PropTypes.bool,
 };
 
 export default DialogCEPayment;

@@ -12,6 +12,7 @@ import Button from "../../components/button/Button";
 import Textarea from "../../components/textarea/Textarea";
 import Input from "../../components/input/Input";
 import { useEffect } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const DialogCECategory = ({
   show,
@@ -20,6 +21,7 @@ const DialogCECategory = ({
   cancel,
   title,
   categoryDataToEdit,
+  loading,
 }) => {
   const schema = yup
     .object({
@@ -91,7 +93,16 @@ const DialogCECategory = ({
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  Submit
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      size={15}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </div>
             </DialogFooter>
@@ -109,6 +120,7 @@ DialogCECategory.propTypes = {
   show: PropTypes.bool,
   title: PropTypes.string,
   categoryDataToEdit: PropTypes.object,
+  loading: PropTypes.bool,
 };
 
 export default DialogCECategory;

@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import Button from "../../components/button/Button";
 import Input from "../../components/input/Input";
 import { useEffect } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const DialogCEProblem = ({
   show,
@@ -19,6 +20,7 @@ const DialogCEProblem = ({
   cancel,
   title,
   dataToEdit,
+  loading,
 }) => {
   const schema = yup
     .object({
@@ -83,7 +85,16 @@ const DialogCEProblem = ({
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  Submit
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      size={15}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </div>
             </DialogFooter>
@@ -101,6 +112,7 @@ DialogCEProblem.propTypes = {
   show: PropTypes.bool,
   title: PropTypes.string,
   dataToEdit: PropTypes.object,
+  loading: PropTypes.bool,
 };
 
 export default DialogCEProblem;

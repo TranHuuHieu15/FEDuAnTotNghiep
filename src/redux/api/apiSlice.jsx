@@ -15,17 +15,23 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
   console.log(result);
-
-  if (result?.error?.originalStatus === 401) {
+  if (result?.error?.status === 500 && result?.error?.data.message === "EJE") {
     console.log("sending refresh token");
-    // send refresh token to get new access token
-    const refreshResult = await baseQuery("/refresh-token", api, extraOptions);
+    const refreshToken = localStorage.getItem("refreshToken");
+    const refreshResult = await baseQuery(
+      {
+        url: "auth/refresh-token",
+        method: "POST",
+        body: { refreshToken },
+      },
+      api,
+      extraOptions
+    );
     console.log(refreshResult);
     if (refreshResult?.data) {
-      const user = api.getState().auth.userInfo;
-      // store the new token
-      api.dispatch(loginSuccess({ ...refreshResult.data }, ...user));
-      // retry the original query with new access token
+      const userToken = refreshResult.data.data;
+      const userInfo = api.getState().auth.userInfo;
+      api.dispatch(loginSuccess({ userToken, userInfo, refreshToken }));
       result = await baseQuery(args, api, extraOptions);
     } else {
       api.dispatch(logout());

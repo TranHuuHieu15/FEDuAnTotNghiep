@@ -27,13 +27,11 @@ const OrderManage = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         const totalPages = Math.ceil(response["all-item"] / response.size);
-        console.log(response);
         setTotalPages(totalPages);
         setOrderData(response.data);
         setIsOrderUpdated(false);
       } catch (error) {
         setOrderData([]);
-        console.log(error);
       }
     };
     if (selectTypeOrder !== "") {

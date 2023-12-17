@@ -16,6 +16,13 @@ export const authApi = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    updateInfo: builder.mutation({
+      query: (data) => ({
+        url: "account/update-profile",
+        method: "PUT",
+        body: data,
+      }),
+    }),
     verifyEmail: builder.mutation({
       query: (data) => ({
         url: `auth/verify-email?email=${data.email}`,
@@ -34,6 +41,7 @@ export const authApi = apiSlice.injectEndpoints({
 export const {
   useLoginMutation,
   useRegisterMutation,
+  useUpdateInfoMutation,
   useVerifyEmailMutation,
   useForgotPWMutation,
 } = authApi;

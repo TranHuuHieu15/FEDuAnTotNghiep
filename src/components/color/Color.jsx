@@ -5,9 +5,7 @@ const Color = ({ availableColors = [], onColorChange, selectedColor }) => {
   const borderStyle = `text-sm font-bold border-2 border-gray-300`;
   const selectedStyle = `scale-125`;
 
-  // Sắp xếp mảng màu từ sáng đến tối
   const sortedColors = [...availableColors].sort((colorA, colorB) => {
-    // Chuyển đổi màu sang giá trị số để so sánh
     const rgbToInt = (color) => parseInt(color.substring(1), 16);
     return rgbToInt(colorA) - rgbToInt(colorB);
   });

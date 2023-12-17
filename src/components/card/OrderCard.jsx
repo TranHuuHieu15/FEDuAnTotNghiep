@@ -3,10 +3,33 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import DialogRating from "../dialog/DialogRating";
 import { useNavigate } from "react-router-dom";
+import axios from "../../config/axios";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "../../redux/features/authSlice";
 
 const OrderCard = ({ orders }) => {
+  const token = useSelector(selectCurrentToken);
   const { orderDto, orderDetailsDto } = orders;
   const { purchaseDate, total } = orderDto;
+  const handlePayOrder = async () => {
+    try {
+      const responseVNPay = await axios.get(
+        `/order/payment?orderId=${orderDto.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (responseVNPay) {
+        const paymentUrl = responseVNPay.data;
+        // Mở URL trong trình duyệt mới
+        window.open(paymentUrl, "_blank");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <div className="flex flex-col items-start justify-center gap-5 p-5 border border-blue-gray-400">
@@ -24,7 +47,13 @@ const OrderCard = ({ orders }) => {
 
           <div className="mr-10">
             {orderDto.typeOrder === "WAIT_TO_PAY" && (
-              <Button variant="outlined">Purchase</Button>
+              <Button
+                variant="outlined"
+                className="w-28"
+                onClick={handlePayOrder}
+              >
+                Pay
+              </Button>
             )}
           </div>
         </div>

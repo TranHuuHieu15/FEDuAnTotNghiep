@@ -53,7 +53,6 @@ const DialogRating = ({ show, handleClose, productId, orderDetailId }) => {
     }
     setRatingValue(0);
     setReviewText("");
-
     handleClose();
   };
   return (

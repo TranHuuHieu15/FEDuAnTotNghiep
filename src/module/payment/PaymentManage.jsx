@@ -7,11 +7,16 @@ import { BsTrash3 } from "react-icons/bs";
 import DiaLogCEPayment from "./DiaLogCEPayment";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice.jsx";
+import DialogAlert from "../../components/dialog/DialogAlert";
 
 const PaymentManage = () => {
   const token = useSelector(selectCurrentToken);
-
+  const user = useSelector(selectCurrentUser);
+  const [showAlert, setShowAlert] = useState(false);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -51,13 +56,17 @@ const PaymentManage = () => {
   }, [showDialogCE]);
 
   const handleCreateTrue = () => {
-    setShowDialogCE({
-      show: true,
-      id: null,
-      isUpdate: false,
-      action: handleCreate,
-      paymentDataToEdit: {},
-    });
+    if (user.path === 0) {
+      setShowDialogCE({
+        show: true,
+        id: null,
+        isUpdate: false,
+        action: handleCreate,
+        paymentDataToEdit: {},
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleCreate = async (data) => {
     if (!showDialogCERef.current.show) return;
@@ -88,16 +97,19 @@ const PaymentManage = () => {
     }
   };
 
-  //update payment
   const handleUpdateTrue = (id) => {
-    const dataEdit = paymentData.find((item) => item.id === id);
-    setShowDialogCE({
-      show: true,
-      id: id,
-      isUpdate: true,
-      action: handleUpdate,
-      paymentDataToEdit: dataEdit,
-    });
+    if (user.path === 0) {
+      const dataEdit = paymentData.find((item) => item.id === id);
+      setShowDialogCE({
+        show: true,
+        id: id,
+        isUpdate: true,
+        action: handleUpdate,
+        paymentDataToEdit: dataEdit,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
 
   const handleUpdate = async (data) => {
@@ -136,10 +148,14 @@ const PaymentManage = () => {
     }
   };
   const handleDeleteTrue = (id) => {
-    setShowDialog({
-      show: true,
-      id: id,
-    });
+    if (user.path === 0) {
+      setShowDialog({
+        show: true,
+        id: id,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleDelete = async () => {
     try {
@@ -181,6 +197,9 @@ const PaymentManage = () => {
       show: false,
       id: null,
     });
+  };
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
   return (
     <>
@@ -246,6 +265,7 @@ const PaymentManage = () => {
         title="Payment"
         paymentDataToEdit={showDialogCE.paymentDataToEdit}
       />
+      <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>
   );
 };

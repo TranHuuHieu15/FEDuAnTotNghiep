@@ -3,17 +3,22 @@ import axios from "../../config/axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../../redux/features/authSlice";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice";
 import Pagination from "../../components/pagination/Pagination";
 import { CiEdit, CiLock } from "react-icons/ci";
 import DialogCEAccount from "./DialogCEAccount";
 import { toast } from "react-toastify";
 import { useRef } from "react";
 import Button from "../../components/button/Button";
-import DialogDelete from "../../components/dialog/DialogDelete";
+import DialogEditTypeAccount from "./DialogEditTypeAccount";
+import DialogAlert from "../../components/dialog/DialogAlert";
 
 const AccountManage = () => {
   const token = useSelector(selectCurrentToken);
+  const user = useSelector(selectCurrentUser);
   const [accountData, setAccountData] = useState([]);
   const [selectRole, setSelectRole] = useState("STAFF");
   const [showDialogCE, setShowDialogCE] = useState({
@@ -26,10 +31,11 @@ const AccountManage = () => {
   const showDialogCERef = useRef(null);
   const [showDialog, setShowDialog] = useState({
     show: false,
-    id: null,
+    dataToEdit: {},
   });
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [showAlert, setShowAlert] = useState(false);
   const statusAccountColor = {
     ACTIVE: "green",
     UNVERIFIED: "blue",
@@ -66,22 +72,30 @@ const AccountManage = () => {
     setCurrentPage(page);
   };
   const handleCreateTrue = () => {
-    setShowDialogCE({
-      show: true,
-      id: null,
-      isUpdate: false,
-      action: handleCreate,
-      dataToEdit: {},
-    });
+    if (user.path === 0) {
+      setShowDialogCE({
+        show: true,
+        id: null,
+        isUpdate: false,
+        action: handleCreate,
+        dataToEdit: {},
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleUpdateTrue = (data) => {
-    setShowDialogCE({
-      show: true,
-      id: data.id,
-      isUpdate: true,
-      action: handleUpdate,
-      dataToEdit: data,
-    });
+    if (user.path === 0) {
+      setShowDialogCE({
+        show: true,
+        id: data.id,
+        isUpdate: true,
+        action: handleUpdate,
+        dataToEdit: data,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleCreate = async (data) => {
     const formData = new FormData();
@@ -160,23 +174,27 @@ const AccountManage = () => {
       console.log(error);
     }
   };
-  const handleLockTrue = (id) => {
-    setShowDialog({
-      show: true,
-      id: id,
-    });
+  const handleLockTrue = (item) => {
+    if (user.path === 0) {
+      setShowDialog({
+        show: true,
+        dataToEdit: item,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
-  const handleLock = async () => {
+  const handleLock = async ({ typeAccount, id }) => {
     try {
-      if (showDialog.show && showDialog.id) {
-        await axios.put(`/account/lock/LOCKED/${showDialog.id}`, {
+      if (showDialog.show) {
+        await axios.put(`/account/lock/${typeAccount}/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         handleCloseDialog();
         fetchData();
-        toast.success("🦄 Delete brand successfully!", {
+        toast.success("Change type account successfully!", {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -204,8 +222,11 @@ const AccountManage = () => {
   const handleCloseDialog = () => {
     setShowDialog({
       show: false,
-      id: null,
+      dataToEdit: {},
     });
+  };
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
   return (
     <>
@@ -309,7 +330,7 @@ const AccountManage = () => {
                       </span>
                       <span
                         className="text-2xl cursor-pointer hover:text-blue-500"
-                        onClick={() => handleLockTrue(item.id)}
+                        onClick={() => handleLockTrue(item)}
                       >
                         <CiLock className="w-8 h-5" />
                       </span>
@@ -330,13 +351,13 @@ const AccountManage = () => {
           </div>
         )}
       </div>
-      <DialogDelete
+      <DialogEditTypeAccount
         show={showDialog.show}
-        title="Account"
-        confirm={handleLock}
-        question="Lock"
-        cancel={handleCloseDialog}
+        dataToEdit={showDialog.dataToEdit}
+        handleCancelClick={handleCloseDialog}
+        handleChangeTypeAccount={handleLock}
       />
+      <DialogAlert show={showAlert} cancel={handleCloseAlert} />
       <DialogCEAccount
         show={showDialogCE.show}
         handleSubmitData={showDialogCE.action}

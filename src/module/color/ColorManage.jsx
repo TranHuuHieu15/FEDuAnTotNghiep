@@ -9,10 +9,17 @@ import { BsTrash3 } from "react-icons/bs";
 import { CiEdit } from "react-icons/ci";
 import { Button } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../../redux/features/authSlice";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice";
+import DialogAlert from "../../components/dialog/DialogAlert";
 
 const ColorManage = () => {
   const token = useSelector(selectCurrentToken);
+  const user = useSelector(selectCurrentUser);
+  const [showAlert, setShowAlert] = useState(false);
+
   const [colorData, setColorData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -45,13 +52,17 @@ const ColorManage = () => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
   const handleCreateTrue = () => {
-    setShowDialogCE({
-      show: true,
-      id: null,
-      isUpdate: false,
-      action: handleCreate,
-      dataToEdit: {},
-    });
+    if (user.path === 0) {
+      setShowDialogCE({
+        show: true,
+        id: null,
+        isUpdate: false,
+        action: handleCreate,
+        dataToEdit: {},
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
 
   const handleCreate = async (colorDto) => {
@@ -80,14 +91,18 @@ const ColorManage = () => {
     }
   };
   const handleUpdateTrue = (id) => {
-    const dataEdit = colorData.find((item) => item.id === id);
-    setShowDialogCE({
-      show: true,
-      id: id,
-      isUpdate: true,
-      action: handleUpdate,
-      dataToEdit: dataEdit,
-    });
+    if (user.path === 0) {
+      const dataEdit = colorData.find((item) => item.id === id);
+      setShowDialogCE({
+        show: true,
+        id: id,
+        isUpdate: true,
+        action: handleUpdate,
+        dataToEdit: dataEdit,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleUpdate = async (colorDto) => {
     try {
@@ -117,10 +132,14 @@ const ColorManage = () => {
   };
 
   const handleDeleteTrue = (id) => {
-    setShowDialog({
-      show: true,
-      id: id,
-    });
+    if (user.path === 0) {
+      setShowDialog({
+        show: true,
+        id: id,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleDelete = async () => {
     try {
@@ -164,6 +183,9 @@ const ColorManage = () => {
       show: false,
       id: null,
     });
+  };
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
   return (
     <>
@@ -221,6 +243,7 @@ const ColorManage = () => {
         title="Color"
         dataToEdit={showDialogCE.dataToEdit}
       />
+      <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>
   );
 };

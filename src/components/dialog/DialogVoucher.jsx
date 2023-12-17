@@ -19,13 +19,10 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher, total }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        //Sắp xếp voucher để voucher có thể sử dụng được lên trên
         const sortedVouchers = response.data.sort((a, b) => {
-          // Nơi voucher có thể sử dụng được lên trên
           if (a.minTotal <= total && b.minTotal > total) {
             return -1;
           }
-          // Nơi voucher không thể sử dụng được xuống dưới
           if (a.minTotal > total && b.minTotal <= total) {
             return 1;
           }
@@ -34,10 +31,9 @@ const DialogVoucher = ({ show, handleCloseVoucher, onUseVoucher, total }) => {
 
         setVoucherData(sortedVouchers);
       } catch (error) {
-        console.error(error);
+        setVoucherData([]);
       }
     };
-
     fetchVoucher();
   }, [total, token]);
 

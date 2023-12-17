@@ -16,7 +16,6 @@ import {
   UserCircleIcon,
   Cog6ToothIcon,
   InboxIcon,
-  PowerIcon,
 } from "@heroicons/react/24/solid";
 import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import React from "react";
@@ -33,57 +32,20 @@ const SideBar = () => {
     <>
       <Card className="w-full h-screen max-w-xs max-h-screen">
         <div className="flex items-center justify-center">
-          <img src={logo} alt="" className="h-28 w-28" />
+          <Link to="/admin">
+            <img src={logo} alt="" className="h-28 w-28" />
+          </Link>
         </div>
         <div className="overflow-auto scrollbar scrollbar-thin scrollbar-thumb-blue-gray-100 max-h-[calc(100vh-72px">
           <List className="px-5">
-            <Accordion
-              open={open === 1}
-              icon={
-                <ChevronDownIcon
-                  strokeWidth={2.5}
-                  className={`mx-auto h-4 w-4 transition-transform ${
-                    open === 1 ? "rotate-180" : ""
-                  }`}
-                />
-              }
-            >
-              <ListItem className="p-0" selected={open === 1}>
-                <AccordionHeader
-                  onClick={() => handleOpen(1)}
-                  className="p-3 border-b-0"
-                >
-                  <ListItemPrefix>
-                    <PresentationChartBarIcon className="w-5 h-5" />
-                  </ListItemPrefix>
-                  <Typography color="blue-gray" className="mr-auto font-normal">
-                    Dashboard
-                  </Typography>
-                </AccordionHeader>
+            <Link to="/admin">
+              <ListItem>
+                <ListItemPrefix>
+                  <PresentationChartBarIcon className="w-5 h-5" />
+                </ListItemPrefix>
+                Dashboard
               </ListItem>
-              <AccordionBody className="py-1">
-                <List className="p-0">
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                    </ListItemPrefix>
-                    Analytics
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                    </ListItemPrefix>
-                    Reporting
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                    </ListItemPrefix>
-                    Projects
-                  </ListItem>
-                </List>
-              </AccordionBody>
-            </Accordion>
+            </Link>
             <Accordion
               open={open === 2}
               icon={
@@ -174,6 +136,14 @@ const SideBar = () => {
                       Voucher
                     </ListItem>
                   </Link>
+                  <Link to="/admin/hashtag">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Hashtag
+                    </ListItem>
+                  </Link>
                   <Link to="/admin/discount">
                     <ListItem>
                       <ListItemPrefix>
@@ -188,6 +158,14 @@ const SideBar = () => {
                         <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
                       </ListItemPrefix>
                       Evaluate
+                    </ListItem>
+                  </Link>
+                  <Link to="/admin/color">
+                    <ListItem>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                      </ListItemPrefix>
+                      Color
                     </ListItem>
                   </Link>
                   <Link to="/admin/feedback">
@@ -229,12 +207,6 @@ const SideBar = () => {
                 <Cog6ToothIcon className="w-5 h-5" />
               </ListItemPrefix>
               Settings
-            </ListItem>
-            <ListItem>
-              <ListItemPrefix>
-                <PowerIcon className="w-5 h-5" />
-              </ListItemPrefix>
-              Log Out
             </ListItem>
           </List>
         </div>

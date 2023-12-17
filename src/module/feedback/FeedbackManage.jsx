@@ -3,11 +3,17 @@ import axios from "../../config/axios.js";
 import { toast } from "react-toastify";
 import DialogCEFeedback from "./DialogCEFeedback.jsx";
 import { CiEdit } from "react-icons/ci";
-import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice.jsx";
 import { useSelector } from "react-redux";
+import DialogAlert from "../../components/dialog/DialogAlert";
 
 const FeedbackManage = () => {
   const token = useSelector(selectCurrentToken);
+  const user = useSelector(selectCurrentUser);
+  const [showAlert, setShowAlert] = useState(false);
   const [feedbackData, setFeedbackData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -37,14 +43,18 @@ const FeedbackManage = () => {
   }, [showDialogCE]);
 
   const handleUpdateTrue = (id) => {
-    const dataEdit = feedbackData.find((item) => item.id === id);
-    setShowDialogCE({
-      show: true,
-      id: id,
-      isUpdate: true,
-      action: handleUpdate,
-      feedbackDataToEdit: dataEdit,
-    });
+    if (user.path === 0) {
+      const dataEdit = feedbackData.find((item) => item.id === id);
+      setShowDialogCE({
+        show: true,
+        id: id,
+        isUpdate: true,
+        action: handleUpdate,
+        feedbackDataToEdit: dataEdit,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleUpdate = async (FeedbackDto) => {
     try {
@@ -85,7 +95,9 @@ const FeedbackManage = () => {
       feedbackDataToEdit: {},
     });
   };
-
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
   return (
     <>
       <table className="w-full text-center table-auto">
@@ -142,6 +154,7 @@ const FeedbackManage = () => {
         title="Feedback"
         feedbackDataToEdit={showDialogCE.feedbackDataToEdit}
       />
+      <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>
   );
 };

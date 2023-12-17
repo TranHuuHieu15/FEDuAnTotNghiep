@@ -13,9 +13,11 @@ import { selectCurrentToken } from "../redux/features/authSlice";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 const VoucherPage = () => {
   const token = useSelector(selectCurrentToken);
+  const navigate = useNavigate();
   const [voucherData, setVoucherData] = useState([]);
 
   useEffect(() => {
@@ -32,9 +34,12 @@ const VoucherPage = () => {
       }
     };
     fetchData();
-  }, [token]);
+  }, []);
 
   const handleSave = async (voucherId) => {
+    if (!token) {
+      navigate("/login");
+    }
     const VoucherOfAccountDto = {
       voucherId: voucherId,
     };
@@ -86,21 +91,25 @@ const VoucherPage = () => {
             <div className="grid grid-cols-2 gap-5">
               {voucherData.map((voucher) => (
                 <Card
-                  className="w-full  bg border  mb-3 hover:duration-500 justify-center min-h-[170px]"
+                  className="w-full border hover:duration-500 justify-center min-h-[170px]"
                   key={voucher.id}
                 >
-                  <CardBody className="grid items-center grid-cols-5 gap-3 p-2">
-                    <div className="col-span-1">
+                  <CardBody className="grid items-center justify-center grid-cols-5 gap-3">
+                    <div className="col-span-2">
                       <img
                         src={voucher.image}
                         alt="anh"
-                        className="w-full max-w-[100px] max-h-[120px] object-cover"
+                        className="object-cover w-64"
                       />
                     </div>
-                    <div className="col-span-3">
-                      <div className="text-2xl">{voucher.name}</div>
-                      <div>{voucher.description}</div>
-                      <div className="text-xs text-red-900">
+                    <div className="col-span-2">
+                      <div className="text-xl font-medium font-eculid">
+                        {voucher.name}
+                      </div>
+                      <div className="text-lg font-eculid">
+                        {voucher.description}
+                      </div>
+                      <div className="text-sm text-red-900 font-eculid">
                         <span>Expiry: </span>
                         {moment(voucher.expirationDate).diff(
                           moment(),

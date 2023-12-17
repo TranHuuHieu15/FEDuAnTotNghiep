@@ -7,10 +7,17 @@ import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import DialogCEDiscount from "./DialogCEDiscount.jsx";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice.jsx";
+import DialogAlert from "../../components/dialog/DialogAlert";
 
 const DiscountManage = () => {
   const token = useSelector(selectCurrentToken);
+  const user = useSelector(selectCurrentUser);
+  const [showAlert, setShowAlert] = useState(false);
+
   const [discountData, setDiscountData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -31,6 +38,7 @@ const DiscountManage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(response);
       setDiscountData(response.data);
     } catch (error) {
       console.log(error);
@@ -43,13 +51,17 @@ const DiscountManage = () => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
   const handleCreateTrue = () => {
-    setShowDialogCE({
-      show: true,
-      id: null,
-      isUpdate: false,
-      action: handleCreate,
-      dataToEdit: {},
-    });
+    if (user.path === 0) {
+      setShowDialogCE({
+        show: true,
+        id: null,
+        isUpdate: false,
+        action: handleCreate,
+        dataToEdit: {},
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleCreate = async (data) => {
     try {
@@ -87,14 +99,18 @@ const DiscountManage = () => {
     }
   };
   const handleUpdateTrue = (id) => {
-    const dataEdit = discountData.find((item) => item.id === id);
-    setShowDialogCE({
-      show: true,
-      id: id,
-      isUpdate: true,
-      action: handleUpdate,
-      dataToEdit: dataEdit,
-    });
+    if (user.path === 0) {
+      const dataEdit = discountData.find((item) => item.id === id);
+      setShowDialogCE({
+        show: true,
+        id: id,
+        isUpdate: true,
+        action: handleUpdate,
+        dataToEdit: dataEdit,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleUpdate = async (data) => {
     try {
@@ -136,10 +152,14 @@ const DiscountManage = () => {
     }
   };
   const handleDeleteTrue = (id) => {
-    setShowDialog({
-      show: true,
-      id: id,
-    });
+    if (user.path === 0) {
+      setShowDialog({
+        show: true,
+        id: id,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleDelete = async () => {
     try {
@@ -184,7 +204,9 @@ const DiscountManage = () => {
       id: null,
     });
   };
-
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
   return (
     <>
       <Button
@@ -203,7 +225,6 @@ const DiscountManage = () => {
             <th className="px-6 py-4 font-medium text-gray-900">
               Expiration Date
             </th>
-            <th className="px-6 py-4 font-medium text-gray-900">Quantity</th>
             <th className="px-6 py-4 font-medium text-gray-900">Image</th>
             <th className="px-6 py-4 font-medium text-gray-900">Description</th>
             <th className="px-6 py-4 font-medium text-gray-900">Category</th>
@@ -222,9 +243,6 @@ const DiscountManage = () => {
                 </td>
                 <td className="p-2 font-medium text-gray-800">
                   {item.expirationDate}
-                </td>
-                <td className="p-2 font-medium text-gray-800">
-                  {item.quantity}
                 </td>
                 <td className="p-2 font-medium text-gray-800">
                   <img
@@ -273,6 +291,7 @@ const DiscountManage = () => {
         title="Discount"
         dataToEdit={showDialogCE.dataToEdit}
       />
+      <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>
   );
 };

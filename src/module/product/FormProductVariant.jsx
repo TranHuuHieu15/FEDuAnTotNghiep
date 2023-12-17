@@ -1,5 +1,5 @@
-// ProductVariantForm.jsx
-import React, { useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import Input from "../../components/input/Input";
@@ -43,7 +43,6 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
             return false; // Trường hợp khác không hợp lệ
         }),
         [`size-${index}`]: yup.string().required("Please choose size"),
-        // [`colorId-${index}`]: yup.string().required("Please choose color"),
         [`quantity-${index}`]: yup.number().required("Please enter quantity"),
         [`price-${index}`]: yup.number().required("Please enter price"),
     });
@@ -67,7 +66,6 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
     };
 
     const onSubmit = (data) => {
-
         if (!dynamicForm) return;
         setIsSaved(!isSaved);
         productVariant(data, index)

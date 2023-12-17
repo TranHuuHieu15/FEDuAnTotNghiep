@@ -1,5 +1,5 @@
-// ProductForm.jsx
-import React, { useEffect, useState } from "react";
+
+import  { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import Input from "../../components/input/Input";
@@ -54,6 +54,7 @@ const ProductForm = ({ category, onSubmitCallback }) => {
         gender: yup.string().required("Please enter product gender !"),
         categoryId: yup.string().required("Please enter product category !"),
         brandId: yup.string().required("Please enter product brands ! ok"),
+        description: yup.string().required("Please enter product description !"),
     })
         .required();
 

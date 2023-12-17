@@ -8,12 +8,14 @@ import { AiTwotoneDelete } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const ProductAddPage = () => {
     const [fields, setFields] = useState([]);
     const { reset: resetProductForm } = useForm();
     const [categories, setCategories] = useState([]);
     const [fileDatas, setFileDatas] = useState([]);
+    const navigate = useNavigate();
     const token = useSelector(selectCurrentToken);
 
     const [productDtoRequest, setProductDtoRequest] = useState({
@@ -84,10 +86,8 @@ const ProductAddPage = () => {
             const isDuplicate = prevProductDtoRequest.productVariantsDto.some((variant) => (
                 variant.colorId === data['colorId-' + index] && variant.size === data['size-' + index]
             ));
-
-            const length = productDtoRequest.productVariantsDto.length + 1;
-            // console.log(isDuplicate);
-
+            const productvariant = fields.find((item) => item.id === index);
+            const index2 = fields.indexOf(productvariant);
             if (existingIndex !== -1) {
                 // Nếu tồn tại, cập nhật dữ liệu
                 const updatedVariants = [...prevProductDtoRequest.productVariantsDto];
@@ -106,7 +106,7 @@ const ProductAddPage = () => {
             } else {
                 // Kiểm tra xem có trùng lặp không
                 if (isDuplicate) {
-                    toast.warning(`Sizes and colors already exist ! Please fix the form ${length}`, {
+                    toast.warning(`Sizes and colors already exist ! Please fix the form ${index2 + 1}`, {
                         position: "top-right",
                         autoClose: 3000,
                         hideProgressBar: false,
@@ -200,9 +200,6 @@ const ProductAddPage = () => {
             theme: "light",
         });
     };
-
-    console.log(productDtoRequest);
-
     const postData = async () => {
         const formData = new FormData();
         formData.append('productDtoRequest', JSON.stringify(productDtoRequest));
@@ -228,7 +225,7 @@ const ProductAddPage = () => {
                     progress: undefined,
                     theme: "light",
                 });
-                // history.push("/admin/product");
+                navigate("/admin/product");
                 setFields([]);
                 setFileDatas([]);
                 setProductDtoRequest({
@@ -261,11 +258,7 @@ const ProductAddPage = () => {
                     onSubmitCallback={handleProductFormSubmit}
                     onResetForm={resetProductForm}
                 />
-                {/* 
-                <div className="relative text-base font-regular px-4 py-4 text-black w-full bg-white  justify-start  rounded-none flex shadow">
-                    <span className="p-2 font-medium cursor-pointer" >add new ProductVariants</span>
-                </div> */}
-
+                
                 <div className="float-none w-full">
                     <div className="grid grid-cols-2 scrollbar scrollbar-thin border-spacing-y-1.5 mb-3 gap-3 w-full shadow-md rounded shadow-blue-gray-100 h-[350px] overflow-y-auto">
                         {fields.map((field) => (

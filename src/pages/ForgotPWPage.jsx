@@ -6,8 +6,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import { useVerifyEmailMutation } from "../redux/api/authApi";
+import ClipLoader from "react-spinners/ClipLoader";
+import { useState } from "react";
 
 const ForgotPWPage = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [verifyEmail] = useVerifyEmailMutation();
   const schema = yup
@@ -26,10 +29,12 @@ const ForgotPWPage = () => {
   const onSubmitHandler = async ({ email }) => {
     if (!isValid) return;
     try {
+      setLoading(true);
       const response = await verifyEmail({ email }).unwrap();
       if (response.result === true) {
         navigate("/checkmail");
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -85,7 +90,16 @@ const ForgotPWPage = () => {
                   className="w-[455px] bg-[#F7C59F]  text-gray-800"
                   disabled={isSubmitting}
                 >
-                  Get new password
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      size={15}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                  ) : (
+                    "Get new password"
+                  )}
                 </Button>
               </form>
             </div>

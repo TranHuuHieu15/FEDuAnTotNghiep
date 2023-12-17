@@ -8,8 +8,11 @@ import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 import PropTypes from "prop-types";
 import axios from "../../config/axios.js";
+import ClipLoader from "react-spinners/ClipLoader";
+import { useState } from "react";
 
 const AccountChangePassword = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const schema = yup
     .object({
@@ -42,6 +45,7 @@ const AccountChangePassword = () => {
       password: data.password,
     };
     try {
+      setLoading(true);
       if (!isValid) return;
       await axios.put("/account/change-password", lastData, {
         headers: {
@@ -63,6 +67,7 @@ const AccountChangePassword = () => {
         progress: undefined,
         theme: "light",
       });
+      setLoading(false);
     } catch (error) {
       toast.error("Update password fail!", {
         position: "top-right",
@@ -121,7 +126,16 @@ const AccountChangePassword = () => {
 
             <div className="mt-7">
               <Button className="bg-blue-gray-900" type="submit">
-                Update
+                {loading ? (
+                  <ClipLoader
+                    color="#fff"
+                    size={15}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                ) : (
+                  "Update"
+                )}
               </Button>
               <Button className="ml-5" outline="outlined">
                 Cancel
@@ -135,5 +149,6 @@ const AccountChangePassword = () => {
 };
 AccountChangePassword.propTypes = {
   isUpdate: PropTypes.bool,
+  loading: PropTypes.bool,
 };
 export default AccountChangePassword;

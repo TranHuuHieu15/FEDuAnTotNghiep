@@ -14,6 +14,7 @@ import {
 import DialogAlert from "../../components/dialog/DialogAlert";
 
 const VoucherManage = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const [showAlert, setShowAlert] = useState(false);
@@ -64,6 +65,7 @@ const VoucherManage = () => {
 
   const handleCreate = async (data) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show) {
         const formData = new FormData();
         typeof data.image === "string"
@@ -96,6 +98,7 @@ const VoucherManage = () => {
           theme: "light",
         });
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -117,6 +120,7 @@ const VoucherManage = () => {
   };
   const handleUpdate = async (data) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         const formData = new FormData();
         typeof data.image === "string"
@@ -153,6 +157,7 @@ const VoucherManage = () => {
           theme: "light",
         });
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -293,6 +298,7 @@ const VoucherManage = () => {
         cancel={handleCloseDialogCE}
         title="Voucher"
         dataToEdit={showDialogCE.dataToEdit}
+        loading={loading}
       />
       <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>

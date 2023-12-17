@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import Pagination from "../../components/pagination/Pagination";
 
 const OrderManage = () => {
+  const [loading, setLoading] = useState(false);
   const [orderData, setOrderData] = useState([]);
   const [selectTypeOrder, setSelectTypeOrder] = useState("");
   const token = useSelector(selectCurrentToken);
@@ -56,6 +57,7 @@ const OrderManage = () => {
 
   const handleChangeTypeOrder = async (data) => {
     try {
+      setLoading(true);
       await axios.put(`/order/update/${data.id}?typeOrder=${data.typeOrder}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -72,6 +74,7 @@ const OrderManage = () => {
         theme: "light",
       });
       setIsOrderUpdated(true);
+      setLoading(false);
     } catch (error) {
       if (error) {
         toast.error("Failed to update order. Please try again.", {
@@ -218,6 +221,7 @@ const OrderManage = () => {
         dataToEdit={isEditTypeOrder.dataToEdit}
         handleCancelClick={handleCancelEdit}
         handleChangeTypeOrder={handleChangeTypeOrder}
+        loading={loading}
       />
     </>
   );

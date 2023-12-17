@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import DialogAlert from "../../components/dialog/DialogAlert";
 
 const FeedbackManage = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const [showAlert, setShowAlert] = useState(false);
@@ -58,6 +59,7 @@ const FeedbackManage = () => {
   };
   const handleUpdate = async (FeedbackDto) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         await axios.put(
           `/feedback/update/${showDialogCERef.current.id}`,
@@ -80,6 +82,7 @@ const FeedbackManage = () => {
           progress: undefined,
           theme: "light",
         });
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -153,6 +156,7 @@ const FeedbackManage = () => {
         cancel={handleCloseDialogCE}
         title="Feedback"
         feedbackDataToEdit={showDialogCE.feedbackDataToEdit}
+        loading={loading}
       />
       <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>

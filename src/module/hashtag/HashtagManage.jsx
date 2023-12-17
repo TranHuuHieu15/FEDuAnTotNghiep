@@ -14,6 +14,7 @@ import {
 import DialogAlert from "../../components/dialog/DialogAlert";
 
 const HashtagManage = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const [showAlert, setShowAlert] = useState(false);
@@ -64,6 +65,7 @@ const HashtagManage = () => {
 
   const handleCreate = async (hashtagDto) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show) {
         await axios.post("/hashtag/create", hashtagDto, {
           headers: {
@@ -82,6 +84,7 @@ const HashtagManage = () => {
           progress: undefined,
           theme: "light",
         });
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -103,6 +106,7 @@ const HashtagManage = () => {
   };
   const handleUpdate = async (hashtagDto) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         await axios.put(
           `/hashtag/update/${showDialogCERef.current.id}`,
@@ -125,6 +129,7 @@ const HashtagManage = () => {
           progress: undefined,
           theme: "light",
         });
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -241,6 +246,7 @@ const HashtagManage = () => {
         cancel={handleCloseDialogCE}
         title="Hashtag"
         hashtagDataToEdit={showDialogCE.hashtagDataToEdit}
+        loading={loading}
       />
       <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>

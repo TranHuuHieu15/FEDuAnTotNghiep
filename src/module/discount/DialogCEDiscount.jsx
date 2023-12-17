@@ -17,6 +17,7 @@ import ImageUpload from "../../components/imageUpload/ImageUpload";
 import Select from "../../components/select/Select";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const DialogCEDiscount = ({
   show,
@@ -25,6 +26,7 @@ const DialogCEDiscount = ({
   cancel,
   title,
   dataToEdit,
+  loading,
 }) => {
   //* Lấy dữ liệu từ category
   const [categories, setCategories] = useState([]);
@@ -70,15 +72,6 @@ const DialogCEDiscount = ({
         })
         .typeError("Please enter a valid number for discount")
         .required("Please enter discount"),
-      quantity: yup
-        .number()
-        .transform((originalValue) => {
-          const value = parseFloat(originalValue);
-          return isNaN(value) || originalValue === "" ? undefined : value;
-        })
-        .typeError("Please enter a valid number for quantity")
-        .required("Please enter quantity"),
-
       registerDate: yup
         .date()
         .transform((originalValue) => {
@@ -109,7 +102,6 @@ const DialogCEDiscount = ({
         discount: "",
         registerDate: "",
         expirationDate: "",
-        quantity: "",
         description: "",
         categoryId: "",
       });
@@ -124,7 +116,6 @@ const DialogCEDiscount = ({
       discount: "",
       registerDate: "",
       expirationDate: "",
-      quantity: "",
       description: "",
       categoryId: "",
     });
@@ -161,23 +152,15 @@ const DialogCEDiscount = ({
                   errors={errors}
                 />
                 <Input
-                  type="number"
-                  name="quantity"
-                  label="Quantity"
-                  className="w-full"
+                  type="date"
+                  name="registerDate"
+                  label="Register Date"
+                  className="w-full mt-3"
                   control={control}
                   errors={errors}
                 />
               </div>
               <div className="grid gap-3">
-                <Input
-                  type="date"
-                  name="registerDate"
-                  label="Register Date"
-                  className="w-full"
-                  control={control}
-                  errors={errors}
-                />
                 <Input
                   type="date"
                   name="expirationDate"
@@ -221,7 +204,16 @@ const DialogCEDiscount = ({
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  Submit
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      size={15}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </div>
             </DialogFooter>
@@ -239,6 +231,7 @@ DialogCEDiscount.propTypes = {
   show: PropTypes.bool,
   title: PropTypes.string,
   dataToEdit: PropTypes.object,
+  loading: PropTypes.bool,
 };
 
 export default DialogCEDiscount;

@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import axios from "../../config/axios.js";
 
-const AccountInfo = () => {
+const AccountChangePassword = () => {
   const dispatch = useDispatch();
   const token = useSelector(selectCurrentToken);
   const schema = yup
@@ -141,7 +141,7 @@ const AccountInfo = () => {
     </>
   );
 };
-AccountInfo.propTypes = {
+AccountChangePassword.propTypes = {
   isUpdate: PropTypes.bool,
 };
-export default AccountInfo;
+export default AccountChangePassword;

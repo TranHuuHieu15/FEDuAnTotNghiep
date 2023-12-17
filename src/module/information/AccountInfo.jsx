@@ -53,7 +53,7 @@ const AccountInfo = () => {
       formData.append("birthday", data.birthday);
       formData.append("address", data.address);
       formData.append("sex", data.sex);
-      updateInfo(formData).unwrap();
+      await updateInfo(formData).unwrap();
       const formattedBirthday = data.birthday.toISOString().split("T")[0];
 
       const userInfo = {
@@ -183,13 +183,15 @@ const AccountInfo = () => {
               ></RadioButton>
             </div>
             <div className="mt-2">
-              <Button
-                className="bg-blue-gray-900"
-                type="submit"
-                disabled={!isDirty}
-              >
-                Update
-              </Button>
+              {user.path === 2 && (
+                <Button
+                  className="bg-blue-gray-900"
+                  type="submit"
+                  disabled={!isDirty}
+                >
+                  Update
+                </Button>
+              )}
             </div>
           </div>
         </form>

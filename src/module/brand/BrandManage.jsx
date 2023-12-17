@@ -36,6 +36,8 @@ const BrandManage = () => {
         },
       });
       setBrandData(response.data);
+      const totalPages = Math.ceil(response["all-item"] / response.size);
+      setTotalPages(totalPages); // Cập nhật tổng số trang
     } catch (error) {
       console.log(error);
     }

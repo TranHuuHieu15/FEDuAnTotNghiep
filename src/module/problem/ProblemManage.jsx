@@ -7,10 +7,16 @@ import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import DialogCEProblem from "./DialogCEProblem.jsx";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice.jsx";
+import DialogAlert from "../../components/dialog/DialogAlert";
 
 const ProblemManage = () => {
   const token = useSelector(selectCurrentToken);
+  const user = useSelector(selectCurrentUser);
+  const [showAlert, setShowAlert] = useState(false);
   const [problemData, setProblemData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -43,13 +49,17 @@ const ProblemManage = () => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
   const handleCreateTrue = () => {
-    setShowDialogCE({
-      show: true,
-      id: null,
-      isUpdate: false,
-      action: handleCreate,
-      problemDataToEdit: {},
-    });
+    if (user.path === 0) {
+      setShowDialogCE({
+        show: true,
+        id: null,
+        isUpdate: false,
+        action: handleCreate,
+        problemDataToEdit: {},
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleCreate = async (paymentDto) => {
     try {
@@ -77,14 +87,18 @@ const ProblemManage = () => {
     }
   };
   const handleUpdateTrue = (id) => {
-    const dataEdit = problemData.find((item) => item.id === id);
-    setShowDialogCE({
-      show: true,
-      id: id,
-      isUpdate: true,
-      action: handleUpdate,
-      problemDataToEdit: dataEdit,
-    });
+    if (user.path === 0) {
+      const dataEdit = problemData.find((item) => item.id === id);
+      setShowDialogCE({
+        show: true,
+        id: id,
+        isUpdate: true,
+        action: handleUpdate,
+        problemDataToEdit: dataEdit,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleUpdate = async (problemDto) => {
     try {
@@ -116,10 +130,14 @@ const ProblemManage = () => {
     }
   };
   const handleDeleteTrue = (id) => {
-    setShowDialog({
-      show: true,
-      id: id,
-    });
+    if (user.path === 0) {
+      setShowDialog({
+        show: true,
+        id: id,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleDelete = async () => {
     try {
@@ -162,7 +180,9 @@ const ProblemManage = () => {
       id: null,
     });
   };
-
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
   return (
     <>
       <Button
@@ -217,6 +237,7 @@ const ProblemManage = () => {
         title="Problem"
         dataToEdit={showDialogCE.dataToEdit}
       />
+      <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>
   );
 };

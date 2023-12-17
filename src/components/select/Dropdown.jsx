@@ -6,12 +6,13 @@ import {
   MenuList,
 } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { logout } from "../../redux/features/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { logout, selectCurrentUser } from "../../redux/features/authSlice";
 import avatar from "../../assets/images/avatar.jpg";
 import PropTypes from "prop-types";
 
-const Dropdown = ({ user }) => {
+const Dropdown = () => {
+  const user = useSelector(selectCurrentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -32,7 +33,7 @@ const Dropdown = ({ user }) => {
         </MenuHandler>
         <MenuList>
           <MenuItem>
-            {user && user?.path === 0 ? (
+            {user && user?.path === 2 ? (
               <Link to="/user">My Profile</Link>
             ) : (
               <Link to="/admin/profile">My Profile</Link>

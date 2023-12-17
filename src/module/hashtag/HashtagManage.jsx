@@ -7,10 +7,16 @@ import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice.jsx";
+import DialogAlert from "../../components/dialog/DialogAlert";
 
 const HashtagManage = () => {
   const token = useSelector(selectCurrentToken);
+  const user = useSelector(selectCurrentUser);
+  const [showAlert, setShowAlert] = useState(false);
   const [hashtagData, setHashtagData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -43,13 +49,17 @@ const HashtagManage = () => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
   const handleCreateTrue = () => {
-    setShowDialogCE({
-      show: true,
-      id: null,
-      isUpdate: false,
-      action: handleCreate,
-      hashtagDataToEdit: {},
-    });
+    if (user.path === 0) {
+      setShowDialogCE({
+        show: true,
+        id: null,
+        isUpdate: false,
+        action: handleCreate,
+        hashtagDataToEdit: {},
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
 
   const handleCreate = async (hashtagDto) => {
@@ -78,14 +88,18 @@ const HashtagManage = () => {
     }
   };
   const handleUpdateTrue = (id) => {
-    const dataEdit = hashtagData.find((item) => item.id === id);
-    setShowDialogCE({
-      show: true,
-      id: id,
-      isUpdate: true,
-      action: handleUpdate,
-      hashtagDataToEdit: dataEdit,
-    });
+    if (user.path === 0) {
+      const dataEdit = hashtagData.find((item) => item.id === id);
+      setShowDialogCE({
+        show: true,
+        id: id,
+        isUpdate: true,
+        action: handleUpdate,
+        hashtagDataToEdit: dataEdit,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleUpdate = async (hashtagDto) => {
     try {
@@ -118,10 +132,14 @@ const HashtagManage = () => {
   };
 
   const handleDeleteTrue = (id) => {
-    setShowDialog({
-      show: true,
-      id: id,
-    });
+    if (user.path === 0) {
+      setShowDialog({
+        show: true,
+        id: id,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleDelete = async () => {
     try {
@@ -164,6 +182,9 @@ const HashtagManage = () => {
       show: false,
       id: null,
     });
+  };
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
   return (
     <>
@@ -221,6 +242,7 @@ const HashtagManage = () => {
         title="Hashtag"
         hashtagDataToEdit={showDialogCE.hashtagDataToEdit}
       />
+      <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>
   );
 };

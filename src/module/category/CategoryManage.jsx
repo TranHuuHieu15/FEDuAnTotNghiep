@@ -7,12 +7,17 @@ import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
 import DialogDelete from "../../components/dialog/DialogDelete.jsx";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import {
+  selectCurrentToken,
+  selectCurrentUser,
+} from "../../redux/features/authSlice.jsx";
+import DialogAlert from "../../components/dialog/DialogAlert";
 import Pagination from "../../components/pagination/Pagination.jsx";
-
 
 const CategoryManage = () => {
   const token = useSelector(selectCurrentToken);
+  const user = useSelector(selectCurrentUser);
+  const [showAlert, setShowAlert] = useState(false);
   const [categoryData, setCategoryData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0); // Thêm state trang hiện tại
   const [totalPages, setTotalPages] = useState(0); // Thêm state tổng số trang
@@ -55,13 +60,17 @@ const CategoryManage = () => {
   };
 
   const handleCreateTrue = () => {
-    setShowDialogCE({
-      show: true,
-      id: null,
-      isUpdate: false,
-      action: handleCreate,
-      categoryDataToEdit: {},
-    });
+    if (user.path === 0) {
+      setShowDialogCE({
+        show: true,
+        id: null,
+        isUpdate: false,
+        action: handleCreate,
+        categoryDataToEdit: {},
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
 
   const handleCreate = async (categoryDto) => {
@@ -90,14 +99,18 @@ const CategoryManage = () => {
     }
   };
   const handleUpdateTrue = (id) => {
-    const dataEdit = categoryData.find((item) => item.id === id);
-    setShowDialogCE({
-      show: true,
-      id: id,
-      isUpdate: true,
-      action: handleUpdate,
-      categoryDataToEdit: dataEdit,
-    });
+    if (user.path === 0) {
+      const dataEdit = categoryData.find((item) => item.id === id);
+      setShowDialogCE({
+        show: true,
+        id: id,
+        isUpdate: true,
+        action: handleUpdate,
+        categoryDataToEdit: dataEdit,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleUpdate = async (categoryDto) => {
     try {
@@ -130,10 +143,14 @@ const CategoryManage = () => {
   };
 
   const handleDeleteTrue = (id) => {
-    setShowDialog({
-      show: true,
-      id: id,
-    });
+    if (user.path === 0) {
+      setShowDialog({
+        show: true,
+        id: id,
+      });
+    } else {
+      setShowAlert(true);
+    }
   };
   const handleDelete = async () => {
     try {
@@ -178,6 +195,9 @@ const CategoryManage = () => {
       show: false,
       id: null,
     });
+  };
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
   return (
     <>
@@ -242,6 +262,7 @@ const CategoryManage = () => {
         title="Category"
         categoryDataToEdit={showDialogCE.categoryDataToEdit}
       />
+      <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>
   );
 };

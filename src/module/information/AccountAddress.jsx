@@ -11,10 +11,12 @@ import {
   selectCurrentUser,
 } from "../../redux/features/authSlice.jsx";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const AccountAddress = () => {
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
+  const navigate = useNavigate();
   const [deliveryAddressData, setDeliveryAddressData] = useState([]);
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
@@ -41,7 +43,11 @@ const AccountAddress = () => {
     }
   };
   useEffect(() => {
-    fetchData();
+    if (!token) {
+      navigate("/login");
+    } else {
+      fetchData();
+    }
   }, [token]);
   useEffect(() => {
     showDialogCERef.current = showDialogCE;

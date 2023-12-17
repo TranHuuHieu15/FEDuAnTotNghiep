@@ -40,10 +40,9 @@ const DialogDeliveryAddressPayment = ({
         });
         setDeliveryAddressData(response.data);
       } catch (error) {
-        console.error(error);
+        setDeliveryAddressData([]);
       }
     };
-
     fetchData();
   }, [token]);
   const handleUseDeliveryAddress = (usedDeliveryAddress) => {

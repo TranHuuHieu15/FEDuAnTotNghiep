@@ -32,8 +32,15 @@ const ContactPage = () => {
 
   const schema = yup
     .object({
-      email: yup.string().required("Please enter your email"),
-      phoneNumber: yup.string().required("Please enter your phone number"),
+      email: yup
+        .string()
+        .email("Invalid email!")
+        .required("Please enter your email"),
+      phoneNumber: yup
+        .string()
+        .min(10)
+        .max(10)
+        .required("Please enter your phone number"),
       description: yup.string().required("Please enter description"),
     })
     .required();
@@ -95,6 +102,7 @@ const ContactPage = () => {
             <form onSubmit={handleSubmit(onSubmitHandler)}>
               <div className="flex flex-col gap-5">
                 <Input
+                  type="email"
                   name="email"
                   label="Email"
                   control={control}

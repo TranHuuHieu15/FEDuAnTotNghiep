@@ -15,9 +15,11 @@ import {
   loginSuccess,
 } from "../redux/features/authSlice";
 import { toast } from "react-toastify";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const SignInPage = () => {
+  const [loading, setLoading] = useState(false);
   const { search } = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -60,6 +62,7 @@ const SignInPage = () => {
   const handleLogin = async (data) => {
     dispatch(loginStart());
     try {
+      setLoading(true);
       const response = await loginMutation(data).unwrap();
       const userInfo = {
         username: response?.data.username,
@@ -99,6 +102,7 @@ const SignInPage = () => {
         progress: undefined,
         theme: "light",
       });
+      setLoading(false);
     } catch (error) {
       if (error.status == 400) {
         toast.error("Username or password is incorrect", {
@@ -209,7 +213,16 @@ const SignInPage = () => {
                       className="w-[355px] bg-[#F7C59F] text-gray-800"
                       disabled={isSubmitting}
                     >
-                      Sign in
+                      {loading ? (
+                        <ClipLoader
+                          color="#fff"
+                          size={15}
+                          aria-label="Loading Spinner"
+                          data-testid="loader"
+                        />
+                      ) : (
+                        "Sign In"
+                      )}
                     </Button>
                   </div>
                   <div className="flex items-center justify-center space-x-3">

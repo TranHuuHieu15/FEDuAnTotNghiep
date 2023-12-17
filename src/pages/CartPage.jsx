@@ -3,6 +3,7 @@ import SiteLayout from "../layout/SiteLayout";
 import CartList from "../components/list/CartList";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { CarouselTransition } from "../components/carousel/Carousel";
 const CartPage = () => {
   const cartData = useSelector((state) => state.cart.products);
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const CartPage = () => {
   return (
     <>
       <SiteLayout>
+        <CarouselTransition></CarouselTransition>
         <div className="flex flex-col items-center justify-center">
           <div className="flex gap-20">
             <div className="flex flex-col items-center justify-center">

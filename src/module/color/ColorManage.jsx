@@ -207,7 +207,15 @@ const ColorManage = () => {
           {colorData.length > 0 &&
             colorData.map((item) => (
               <tr key={item.id}>
-                <td className="p-2 font-medium text-gray-800">{item.id}</td>
+                <td className="flex items-center justify-center p-2 font-medium text-gray-800">
+                  <div
+                    className="w-12 h-12 rounded-full"
+                    style={{
+                      backgroundColor: item.id,
+                      boxShadow: "0 0 0 1px rgba(0, 0, 0, 0.1)",
+                    }}
+                  ></div>
+                </td>
                 <td className="p-2">{item.name}</td>
                 <td className="p-2">
                   <span className="flex items-center justify-center gap-3">

@@ -36,7 +36,7 @@ const AccountInfo = () => {
       fullName: user.fullName,
       email: user.email,
       phoneNumber: user.phoneNumber,
-      birthday: user.birthday,
+      birthday: new Date(user.birthday).toLocaleDateString("en-CA"),
       address: user.address,
       sex: user.sex,
     },
@@ -47,20 +47,24 @@ const AccountInfo = () => {
       const formData = new FormData();
       typeof data.image === "string"
         ? formData.append("image", data.image)
-        : formData.append("imageFile", data.image);
+        : typeof data.image === "object" && data.image !== null
+        ? formData.append("imageFile", data.image)
+        : formData.append("image", data.image);
       formData.append("fullName", data.fullName);
       formData.append("phoneNumber", data.phoneNumber);
       formData.append("birthday", data.birthday);
       formData.append("address", data.address);
       formData.append("sex", data.sex);
       await updateInfo(formData).unwrap();
-      const formattedBirthday = data.birthday.toISOString().split("T")[0];
-
+      const localDate = new Date(data.birthday);
+      const formattedBirthday = localDate.toLocaleDateString("en-US");
       const userInfo = {
         image:
           typeof data.image === "string"
             ? data.image
-            : URL.createObjectURL(data.image),
+            : typeof data.image === "object" && data.image !== null
+            ? URL.createObjectURL(data.image)
+            : null,
         username: user.username,
         typeAccount: user.typeAccount,
         path: user.path,
@@ -156,12 +160,14 @@ const AccountInfo = () => {
               control={control}
               errors={errors}
             />
-            <Textarea
-              name="address"
-              label="Address"
-              control={control}
-              errors={errors}
-            />
+            {(user?.path === 0 || user?.path === 1) && (
+              <Textarea
+                name="address"
+                label="Address"
+                control={control}
+                errors={errors}
+              />
+            )}
 
             <div className="flex items-center gap-4">
               <p className="text-gray-600">Gender</p>

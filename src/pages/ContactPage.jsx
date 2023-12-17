@@ -137,8 +137,7 @@ const ContactPage = () => {
               <div className="flex flex-col gap-2">
                 <span className="text-xl text-blue-gray-700">Address</span>
                 <p className="text-gray-600 text-md">
-                  Coza Store Center 8th floor, 379 Hudson St, New York, NY 10018
-                  US
+                  Hoa Khanh Bac, Lien Chieu, Da Nang
                 </p>
               </div>
             </div>
@@ -146,14 +145,14 @@ const ContactPage = () => {
               <BsTelephone className="w-6 h-6 text-blue-gray-700" />
               <div className="flex flex-col gap-2">
                 <span className="text-xl text-blue-gray-700">Lets Talk</span>
-                <p className="text-blue-300 text-md">+1 800 1236879</p>
+                <p className="text-blue-300 text-md">+84 886 004 864</p>
               </div>
             </div>
             <div className="flex gap-3">
               <AiOutlineMail className="w-6 h-6 text-blue-gray-700" />
               <div className="flex flex-col gap-2">
                 <span className="text-xl text-blue-gray-700">Sale Support</span>
-                <p className="text-blue-300 text-md">contact@example.com</p>
+                <p className="text-blue-300 text-md">adtiembanh@gmail.com</p>
               </div>
             </div>
           </div>

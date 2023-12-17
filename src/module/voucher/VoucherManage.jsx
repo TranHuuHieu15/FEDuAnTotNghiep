@@ -220,7 +220,7 @@ const VoucherManage = () => {
       >
         Add new voucher
       </Button>
-      <table className="w-full text-center table-auto">
+      <table className="w-full table-auto text-start">
         <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
           <tr>
             <th className="px-6 py-4 font-medium text-gray-900">Image</th>
@@ -249,11 +249,7 @@ const VoucherManage = () => {
             voucherData.map((item) => (
               <tr key={item.id}>
                 <td className="p-2 font-medium text-gray-800">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    style={{ width: "70px" }}
-                  />
+                  <img src={item.image} alt={item.name} className="h-24 w-96" />
                 </td>
                 <td className="p-2">{item.name}</td>
                 <td className="p-2">{item.discount}</td>

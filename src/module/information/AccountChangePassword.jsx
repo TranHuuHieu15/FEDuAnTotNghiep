@@ -6,13 +6,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
-import { updateUserInfo } from "../../redux/features/authSlice.jsx";
-import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import axios from "../../config/axios.js";
 
 const AccountChangePassword = () => {
-  const dispatch = useDispatch();
   const token = useSelector(selectCurrentToken);
   const schema = yup
     .object({
@@ -51,11 +48,6 @@ const AccountChangePassword = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      dispatch(
-        updateUserInfo({
-          password: data.password,
-        })
-      );
       reset({
         oldPassword: "",
         newPassword: "",

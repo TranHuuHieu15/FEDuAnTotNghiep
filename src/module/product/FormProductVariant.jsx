@@ -9,17 +9,18 @@ import ImageUpload from "../../components/imageUpload/ImageUpload";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PropTypes from "prop-types";
 import axios from "../../config/axios.js";
-import Select from "../../components/select/Select.jsx";
+import Color from "../../components/color/Color.jsx";
 
 const FormProductVariant = ({ index, onSubmitCallback }) => {
   const [colors, setColors] = useState([]);
+  const [color, setColor] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     const fetchColors = async () => {
       try {
         const response = await axios.get("/color");
-        setColors(response.data);
+        setColors(response.data.map((color) => color.id));
       } catch (error) {
         console.error("Error fetching colors:", error);
       }
@@ -44,9 +45,9 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
         return false; // Trường hợp khác không hợp lệ
       }),
     [`size-${index}`]: yup.string().required("Please choose size"),
-    [`colorId-${index}`]: yup.string().required("Please choose color"),
-    [`quantity-${index}`]: yup.string().required("Please enter quantity"),
-    [`price-${index}`]: yup.string().required("Please enter price"),
+    // [`colorId-${index}`]: yup.string().required("Please choose color"),
+    [`quantity-${index}`]: yup.number().required("Please enter quantity"),
+    [`price-${index}`]: yup.number().required("Please enter price"),
   });
 
   const {
@@ -58,89 +59,108 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
   });
 
   const productVariant = (data, index) => {
-    onSubmitCallback(data, index); // Truyền dữ liệu về component gọi ProductVariantForm
+    if (isSaved === true) return;
+    const lastData = {
+      ...data,
+      [`colorId-${index}`]: color,
+    };
+    onSubmitCallback(lastData, index);
+    // Truyền dữ liệu về component gọi ProductVariantForm
   };
 
-  const handleChangeSave = () => {
+  const onSubmit = (data) => {
     if (!dynamicForm) return;
     setIsSaved(!isSaved);
+    productVariant(data, index);
+  };
+
+  const handleColorChange = (color) => {
+    setColor(color);
   };
 
   return (
     <>
       <form
-        onSubmit={handleSubmit((data) => productVariant(data, index))}
-        className="flex flex-row items-center"
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid items-center justify-center"
       >
-        <ImageUpload
-          name={`image-${index}`}
-          className="w-full"
-          control={dynamicFormControl}
-          errors={dynamicFormErrors}
-          disabled={isSaved}
-        />
-        <div className="flex flex-col gap-3 p-1">
-          <div className="flex flex-row gap-3">
-            <SelectDefault
-              mainClassName="flex flex-col"
-              className2="text-sm ml-1 font-normal"
-              className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
-              title="Size"
-              selectDefault="Select size"
-              name={`size-${index}`}
-              options={[
-                { id: 0, name: "S", value: "S" },
-                { id: 1, name: "M", value: "M" },
-              ]}
-              control={dynamicFormControl}
-              errors={dynamicFormErrors}
-              disabled={isSaved}
-            />
-            <Select
-              mainClassName="flex flex-col"
-              className2="text-sm ml-1 font-normal"
-              className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
-              title="Color"
-              selectDefault="Select color"
-              name={`colorId-${index}`} // Đặt tên khác nhau cho từng biểu mẫu động
-              control={dynamicFormControl}
-              errors={dynamicFormErrors}
-              options={colors}
-              disabled={isSaved}
-            />
-          </div>
-          <div className="flex flex-row gap-28">
-            <Input
-              label="Quantity"
-              name={`quantity-${index}`}
-              placeholder="Enter quantity product variant"
-              className="w-[100px]"
-              control={dynamicFormControl}
-              errors={dynamicFormErrors}
-              disabled={isSaved}
-            />
-            <Input
-              label="Price"
-              name={`price-${index}`}
-              placeholder="Enter price product variant"
-              className="w-20"
+        <div className="grid grid-row items-center justify-center gap-3">
+          <div className="grip-col">
+            <ImageUpload
+              name={`image-${index}`}
+              className="w-full"
               control={dynamicFormControl}
               errors={dynamicFormErrors}
               disabled={isSaved}
             />
           </div>
-        </div>
-        <div className="p-2 gap-3">
-          <div className="p-1">
-            <div className="p-1">
-              <Button
-                className="w-[100px]"
-                type="submit"
-                onClick={handleChangeSave}
-              >
-                {isSaved ? "Edit" : "Save"}
-              </Button>
+          <div className="grid grid-flow-col">
+            <div className="flex flex-col gap-3 p-1">
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col">
+                  <div className="grid grid-flow-col gap-3">
+                    <Input
+                      label="Quantity"
+                      name={`quantity-${index}`}
+                      placeholder="Enter quantity product variant"
+                      className="w-full"
+                      control={dynamicFormControl}
+                      errors={dynamicFormErrors}
+                      disabled={isSaved}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 items-end gap-3">
+                    <Input
+                      label="Price"
+                      name={`price-${index}`}
+                      placeholder="Enter price product variant"
+                      className=""
+                      control={dynamicFormControl}
+                      errors={dynamicFormErrors}
+                      disabled={isSaved}
+                    />
+                    <SelectDefault
+                      mainClassName=""
+                      className2="text-sm ml-1 font-normal"
+                      className="p-2 rounded-lg border-blue-gray-300 w-full"
+                      title="Size"
+                      selectDefault="Select size"
+                      name={`size-${index}`}
+                      options={[
+                        { id: 0, name: "S", value: "S" },
+                        { id: 1, name: "M", value: "M" },
+                        { id: 2, name: "L", value: "L" },
+                        { id: 3, name: "XL", value: "XL" },
+                        { id: 4, name: "XXL", value: "XXL" },
+                      ]}
+                      control={dynamicFormControl}
+                      errors={dynamicFormErrors}
+                      disabled={isSaved}
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <div className="text-sm font-normal">Color:</div>
+                  <div className="flex">
+                    <Color
+                      color={[]}
+                      name={`colorId-${index}`}
+                      selectedColor={color}
+                      availableColors={colors}
+                      onColorChange={handleColorChange}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
+          <div className="p-2 flex items-center justify-center">
+            <Button
+              className="w-[100px] items-center justify-end"
+              type="submit"
+            >
+              {isSaved ? "Edit" : "Save"}
+            </Button>
           </div>
         </div>
       </form>

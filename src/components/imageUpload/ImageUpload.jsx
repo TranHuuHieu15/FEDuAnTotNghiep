@@ -39,11 +39,9 @@ const ImageUpload = ({
             src={
               isUpdate && typeof value === "string"
                 ? value
-                : typeof value === "object" && value instanceof File
-                ? URL.createObjectURL(value)
-                : imageAvail // Đặt một hình ảnh mặc định nếu value không phải là chuỗi hoặc File
+                : URL.createObjectURL(value)
             }
-            alt=""
+            alt="Image available"
             className={`object-cover rounded-md ${size}`}
           />
         ) : (

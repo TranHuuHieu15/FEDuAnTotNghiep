@@ -49,11 +49,11 @@ const ProductForm = ({ category, onSubmitCallback }) => {
           }
           return false;
         }),
-      name: yup.string().required("Please enter product name"),
-      season: yup.string().required("Please enter product season"),
-      gender: yup.string().required("Please enter product gender"),
-      categoryId: yup.string().required("Please enter product category"),
-      brandId: yup.string().required("Please enter product brand"),
+      name: yup.string().required("Please enter product name !"),
+      season: yup.string().required("Please enter product season !"),
+      gender: yup.string().required("Please enter product gender !"),
+      categoryId: yup.string().required("Please enter product category !"),
+      brandId: yup.string().required("Please enter product brands ! ok"),
     })
     .required();
 
@@ -61,7 +61,6 @@ const ProductForm = ({ category, onSubmitCallback }) => {
     formState: { errors, isValid: dynamicForm },
     control,
     handleSubmit: handleSubmit,
-    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -138,118 +137,133 @@ const ProductForm = ({ category, onSubmitCallback }) => {
   };
 
   return (
-    <div className="flex-none w-[500px]">
+    <div className="flex rounded w-full p-10">
       <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <div className="flex flex-col gap-3 items-center">
-          <ImageUpload
-            name="image"
-            className="w-full"
-            control={control}
-            errors={errors}
-            disabled={isSaved}
-          />
-          <Input
-            label="Name"
-            name="name"
-            placeholder="Enter name product"
-            className="w-[70%]"
-            control={control}
-            errors={errors}
-            disabled={isSaved}
-          />
-          <div className="flex flex-row items-center justify-center gap-3">
-            <SelectDefault
-              mainClassName="flex flex-col"
-              className2="text-sm ml-1 font-normal"
-              className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
-              selectDefault="Select season"
-              title="Season"
-              name="season"
-              options={typeSeason}
+        <div className="flex flex-row gap-3">
+          <div className="flex-col p-2">
+            <ImageUpload
+              name="image"
+              className="w-[200px]"
               control={control}
               errors={errors}
               disabled={isSaved}
-            />
-            <SelectDefault
-              mainClassName="flex flex-col"
-              className2="text-sm ml-1 font-normal"
-              className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
-              selectDefault="Select gender"
-              title="Gender"
-              name="gender"
-              options={typeGender}
-              control={control}
-              errors={errors}
-              disabled={isSaved}
+              size="w-[500px] h-[300px]"
             />
           </div>
-          <div className="flex flex-row items-center justify-center gap-3">
-            <Select
-              mainClassName="flex flex-col"
-              className2="text-sm ml-1 font-normal"
-              className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
-              selectDefault="Select category"
-              title="Category"
-              name="categoryId"
+          {/* <ImageUpload
+                        name="image"
+                        className="w-full"
+                        control={control}
+                        errors={errors}
+                        disabled={isSaved}
+                    /> */}
+          <div className="flex flex-col min-w-[635px] max-w-[635px]">
+            <Input
+              label="Name"
+              name="name"
+              placeholder="Enter name product"
+              className="w-full p-2"
               control={control}
               errors={errors}
-              options={category}
               disabled={isSaved}
             />
-            <Select
-              mainClassName="flex flex-col"
-              className2="text-sm ml-1 font-normal"
-              className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
-              selectDefault="Select brand"
-              title="Brands"
-              name="brandId"
-              control={control}
-              errors={errors}
-              options={brands}
-              disabled={isSaved}
-            />
-          </div>
-          <div className="flex flex-col gap-3">
-            <div className="flex w-[350px] flex-wrap gap-3">
-              {selectHashTag.map((item) => (
+            <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center p-2">
+                <SelectDefault
+                  mainClassName="flex flex-col m-1"
+                  className2="text-sm ml-1 font-normal"
+                  className="p-2 rounded-lg border-blue-gray-300 w-full"
+                  selectDefault="Select season"
+                  title="Season"
+                  name="season"
+                  options={typeSeason}
+                  control={control}
+                  errors={errors}
+                  disabled={isSaved}
+                />
+                <SelectDefault
+                  mainClassName="flex flex-col"
+                  className2="text-sm ml-1 font-normal"
+                  className="p-2 rounded-lg border-blue-gray-300 w-full"
+                  selectDefault="Select gender"
+                  title="Gender"
+                  name="gender"
+                  options={typeGender}
+                  control={control}
+                  errors={errors}
+                  disabled={isSaved}
+                />
+              </div>
+              <div className="flex items-center justify-center p-2">
+                <Select
+                  mainClassName="flex flex-col m-1"
+                  className2="text-sm ml-1 font-normal"
+                  className="p-2 rounded-lg border-blue-gray-300 w-full"
+                  selectDefault="Select category"
+                  title="Category"
+                  name="categoryId"
+                  control={control}
+                  errors={errors}
+                  options={category}
+                  disabled={isSaved}
+                />
+                <Select
+                  mainClassName="flex flex-col"
+                  className2="text-sm ml-1 font-normal"
+                  className="p-2 rounded-lg border-blue-gray-300 w-[170px]"
+                  selectDefault="Select brand"
+                  title="Brands"
+                  name="brandId"
+                  control={control}
+                  errors={errors}
+                  options={brands}
+                  disabled={isSaved}
+                />
+              </div>
+            </div>
+            <div className="">
+              <div className="pl-[15px] text-sm font-normal">Hashtag:</div>
+              <div className="flex flex-wrap p-2">
+                {selectHashTag.map((item) => (
+                  <Button
+                    className="w-auto rounded-full"
+                    onClick={() => handleDeleteHashtag(item)}
+                    key={item.id}
+                    variant="outlined"
+                    disabled={isSaved}
+                  >
+                    {item.name}
+                  </Button>
+                ))}
                 <Button
-                  className="w-auto rounded-full"
-                  onClick={() => handleDeleteHashtag(item)}
-                  key={item.id}
+                  className="w-[100px] rounded-full"
                   variant="outlined"
+                  onClick={handleOpenDialogHashtag}
                   disabled={isSaved}
                 >
-                  {item.name}
+                  +
                 </Button>
-              ))}
-              <Button
-                className="w-[100px] rounded-full"
-                variant="outlined"
-                onClick={handleOpenDialogHashtag}
+              </div>
+            </div>
+            <div className="mt-2 w-full p-2">
+              <Textarea
+                label="Description"
+                name="description"
+                control={control}
+                errors={errors}
                 disabled={isSaved}
-              >
-                +
-              </Button>
+              />
             </div>
           </div>
-          <div className="mt-2 w-[70%]">
-            <Textarea
-              label="Description"
-              name="description"
-              control={control}
-              errors={errors}
-              disabled={isSaved}
-            />
-          </div>
-          <div className="flex items-center justify-center">
-            <Button
-              className="w-[100px]"
-              type="submit"
-              onClick={handleChangeSave}
-            >
-              {!isSaved ? "Save" : "Edit"}
-            </Button>
-          </div>
+        </div>
+        <div className="flex items-center justify-center">
+          <Button
+            className="w-[100px]"
+            type="submit"
+            onClick={handleChangeSave}
+          >
+            {!isSaved ? "Save" : "Edit"}
+          </Button>
         </div>
       </form>
       <DialogHashtag

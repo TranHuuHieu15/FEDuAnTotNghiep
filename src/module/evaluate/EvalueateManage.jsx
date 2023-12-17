@@ -3,10 +3,14 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import Pagination from "../../components/pagination/Pagination.jsx";
+
 
 const EvalueateManage = () => {
   const token = useSelector(selectCurrentToken);
   const [evaluateData, setEvaluateData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0); // Thêm state trang hiện tại
+  const [totalPages, setTotalPages] = useState(0); // Thêm state tổng số trang
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -16,12 +20,18 @@ const EvalueateManage = () => {
           },
         });
         setEvaluateData(response.data);
+        const totalPages = Math.ceil(response["all-item"] / response.size);
+        setTotalPages(totalPages); // Cập nhật tổng số trang
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
   }, [token]);
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
   return (
     <>
       <table className="w-full text-center table-auto">
@@ -49,6 +59,13 @@ const EvalueateManage = () => {
             ))}
         </tbody>
       </table>
+      <div className="flex items-center justify-center">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChange={handleChangePage}
+        ></Pagination>
+      </div>
     </>
   );
 };

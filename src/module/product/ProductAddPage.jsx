@@ -4,14 +4,13 @@ import axios from "../../config/axios.js";
 import FormProductVariant from "./FormProductVariant.jsx";
 import Button from "../../components/button/Button.jsx";
 import { useForm } from "react-hook-form";
-import { FcPlus } from "react-icons/fc";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 import { useSelector } from "react-redux";
 
 const ProductAddPage = () => {
-  const [fields, setFields] = useState([{ id: 1 }]);
+  const [fields, setFields] = useState([]);
   const { reset: resetProductForm } = useForm();
   const [categories, setCategories] = useState([]);
   const [fileDatas, setFileDatas] = useState([]);
@@ -20,9 +19,7 @@ const ProductAddPage = () => {
   const [productDtoRequest, setProductDtoRequest] = useState({
     productDto: {}, // Assuming fixed form data structure
     hashtagOfProductsDto: [],
-    createProductVariant: [],
-    deleteProductVariant: [],
-    updateProductVariant: [],
+    productVariantsDto: [],
   });
 
   useEffect(() => {
@@ -84,6 +81,71 @@ const ProductAddPage = () => {
   };
 
   const handleDynamicFormSubmit = async (data, index) => {
+    setProductDtoRequest((prevProductDtoRequest) => {
+      const existingIndex = prevProductDtoRequest.productVariantsDto.findIndex(
+        (variant) => variant.id === index
+      );
+      const isDuplicate = prevProductDtoRequest.productVariantsDto.some(
+        (variant) =>
+          variant.colorId === data["colorId-" + index] &&
+          variant.size === data["size-" + index]
+      );
+
+      const length = productDtoRequest.productVariantsDto.length + 1;
+      // console.log(isDuplicate);
+
+      if (existingIndex !== -1) {
+        // Nếu tồn tại, cập nhật dữ liệu
+        const updatedVariants = [...prevProductDtoRequest.productVariantsDto];
+        updatedVariants[existingIndex] = {
+          ...updatedVariants[existingIndex],
+          colorId: data["colorId-" + index],
+          size: data["size-" + index],
+          quantity: data["quantity-" + index],
+          price: data["price-" + index],
+        };
+
+        return {
+          ...prevProductDtoRequest,
+          productVariantsDto: updatedVariants,
+        };
+      } else {
+        // Kiểm tra xem có trùng lặp không
+        if (isDuplicate) {
+          toast.warning(
+            `Sizes and colors already exist ! Please fix the form ${length}`,
+            {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            }
+          );
+
+          // Trả về state hiện tại nếu có trùng lặp
+          return prevProductDtoRequest;
+        }
+      }
+      // Nếu không tồn tại và không trùng lặp, thêm mới
+      return {
+        ...prevProductDtoRequest,
+        productVariantsDto: [
+          ...prevProductDtoRequest.productVariantsDto,
+          {
+            id: index,
+            colorId: data["colorId-" + index],
+            size: data["size-" + index],
+            quantity: data["quantity-" + index],
+            price: data["price-" + index],
+          },
+        ],
+      };
+    });
+
     // Thêm file vào mảng fileDatas
     setFileDatas((prevFileDatas) => {
       const newFileDatas = [...prevFileDatas];
@@ -105,45 +167,6 @@ const ProductAddPage = () => {
       }
       return newFileDatas;
     });
-
-    setProductDtoRequest((prevProductDtoRequest) => {
-      const existingIndex =
-        prevProductDtoRequest.createProductVariant.findIndex(
-          (variant) => variant.id === index
-        );
-
-      if (existingIndex !== -1) {
-        // Nếu tồn tại, cập nhật dữ liệu
-        const updatedVariants = [...prevProductDtoRequest.createProductVariant];
-        updatedVariants[existingIndex] = {
-          ...updatedVariants[existingIndex],
-          colorId: data["colorId-" + index],
-          size: data["size-" + index],
-          quantity: data["quantity-" + index],
-          price: data["price-" + index],
-        };
-
-        return {
-          ...prevProductDtoRequest,
-          createProductVariant: updatedVariants,
-        };
-      } else {
-        // Nếu không tồn tại, thêm mới
-        return {
-          ...prevProductDtoRequest,
-          createProductVariant: [
-            ...prevProductDtoRequest.createProductVariant,
-            {
-              id: index,
-              colorId: data["colorId-" + index],
-              size: data["size-" + index],
-              quantity: data["quantity-" + index],
-              price: data["price-" + index],
-            },
-          ],
-        };
-      }
-    });
   };
 
   const handleAddField = () => {
@@ -156,13 +179,13 @@ const ProductAddPage = () => {
     const newFiles = fileDatas.filter((file) => file.id !== index);
     const newFields = [...fields];
 
-    // Xóa đối tượng từ createProductVariant theo Id
-    const newVariants = productDtoRequest.createProductVariant.filter(
+    // Xóa đối tượng từ productVariantsDto theo Id
+    const newVariants = productDtoRequest.productVariantsDto.filter(
       (variant) => variant.id !== index
     );
     setProductDtoRequest({
       ...productDtoRequest,
-      createProductVariant: newVariants,
+      productVariantsDto: newVariants,
     });
 
     // Tìm vị trí của phần tử cần xóa trong newFields dựa trên id
@@ -189,6 +212,8 @@ const ProductAddPage = () => {
     });
   };
 
+  console.log(productDtoRequest);
+
   const postData = async () => {
     const formData = new FormData();
     formData.append("productDtoRequest", JSON.stringify(productDtoRequest));
@@ -214,11 +239,17 @@ const ProductAddPage = () => {
           progress: undefined,
           theme: "light",
         });
+        // history.push("/admin/product");
         setFields([]);
         setFileDatas([]);
-        setProductDtoRequest();
+        setProductDtoRequest({
+          productDto: {}, // Assuming fixed form data structure
+          hashtagOfProductsDto: [],
+          productVariantsDto: [],
+        });
       }
     } catch (response) {
+      console.log(response);
       toast.error("Create new product fail!", {
         position: "top-right",
         autoClose: 3000,
@@ -229,50 +260,55 @@ const ProductAddPage = () => {
         progress: undefined,
         theme: "light",
       });
-      setFileDatas([]);
-      setProductDtoRequest();
     }
   };
 
   return (
     <>
-      <div className="flex flex-row gap-2">
+      <div className="flex flex-col items-center gap-2">
         {/* form product  */}
         <ProductForm
           category={categories}
           onSubmitCallback={handleProductFormSubmit}
           onResetForm={resetProductForm}
         />
+        {/* 
+                <div className="relative text-base font-regular px-4 py-4 text-black w-full bg-white  justify-start  rounded-none flex shadow">
+                    <span className="p-2 font-medium cursor-pointer" >add new ProductVariants</span>
+                </div> */}
 
-        <div className="flex-1">
-          <div className="flex flex-col gap-3 h-[450px]  max-h-[600px] overflow-y-auto">
+        <div className="float-none w-full">
+          <div className="grid grid-cols-2 scrollbar scrollbar-thin border-spacing-y-1.5 mb-3 gap-3 w-full shadow-md rounded shadow-blue-gray-100 h-[350px] overflow-y-auto">
             {fields.map((field) => (
-              <div className="flex flex-row border p-5" key={field.id}>
+              <div className="p-1 shadow shadow-blue-gray-400" key={field.id}>
+                <div className="grid items-end justify-end">
+                  <Button
+                    className="w-[70px] text-2xl justify-end"
+                    outline="text"
+                    onClick={() => handleRemoveField(field.id)}
+                  >
+                    <AiTwotoneDelete />
+                  </Button>
+                </div>
+
                 <FormProductVariant
                   index={field.id}
                   onSubmitCallback={handleDynamicFormSubmit}
                 />
-                <Button
-                  className="h-[40px] text-2xl"
-                  outline="text"
-                  onClick={() => handleRemoveField(field.id)}
-                >
-                  <AiTwotoneDelete />
-                </Button>
               </div>
             ))}
           </div>
-          <div className="flex justify-between">
-            <div className="flex items-center w-1/4 pt-[100px]">
+          <div className="flex flex-row gap-3 items-center">
+            <div className="flex items-center justify-start">
               <Button
-                className="w-3/4 text-lg flex items-center justify-center"
+                className="text-sm"
                 outline="outlined"
                 onClick={handleAddField}
               >
-                <FcPlus />
+                Add new form size and color
               </Button>
             </div>
-            <div className="flex items-end justify-end pt-[100px] pr-10">
+            <div className="flex justify-end">
               <Button className="text-sm" onClick={postData}>
                 Add New Product
               </Button>

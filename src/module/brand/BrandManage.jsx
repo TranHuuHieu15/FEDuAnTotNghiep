@@ -7,16 +7,14 @@ import { CiEdit } from "react-icons/ci";
 import DialogCEBrand from "./DialogCEBrand.jsx";
 import Button from "../../components/button/Button.jsx";
 import { useSelector } from "react-redux";
-import {
-  selectCurrentToken,
-  selectCurrentUser,
-} from "../../redux/features/authSlice.jsx";
-import DialogAlert from "../../components/dialog/DialogAlert.jsx";
+import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
+import Pagination from "../../components/pagination/Pagination.jsx";
+
 
 const BrandManage = () => {
   const token = useSelector(selectCurrentToken);
-  const user = useSelector(selectCurrentUser);
-  const [showAlert, setShowAlert] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0); // Thêm state trang hiện tại
+  const [totalPages, setTotalPages] = useState(0); // Thêm state tổng số trang
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -32,34 +30,39 @@ const BrandManage = () => {
   const [brandData, setBrandData] = useState([]);
   const fetchData = async () => {
     try {
-      const response = await axios.get("/brand", {
+      const response = await axios.get(`/brand?page=${currentPage}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setBrandData(response.data);
+      const totalPages = Math.ceil(response["all-item"] / response.size);
+      setTotalPages(totalPages); // Cập nhật tổng số trang
     } catch (error) {
       console.log(error);
     }
   };
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
+
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, [token], [currentPage]);
+
+
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
   const handleCreateTrue = () => {
-    if (user.path === 0) {
-      setShowDialogCE({
-        show: true,
-        id: null,
-        isUpdate: false,
-        action: handleCreate,
-        brandDataToEdit: {},
-      });
-    } else {
-      setShowAlert(true);
-    }
+    setShowDialogCE({
+      show: true,
+      id: null,
+      isUpdate: false,
+      action: handleCreate,
+      brandDataToEdit: {},
+    });
   };
   const handleCreate = async (data) => {
     if (!showDialogCERef.current.show) return;
@@ -90,18 +93,14 @@ const BrandManage = () => {
     }
   };
   const handleUpdateTrue = (id) => {
-    if (user.path === 0) {
-      const dataEdit = brandData.find((item) => item.id === id);
-      setShowDialogCE({
-        show: true,
-        id: id,
-        isUpdate: true,
-        action: handleUpdate,
-        brandDataToEdit: dataEdit,
-      });
-    } else {
-      setShowAlert(true);
-    }
+    const dataEdit = brandData.find((item) => item.id === id);
+    setShowDialogCE({
+      show: true,
+      id: id,
+      isUpdate: true,
+      action: handleUpdate,
+      brandDataToEdit: dataEdit,
+    });
   };
   const handleUpdate = async (data) => {
     if (!showDialogCERef.current.show && !showDialogCERef.current.id) return;
@@ -134,14 +133,10 @@ const BrandManage = () => {
     }
   };
   const handleDeleteTrue = (id) => {
-    if (user.path === 0) {
-      setShowDialog({
-        show: true,
-        id: id,
-      });
-    } else {
-      setShowAlert(true);
-    }
+    setShowDialog({
+      show: true,
+      id: id,
+    });
   };
   const handleDelete = async () => {
     try {
@@ -185,16 +180,13 @@ const BrandManage = () => {
       id: null,
     });
   };
-  const handleCloseAlert = () => {
-    setShowAlert(false);
-  };
   return (
     <>
       <Button
         className="float-right mb-2 mr-2 cursor-pointer bg-light-green-500"
         onClick={handleCreateTrue}
       >
-        Add new Brand
+        Add new Category
       </Button>
       <table className="w-full text-center table-auto">
         <thead className="text-xs font-semibold text-gray-400 uppercase bg-gray-100">
@@ -238,6 +230,13 @@ const BrandManage = () => {
           ))}
         </tbody>
       </table>
+      <div className="flex items-center justify-center">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChange={handleChangePage}
+        ></Pagination>
+      </div>
       <DialogDelete
         show={showDialog.show}
         title="Brand"
@@ -252,7 +251,6 @@ const BrandManage = () => {
         title="Brand"
         brandDataToEdit={showDialogCE.brandDataToEdit}
       />
-      <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>
   );
 };

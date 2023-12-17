@@ -12,6 +12,7 @@ import {
   selectCurrentUser,
 } from "../../redux/features/authSlice.jsx";
 import DialogAlert from "../../components/dialog/DialogAlert";
+import Pagination from "../../components/pagination/Pagination.jsx";
 
 const DiscountManage = () => {
   const token = useSelector(selectCurrentToken);
@@ -19,6 +20,8 @@ const DiscountManage = () => {
   const [showAlert, setShowAlert] = useState(false);
 
   const [discountData, setDiscountData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0); // Thêm state trang hiện tại
+  const [totalPages, setTotalPages] = useState(0); // Thêm state tổng số trang
   const [showDialogCE, setShowDialogCE] = useState({
     show: false,
     id: null,
@@ -33,23 +36,31 @@ const DiscountManage = () => {
   });
   const fetchData = async () => {
     try {
-      const response = await axios.get("/discount", {
+      const response = await axios.get(`/discount?page=${currentPage}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       console.log(response);
       setDiscountData(response.data);
+      const totalPages = Math.ceil(response["all-item"] / response.size);
+      setTotalPages(totalPages); // Cập nhật tổng số trang
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, [token, currentPage]);
+
   useEffect(() => {
     showDialogCERef.current = showDialogCE;
   }, [showDialogCE]);
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleCreateTrue = () => {
     if (user.path === 0) {
       setShowDialogCE({
@@ -277,6 +288,13 @@ const DiscountManage = () => {
             ))}
         </tbody>
       </table>
+      <div className="flex items-center justify-center">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChange={handleChangePage}
+        ></Pagination>
+      </div>
       <DialogDelete
         show={showDialog.show}
         title="discount"

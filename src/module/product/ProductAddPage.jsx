@@ -8,8 +8,10 @@ import { AiTwotoneDelete } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 import { useSelector } from "react-redux";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const ProductAddPage = () => {
+  const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState([]);
   const { reset: resetProductForm } = useForm();
   const [categories, setCategories] = useState([]);
@@ -222,6 +224,7 @@ const ProductAddPage = () => {
     });
 
     try {
+      setLoading(true);
       const response = await axios.post("/product/create", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -248,6 +251,7 @@ const ProductAddPage = () => {
           productVariantsDto: [],
         });
       }
+      setLoading(false);
     } catch (response) {
       console.log(response);
       toast.error("Create new product fail!", {
@@ -305,12 +309,21 @@ const ProductAddPage = () => {
                 outline="outlined"
                 onClick={handleAddField}
               >
-                Add new form size and color
+                Add new product variant
               </Button>
             </div>
             <div className="flex justify-end">
               <Button className="text-sm" onClick={postData}>
-                Add New Product
+                {loading ? (
+                  <ClipLoader
+                    color="#fff"
+                    size={15}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                ) : (
+                  "Add New Product"
+                )}
               </Button>
             </div>
           </div>

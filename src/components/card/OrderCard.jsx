@@ -6,13 +6,16 @@ import { useNavigate } from "react-router-dom";
 import axios from "../../config/axios";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../../redux/features/authSlice";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const OrderCard = ({ orders }) => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const { orderDto, orderDetailsDto } = orders;
   const { purchaseDate, total } = orderDto;
   const handlePayOrder = async () => {
     try {
+      setLoading(true);
       const responseVNPay = await axios.get(
         `/order/payment?orderId=${orderDto.id}`,
         {
@@ -26,6 +29,7 @@ const OrderCard = ({ orders }) => {
         // Mở URL trong trình duyệt mới
         window.open(paymentUrl, "_blank");
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -52,7 +56,16 @@ const OrderCard = ({ orders }) => {
                 className="w-28"
                 onClick={handlePayOrder}
               >
-                Pay
+                {loading ? (
+                  <ClipLoader
+                    color="#333"
+                    size={15}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                ) : (
+                  "Pay"
+                )}
               </Button>
             )}
           </div>

@@ -9,8 +9,10 @@ import { toast } from "react-toastify";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const ProductCEPage = () => {
+  const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const [isUpdate, setIsUpdate] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -48,10 +50,7 @@ const ProductCEPage = () => {
 
   //Tách ra để lưu ảnh của mainImage
   const [fileImageDatas, setFileImageDatas] = useState([]);
-  console.log("Ảnh của product: ", fileImageDatas);
   const [fileImageDatasVar, setFileImageDatasVar] = useState([]);
-  console.log("Ảnh của productVariant: ", fileImageDatasVar);
-
   //*Thêm variant mới khi click vào nút add +
   const handleAddDiv = () => {
     setProductVariantsData((prevData) => {
@@ -141,7 +140,6 @@ const ProductCEPage = () => {
       ],
     }));
   }
-  console.log(dataProductVariantAll);
   const handleProductFormSubmit = async (data) => {
     try {
       setFileImageDatas((prevFileDatas) => {
@@ -189,7 +187,6 @@ const ProductCEPage = () => {
       const formData = new FormData();
       dataProductVariantAll.PVRequest.forEach((data, index) => {
         formData.append(`pvRequests[${index}].data`, JSON.stringify(data.data));
-        console.log("cái chi ri: ", data.imageFile);
         if (data.imageFile && data.imageFile instanceof File) {
           formData.append(`pvRequests[${index}].imageFile`, data.imageFile);
         }
@@ -199,7 +196,6 @@ const ProductCEPage = () => {
         //   formData.append(`pvRequests[${index}].imageFile`, imageFile);
         // }
       });
-      console.log(dataProductAll.productDto);
       formData.append("productDto", JSON.stringify(dataProductAll.productDto));
       fileImageDatas.forEach((fileData) => {
         formData.append("mainImage", fileData);
@@ -208,7 +204,7 @@ const ProductCEPage = () => {
         "hashtagOfProducts",
         JSON.stringify(dataProductAll.hashtagOfProducts)
       );
-      console.log(formData.getAll("productDto"));
+      setLoading(true);
       await axios.put(`product/update/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -224,6 +220,7 @@ const ProductCEPage = () => {
         progress: undefined,
         theme: "light",
       });
+      setLoading(false);
     } catch (error) {
       console.error("Error:", error);
       toast.error("update product and product variant fail!", {
@@ -288,7 +285,16 @@ const ProductCEPage = () => {
             </div>
             <div className="flex justify-end">
               <Button className="text-sm" onClick={updateData}>
-                Update Product
+                {loading ? (
+                  <ClipLoader
+                    color="#fff"
+                    size={15}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                ) : (
+                  "Update Product"
+                )}
               </Button>
             </div>
           </div>

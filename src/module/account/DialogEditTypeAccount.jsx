@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import SelectDefault from "../../components/select/SelectDefault";
 import { useEffect } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const typeAccount = [
   {
@@ -28,6 +29,7 @@ const DialogEditTypeAccount = ({
   handleCancelClick,
   dataToEdit,
   handleChangeTypeAccount,
+  loading,
 }) => {
   const {
     handleSubmit,
@@ -91,7 +93,18 @@ const DialogEditTypeAccount = ({
               type="submit"
               disabled={isSubmitting}
             >
-              <span>Change</span>
+              <span>
+                {loading ? (
+                  <ClipLoader
+                    color="#fff"
+                    size={15}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                ) : (
+                  "Change"
+                )}
+              </span>
             </Button>
           </DialogFooter>
         </form>
@@ -105,6 +118,7 @@ DialogEditTypeAccount.propTypes = {
   handleCancelClick: PropTypes.func,
   handleChangeTypeAccount: PropTypes.func,
   dataToEdit: PropTypes.object.isRequired,
+  loading: PropTypes.bool,
 };
 
 export default DialogEditTypeAccount;

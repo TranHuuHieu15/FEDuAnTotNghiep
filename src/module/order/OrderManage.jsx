@@ -88,6 +88,7 @@ const OrderManage = () => {
           theme: "light",
         });
       }
+      setLoading(false);
     }
   };
 

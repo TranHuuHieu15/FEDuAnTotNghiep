@@ -17,6 +17,7 @@ import DialogEditTypeAccount from "./DialogEditTypeAccount";
 import DialogAlert from "../../components/dialog/DialogAlert";
 
 const AccountManage = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const [accountData, setAccountData] = useState([]);
@@ -110,6 +111,7 @@ const AccountManage = () => {
     formData.append("birthday", data.birthday);
     formData.append("address", data.address);
     try {
+      setLoading(true);
       if (showDialogCERef.current.show) {
         await axios.post("/account/create", formData, {
           headers: {
@@ -129,7 +131,21 @@ const AccountManage = () => {
           theme: "light",
         });
       }
+      setLoading(false);
     } catch (error) {
+      if (error.response.status === 400) {
+        toast.error(error.response.data.message, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+      setLoading(false);
       console.log(error);
     }
   };
@@ -306,12 +322,14 @@ const AccountManage = () => {
                   <td className="p-3">
                     <div className="flex items-center justify-center">
                       <span
-                        className={`inline-flex items-center justify-center w-2 h-2 font-semibold leading-none text-white bg-${statusAccountColor[item.typeAccount]
-                          }-500 rounded-full rizzui-badge color`}
+                        className={`inline-flex items-center justify-center w-2 h-2 font-semibold leading-none text-white bg-${
+                          statusAccountColor[item.typeAccount]
+                        }-500 rounded-full rizzui-badge color`}
                       ></span>
                       <p
-                        className={`font-medium text-${statusAccountColor[item.typeAccount]
-                          }-500 ms-2`}
+                        className={`font-medium text-${
+                          statusAccountColor[item.typeAccount]
+                        }-500 ms-2`}
                       >
                         {item.typeAccount}
                       </p>
@@ -353,6 +371,7 @@ const AccountManage = () => {
         dataToEdit={showDialog.dataToEdit}
         handleCancelClick={handleCloseDialog}
         handleChangeTypeAccount={handleLock}
+        loading={loading}
       />
       <DialogAlert show={showAlert} cancel={handleCloseAlert} />
       <DialogCEAccount
@@ -361,6 +380,7 @@ const AccountManage = () => {
         isUpdate={showDialogCE.isUpdate}
         dataToEdit={showDialogCE.dataToEdit}
         cancel={handleCloseDialogCE}
+        loading={loading}
       />
     </>
   );

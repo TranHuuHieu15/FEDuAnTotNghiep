@@ -88,6 +88,7 @@ const BrandManage = () => {
       });
       setLoading(false);
     } catch (err) {
+      setLoading(false);
       console.log(err.response.data.message);
     }
   };
@@ -134,6 +135,7 @@ const BrandManage = () => {
       });
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };

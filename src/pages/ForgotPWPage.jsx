@@ -36,6 +36,7 @@ const ForgotPWPage = () => {
       }
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
     reset({

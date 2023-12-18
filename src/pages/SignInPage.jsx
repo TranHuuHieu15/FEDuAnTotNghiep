@@ -139,6 +139,7 @@ const SignInPage = () => {
         });
       }
       dispatch(loginFailure());
+      setLoading(false);
     }
   };
 

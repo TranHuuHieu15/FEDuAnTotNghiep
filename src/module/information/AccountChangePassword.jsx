@@ -69,6 +69,7 @@ const AccountChangePassword = () => {
       });
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       toast.error("Update password fail!", {
         position: "top-right",
         autoClose: 3000,

@@ -96,6 +96,7 @@ const PaymentManage = () => {
       });
       setLoading(false);
     } catch (err) {
+      setLoading(false);
       console.log(err);
     }
   };
@@ -149,6 +150,7 @@ const PaymentManage = () => {
       });
       setLoading(false);
     } catch (err) {
+      setLoading(false);
       console.log(err);
     }
   };

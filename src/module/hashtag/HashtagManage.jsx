@@ -87,6 +87,7 @@ const HashtagManage = () => {
         setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -132,6 +133,7 @@ const HashtagManage = () => {
         setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };

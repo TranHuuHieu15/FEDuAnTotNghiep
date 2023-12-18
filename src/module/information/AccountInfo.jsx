@@ -132,7 +132,7 @@ const AccountInfo = () => {
               ></ImageUpload>
             </div>
           </div>
-          <div className="flex flex-col items-start justify-start gap-3 w-[323px]">
+          <div className="flex flex-col items-start justify-start gap-3 w-[386px]">
             <Input
               type="email"
               label="Enter your email"

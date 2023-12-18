@@ -28,7 +28,7 @@ const ProductPage = () => {
       const response = await axios.get(url);
       setProductData(response.data || response.content);
       const totalPages = Math.ceil(response["all-item"] / response.size);
-      setTotalPages(totalPages); // Cập nhật tổng số trang
+      setTotalPages(totalPages);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -42,7 +42,7 @@ const ProductPage = () => {
     } else if (queryDebounce) {
       fetchData(`/product/search?key=${queryDebounce}`);
     } else {
-      fetchData(`/product?page=${currentPage}`);
+      fetchData(`/product?page=${currentPage}&size=16`);
     }
   }, [brand, category, gender, queryDebounce, season, currentPage]);
   const handleSearchChange = (e) => {
@@ -72,7 +72,7 @@ const ProductPage = () => {
       <SiteLayout>
         <CarouselTransition></CarouselTransition>
         <div className="flex justify-center gap-10 mx-20 my-10">
-          <div className="mx-6 w-96">
+          <div className="flex-none mx-6 w-96">
             <Filter
               handleSearchChange={handleSearchChange}
               handleSeasonValue={handleSeasonValue}
@@ -81,9 +81,9 @@ const ProductPage = () => {
               handleBrandValue={handleBrandValue}
             />
           </div>
-          <div className="flex flex-col justify-start gap-5">
+          <div className="justify-start flex-1 gap-5">
             {loading && (
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-3">
                 <ProductCardLoading />
                 <ProductCardLoading />
                 <ProductCardLoading />
@@ -106,12 +106,16 @@ const ProductPage = () => {
                   ></ProductCard>
                 ))}
             </div>
-            <div className="flex items-center justify-center">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onChange={handleChangePage}
-              ></Pagination>
+            <div className="flex items-center justify-center mt-4">
+              {totalPages && totalPages > 0 ? (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onChange={handleChangePage}
+                ></Pagination>
+              ) : (
+                ""
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-3">
               {!loading && !productData && (

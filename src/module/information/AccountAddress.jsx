@@ -96,6 +96,7 @@ const AccountAddress = () => {
         setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -157,6 +158,7 @@ const AccountAddress = () => {
       }
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };

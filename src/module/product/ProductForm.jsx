@@ -1,5 +1,5 @@
-// ProductForm.jsx
-import React, { useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import Input from "../../components/input/Input";
@@ -32,29 +32,41 @@ const ProductForm = ({ category, onSubmitCallback }) => {
     fetchBrands();
   }, []);
 
-  const schema = yup
-    .object({
-      image: yup
-        .mixed()
-        .test("file", "Please choose a valid image file", (value) => {
-          if (value instanceof File) {
-            const acceptedExtensions = [".jpg", ".jpeg", ".png"];
-            const fileExtension = value.name.split(".").pop().toLowerCase();
-            return acceptedExtensions.includes(`.${fileExtension}`);
-          } else if (typeof value === "string") {
-            const imageExtensions = [".jpg", ".jpeg", ".png"];
-            return imageExtensions.some((extension) =>
-              value.toLowerCase().endsWith(extension)
-            );
-          }
-          return false;
-        }),
-      name: yup.string().required("Please enter product name !"),
-      season: yup.string().required("Please enter product season !"),
-      gender: yup.string().required("Please enter product gender !"),
-      categoryId: yup.string().required("Please enter product category !"),
-      brandId: yup.string().required("Please enter product brands ! ok"),
-    })
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const response = await axios.get("/brand");
+        setBrands(response.data);
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
+    };
+    fetchBrands();
+  }, []);
+
+  const schema = yup.object({
+    image: yup
+      .mixed()
+      .test("file", "Please choose a valid image file", (value) => {
+        if (value instanceof File) {
+          const acceptedExtensions = [".jpg", ".jpeg", ".png"];
+          const fileExtension = value.name.split(".").pop().toLowerCase();
+          return acceptedExtensions.includes(`.${fileExtension}`);
+        } else if (typeof value === "string") {
+          const imageExtensions = [".jpg", ".jpeg", ".png"];
+          return imageExtensions.some((extension) =>
+            value.toLowerCase().endsWith(extension)
+          );
+        }
+        return false;
+      }),
+    name: yup.string().required("Please enter product name !"),
+    season: yup.string().required("Please enter product season !"),
+    gender: yup.string().required("Please enter product gender !"),
+    categoryId: yup.string().required("Please enter product category !"),
+    brandId: yup.string().required("Please enter product brands ! ok"),
+    description: yup.string().required("Please enter product description !"),
+  })
     .required();
 
   const {

@@ -1,5 +1,4 @@
-// ProductVariantForm.jsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import Input from "../../components/input/Input";

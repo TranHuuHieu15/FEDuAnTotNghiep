@@ -72,15 +72,14 @@ const FeedbackManage = () => {
       setLoading(true);
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         await axios.put(
-          `/feedback/update/${showDialogCERef.current.id}`,
-          FeedbackDto,
+          `/feedback/set-status/${showDialogCERef.current.id}/${FeedbackDto.status}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        fetchData();
+fetchData();
         handleCloseDialogCE();
         toast.success("Update Feedback successfully!", {
           position: "top-right",
@@ -92,9 +91,12 @@ const FeedbackManage = () => {
           progress: undefined,
           theme: "light",
         });
+        fetchData();
+        handleCloseDialogCE();
         setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };

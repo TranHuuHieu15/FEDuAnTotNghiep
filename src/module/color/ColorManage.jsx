@@ -90,6 +90,7 @@ const ColorManage = () => {
         setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -132,6 +133,7 @@ const ColorManage = () => {
       }
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };

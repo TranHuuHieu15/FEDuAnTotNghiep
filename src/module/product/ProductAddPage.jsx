@@ -8,6 +8,7 @@ import { AiTwotoneDelete } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 
 const ProductAddPage = () => {
@@ -16,6 +17,7 @@ const ProductAddPage = () => {
   const { reset: resetProductForm } = useForm();
   const [categories, setCategories] = useState([]);
   const [fileDatas, setFileDatas] = useState([]);
+  const navigate = useNavigate();
   const token = useSelector(selectCurrentToken);
 
   const [productDtoRequest, setProductDtoRequest] = useState({
@@ -35,7 +37,7 @@ const ProductAddPage = () => {
     };
     fetchCategories();
   }, []);
-  //
+  // 
   const handleProductFormSubmit = async (data) => {
     try {
       // Thực hiện các bước xử lý dữ liệu ở đây
@@ -48,9 +50,7 @@ const ProductAddPage = () => {
         // Đặt ảnh mới với ID là 0
         imageFile.id = 0;
 
-        const existingIndex = newFileDatas.findIndex(
-          (item) => item.id === imageFile.id
-        );
+        const existingIndex = newFileDatas.findIndex((item) => item.id === imageFile.id);
 
         if (existingIndex !== -1) {
           // Nếu đã tồn tại, thay thế nó
@@ -84,27 +84,21 @@ const ProductAddPage = () => {
 
   const handleDynamicFormSubmit = async (data, index) => {
     setProductDtoRequest((prevProductDtoRequest) => {
-      const existingIndex = prevProductDtoRequest.productVariantsDto.findIndex(
-        (variant) => variant.id === index
-      );
-      const isDuplicate = prevProductDtoRequest.productVariantsDto.some(
-        (variant) =>
-          variant.colorId === data["colorId-" + index] &&
-          variant.size === data["size-" + index]
-      );
-
-      const length = productDtoRequest.productVariantsDto.length + 1;
-      // console.log(isDuplicate);
-
+      const existingIndex = prevProductDtoRequest.productVariantsDto.findIndex((variant) => variant.id === index);
+      const isDuplicate = prevProductDtoRequest.productVariantsDto.some((variant) => (
+        variant.colorId === data['colorId-' + index] && variant.size === data['size-' + index]
+      ));
+      const productvariant = fields.find((item) => item.id === index);
+      const index2 = fields.indexOf(productvariant);
       if (existingIndex !== -1) {
         // Nếu tồn tại, cập nhật dữ liệu
         const updatedVariants = [...prevProductDtoRequest.productVariantsDto];
         updatedVariants[existingIndex] = {
           ...updatedVariants[existingIndex],
-          colorId: data["colorId-" + index],
-          size: data["size-" + index],
-          quantity: data["quantity-" + index],
-          price: data["price-" + index],
+          colorId: data['colorId-' + index],
+          size: data['size-' + index],
+          quantity: data['quantity-' + index],
+          price: data['price-' + index],
         };
 
         return {
@@ -114,19 +108,16 @@ const ProductAddPage = () => {
       } else {
         // Kiểm tra xem có trùng lặp không
         if (isDuplicate) {
-          toast.warning(
-            `Sizes and colors already exist ! Please fix the form ${length}`,
-            {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-            }
-          );
+          toast.warning(`Sizes and colors already exist ! Please fix the form ${index2 + 1}`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
 
           // Trả về state hiện tại nếu có trùng lặp
           return prevProductDtoRequest;
@@ -139,10 +130,10 @@ const ProductAddPage = () => {
           ...prevProductDtoRequest.productVariantsDto,
           {
             id: index,
-            colorId: data["colorId-" + index],
-            size: data["size-" + index],
-            quantity: data["quantity-" + index],
-            price: data["price-" + index],
+            colorId: data['colorId-' + index],
+            size: data['size-' + index],
+            quantity: data['quantity-' + index],
+            price: data['price-' + index],
           },
         ],
       };
@@ -151,14 +142,12 @@ const ProductAddPage = () => {
     // Thêm file vào mảng fileDatas
     setFileDatas((prevFileDatas) => {
       const newFileDatas = [...prevFileDatas];
-      const imageFile = data["image-" + [index]];
+      const imageFile = data['image-' + [index]];
 
       // Đặt ID cho ảnh mới là index
       imageFile.id = index;
       // Kiểm tra xem có phần tử nào có cùng ID không
-      const existingIndex = newFileDatas.findIndex(
-        (item) => item.id === imageFile.id
-      );
+      const existingIndex = newFileDatas.findIndex((item) => item.id === imageFile.id);
 
       if (existingIndex !== -1) {
         // Nếu đã tồn tại, thay thế nó
@@ -171,10 +160,12 @@ const ProductAddPage = () => {
     });
   };
 
+
   const handleAddField = () => {
     const randomNumber = Math.floor(Math.random() * 900) + 100;
     const newFields = [...fields, { id: randomNumber }];
     setFields(newFields);
+
   };
 
   const handleRemoveField = (index) => {
@@ -182,9 +173,7 @@ const ProductAddPage = () => {
     const newFields = [...fields];
 
     // Xóa đối tượng từ productVariantsDto theo Id
-    const newVariants = productDtoRequest.productVariantsDto.filter(
-      (variant) => variant.id !== index
-    );
+    const newVariants = productDtoRequest.productVariantsDto.filter((variant) => variant.id !== index);
     setProductDtoRequest({
       ...productDtoRequest,
       productVariantsDto: newVariants,
@@ -213,21 +202,18 @@ const ProductAddPage = () => {
       theme: "light",
     });
   };
-
-  console.log(productDtoRequest);
-
   const postData = async () => {
     const formData = new FormData();
-    formData.append("productDtoRequest", JSON.stringify(productDtoRequest));
+    formData.append('productDtoRequest', JSON.stringify(productDtoRequest));
     fileDatas.forEach((fileData) => {
-      formData.append("files", fileData);
+      formData.append('files', fileData);
     });
 
     try {
       setLoading(true);
       const response = await axios.post("/product/create", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
       });
@@ -242,7 +228,7 @@ const ProductAddPage = () => {
           progress: undefined,
           theme: "light",
         });
-        // history.push("/admin/product");
+        navigate("/admin/product");
         setFields([]);
         setFileDatas([]);
         setProductDtoRequest({
@@ -253,6 +239,7 @@ const ProductAddPage = () => {
       }
       setLoading(false);
     } catch (response) {
+      setLoading(false);
       console.log(response);
       toast.error("Create new product fail!", {
         position: "top-right",
@@ -265,7 +252,7 @@ const ProductAddPage = () => {
         theme: "light",
       });
     }
-  };
+  }
 
   return (
     <>
@@ -276,24 +263,14 @@ const ProductAddPage = () => {
           onSubmitCallback={handleProductFormSubmit}
           onResetForm={resetProductForm}
         />
-        {/* 
-                <div className="relative text-base font-regular px-4 py-4 text-black w-full bg-white  justify-start  rounded-none flex shadow">
-                    <span className="p-2 font-medium cursor-pointer" >add new ProductVariants</span>
-                </div> */}
 
         <div className="float-none w-full">
           <div className="grid grid-cols-2 scrollbar scrollbar-thin border-spacing-y-1.5 mb-3 gap-3 w-full shadow-md rounded shadow-blue-gray-100 h-[350px] overflow-y-auto">
             {fields.map((field) => (
               <div className="p-1 shadow shadow-blue-gray-400" key={field.id}>
-                <div className="grid items-end justify-end">
-                  <Button
-                    className="w-[70px] text-2xl justify-end"
-                    outline="text"
-                    onClick={() => handleRemoveField(field.id)}
-                  >
-                    <AiTwotoneDelete />
-                  </Button>
-                </div>
+                <div className="grid items-end justify-end"><Button className="w-[70px] text-2xl justify-end" outline="text" onClick={() => handleRemoveField(field.id)}>
+                  <AiTwotoneDelete />
+                </Button></div>
 
                 <FormProductVariant
                   index={field.id}
@@ -301,6 +278,7 @@ const ProductAddPage = () => {
                 />
               </div>
             ))}
+
           </div>
           <div className="flex flex-row gap-3 items-center">
             <div className="flex items-center justify-start">
@@ -328,6 +306,7 @@ const ProductAddPage = () => {
             </div>
           </div>
         </div>
+
       </div>
     </>
   );

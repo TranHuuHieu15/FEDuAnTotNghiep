@@ -26,8 +26,8 @@ const SelectDefault = ({
         <select disabled={disabled} className={selectClasses} {...field}>
           <option value="">{selectDefault}</option>
           {options &&
-            options.map((item) => (
-              <option value={item.value} key={item.id}>
+            options.map((item, index) => (
+              <option value={item.value} key={index}>
                 {item.name}
               </option>
             ))}

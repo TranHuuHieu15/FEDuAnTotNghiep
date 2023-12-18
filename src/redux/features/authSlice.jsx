@@ -1,19 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const loadTokenToLocalStorage = () => {
-  const token = localStorage.getItem("userToken");
+const loadTokenTosessionStorage = () => {
+  const token = sessionStorage.getItem("userToken");
   if (token !== undefined && token !== null) {
     return token;
   }
   return null;
 };
 
-const userInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
+const userInfo = JSON.parse(sessionStorage.getItem("userInfo")) || {};
 
 const initialState = {
   loading: false,
   userInfo, // for user object
-  userToken: loadTokenToLocalStorage(), // for storing the JWT
+  userToken: loadTokenTosessionStorage(), // for storing the JWT
   error: null,
   success: false, // for monitoring the registration process.
 };
@@ -31,9 +31,12 @@ const authSlice = createSlice({
       state.userInfo = action.payload.userInfo;
       state.userToken = action.payload.userToken;
       state.success = true;
-      localStorage.setItem("userInfo", JSON.stringify(action.payload.userInfo));
-      localStorage.setItem("userToken", action.payload.userToken);
-      localStorage.setItem("refreshToken", action.payload.refreshToken);
+      sessionStorage.setItem(
+        "userInfo",
+        JSON.stringify(action.payload.userInfo)
+      );
+      sessionStorage.setItem("userToken", action.payload.userToken);
+      sessionStorage.setItem("refreshToken", action.payload.refreshToken);
     },
     loginFailure: (state, action) => {
       state.loading = false;
@@ -59,13 +62,13 @@ const authSlice = createSlice({
       state.userInfo = {};
       state.userToken = null;
       state.success = false;
-      localStorage.removeItem("userInfo");
-      localStorage.removeItem("userToken");
-      localStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("userInfo");
+      sessionStorage.removeItem("userToken");
+      sessionStorage.removeItem("refreshToken");
     },
     updateUserInfo: (state, action) => {
       state.userInfo = action.payload;
-      localStorage.setItem("userInfo", JSON.stringify(state.userInfo));
+      sessionStorage.setItem("userInfo", JSON.stringify(state.userInfo));
     },
   },
 });

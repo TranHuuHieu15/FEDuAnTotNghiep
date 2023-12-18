@@ -16,6 +16,7 @@ import {
 import DialogAlert from "../../components/dialog/DialogAlert";
 
 const ColorManage = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const [showAlert, setShowAlert] = useState(false);
@@ -67,6 +68,7 @@ const ColorManage = () => {
 
   const handleCreate = async (colorDto) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show) {
         await axios.post("/color/create", colorDto, {
           headers: {
@@ -85,6 +87,7 @@ const ColorManage = () => {
           progress: undefined,
           theme: "light",
         });
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -106,6 +109,7 @@ const ColorManage = () => {
   };
   const handleUpdate = async (colorDto) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
         const endcodeId = showDialogCERef.current.id.replace(/^#/, "%23");
         await axios.put(`/color/update/${endcodeId}`, colorDto, {
@@ -126,6 +130,7 @@ const ColorManage = () => {
           theme: "light",
         });
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -207,7 +212,15 @@ const ColorManage = () => {
           {colorData.length > 0 &&
             colorData.map((item) => (
               <tr key={item.id}>
-                <td className="p-2 font-medium text-gray-800">{item.id}</td>
+                <td className="flex items-center justify-center p-2 font-medium text-gray-800">
+                  <div
+                    className="w-12 h-12 rounded-full"
+                    style={{
+                      backgroundColor: item.id,
+                      boxShadow: "0 0 0 1px rgba(0, 0, 0, 0.1)",
+                    }}
+                  ></div>
+                </td>
                 <td className="p-2">{item.name}</td>
                 <td className="p-2">
                   <span className="flex items-center justify-center gap-3">
@@ -242,6 +255,7 @@ const ColorManage = () => {
         cancel={handleCloseDialogCE}
         title="Color"
         dataToEdit={showDialogCE.dataToEdit}
+        loading={loading}
       />
       <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>

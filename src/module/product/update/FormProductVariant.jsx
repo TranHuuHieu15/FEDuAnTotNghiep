@@ -1,20 +1,25 @@
-
+// ProductVariantForm.jsx
 import { useEffect, useState } from "react";
 import * as yup from "yup";
-import { useForm } from "react-hook-form";
-import Input from "../../components/input/Input";
-import SelectDefault from "../../components/select/SelectDefault";
-import Button from "../../components/button/Button";
-import ImageUpload from "../../components/imageUpload/ImageUpload";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import Input from "../../../components/input/Input";
+import SelectDefault from "../../../components/select/SelectDefault";
+import ImageUpload from "../../../components/imageUpload/ImageUpload";
 import PropTypes from "prop-types";
-import axios from "../../config/axios.js";
-import Color from "../../components/color/Color.jsx";
+import axios from "../../../config/axios.js";
+import Select from "../../../components/select/Select.jsx";
+import Color from "../../../components/color/Color.jsx";
+import Button from "../../../components/button/Button.jsx";
 
-const FormProductVariant = ({ index, onSubmitCallback }) => {
+const FormProductVariant = ({ onSubmitCallback, initialData, isUpdate }) => {
   const [colors, setColors] = useState([]);
-  const [color, setColor] = useState(null);
+  const [chooseColor, setChooseColor] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
+
+  const handleColorChange = (color) => {
+    setChooseColor(color);
+  };
 
   useEffect(() => {
     const fetchColors = async () => {
@@ -29,7 +34,7 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
   }, []);
 
   const schema = yup.object({
-    [`image-${index}`]: yup
+    [`image`]: yup
       .mixed()
       .test("file", "Please choose a image file", (value) => {
         if (value instanceof File) {
@@ -44,16 +49,17 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
         }
         return false; // Trường hợp khác không hợp lệ
       }),
-    [`size-${index}`]: yup.string().required("Please choose size"),
-    // [`colorId-${index}`]: yup.string().required("Please choose color"),
-    [`quantity-${index}`]: yup.number().required("Please enter quantity"),
-    [`price-${index}`]: yup.number().required("Please enter price"),
+    [`size`]: yup.string().required("Please choose size"),
+    [`colorId`]: yup.string().required("Please choose color"),
+    [`quantity`]: yup.string().required("Please enter quantity"),
+    [`price`]: yup.string().required("Please enter price"),
   });
 
   const {
     formState: { errors: dynamicFormErrors, isValid: dynamicForm },
     control: dynamicFormControl,
     handleSubmit: handleSubmit,
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -62,21 +68,30 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
     if (isSaved === true) return;
     const lastData = {
       ...data,
-      [`colorId-${index}`]: color,
+      [`colorId`]: chooseColor,
     };
     onSubmitCallback(lastData, index);
     // Truyền dữ liệu về component gọi ProductVariantForm
   };
 
+  const handleChangeSave = () => {
+    if (!dynamicForm && !isSaved) return;
+    setIsSaved(!isSaved);
+  };
+
   const onSubmit = (data) => {
     if (!dynamicForm) return;
     setIsSaved(!isSaved);
-    productVariant(data, index);
+    productVariant(data);
   };
-
-  const handleColorChange = (color) => {
-    setColor(color);
-  };
+  useEffect(() => {
+    setChooseColor(initialData.colorId);
+    if (initialData) {
+      console.log(initialData);
+      // Populate the form with initialData
+      reset(initialData);
+    }
+  }, [initialData, reset]);
 
   return (
     <>
@@ -87,7 +102,8 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
         <div className="grid grid-row items-center justify-center gap-3">
           <div className="grip-col">
             <ImageUpload
-              name={`image-${index}`}
+              isUpdate={isUpdate}
+              name={`image`}
               className="w-full"
               control={dynamicFormControl}
               errors={dynamicFormErrors}
@@ -101,7 +117,7 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
                   <div className="grid grid-flow-col gap-3">
                     <Input
                       label="Quantity"
-                      name={`quantity-${index}`}
+                      name={`quantity`}
                       placeholder="Enter quantity product variant"
                       className="w-full"
                       control={dynamicFormControl}
@@ -112,26 +128,26 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
                   <div className="grid grid-cols-2 items-end gap-3">
                     <Input
                       label="Price"
-                      name={`price-${index}`}
+                      name={`price`}
                       placeholder="Enter price product variant"
-                      className=""
+                      className="w-full"
                       control={dynamicFormControl}
                       errors={dynamicFormErrors}
                       disabled={isSaved}
                     />
                     <SelectDefault
-                      mainClassName=""
+                      mainClassName="flex flex-col"
                       className2="text-sm ml-1 font-normal"
-                      className="p-2 rounded-lg border-blue-gray-300 w-full"
+                      className="p-2 rounded-lg border-blue-gray-300 w-[200px]"
                       title="Size"
                       selectDefault="Select size"
-                      name={`size-${index}`}
+                      name={`size`}
                       options={[
                         { id: 0, name: "S", value: "S" },
                         { id: 1, name: "M", value: "M" },
                         { id: 2, name: "L", value: "L" },
                         { id: 3, name: "XL", value: "XL" },
-                        { id: 4, name: "XXL", value: "XXL" },
+                        { id: 4, name: "XL", value: "XL" },
                       ]}
                       control={dynamicFormControl}
                       errors={dynamicFormErrors}
@@ -144,8 +160,8 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
                   <div className="flex">
                     <Color
                       color={[]}
-                      name={`colorId-${index}`}
-                      selectedColor={color}
+                      name={`colorId}`}
+                      selectedColor={chooseColor}
                       availableColors={colors}
                       onColorChange={handleColorChange}
                     />
@@ -156,8 +172,9 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
           </div>
           <div className="p-2 flex items-center justify-center">
             <Button
-              className="w-[100px] items-center justify-end"
+              className="w-[150px]"
               type="submit"
+              // onClick={handleChangeSave}
             >
               {isSaved ? "Edit" : "Save"}
             </Button>
@@ -168,8 +185,9 @@ const FormProductVariant = ({ index, onSubmitCallback }) => {
   );
 };
 FormProductVariant.propTypes = {
-  index: PropTypes.number.isRequired,
+  isUpdate: PropTypes.bool,
   onSubmitCallback: PropTypes.func.isRequired,
+  initialData: PropTypes.object,
 };
 
 export default FormProductVariant;

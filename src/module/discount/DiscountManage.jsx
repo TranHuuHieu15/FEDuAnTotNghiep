@@ -15,6 +15,7 @@ import DialogAlert from "../../components/dialog/DialogAlert";
 import Pagination from "../../components/pagination/Pagination.jsx";
 
 const DiscountManage = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const [showAlert, setShowAlert] = useState(false);
@@ -76,6 +77,7 @@ const DiscountManage = () => {
   };
   const handleCreate = async (data) => {
     try {
+      setLoading(true);
       if (showDialogCERef.current.show) {
         const formData = new FormData();
         typeof data.image === "string"
@@ -84,7 +86,6 @@ const DiscountManage = () => {
         formData.append("discount", data.discount);
         formData.append("registerDate", data.registerDate);
         formData.append("expirationDate", data.expirationDate);
-        formData.append("quantity", data.quantity);
         formData.append("categoryId", data.categoryId);
         formData.append("description", data.description);
         await axios.post("/discount/create", formData, {
@@ -104,6 +105,7 @@ const DiscountManage = () => {
           progress: undefined,
           theme: "light",
         });
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -125,6 +127,7 @@ const DiscountManage = () => {
   };
   const handleUpdate = async (data) => {
     try {
+      setLoading(true);
       const formData = new FormData();
       typeof data.image === "string"
         ? formData.append("image", data.image)
@@ -132,7 +135,6 @@ const DiscountManage = () => {
       formData.append("discount", data.discount);
       formData.append("registerDate", data.registerDate);
       formData.append("expirationDate", data.expirationDate);
-      formData.append("quantity", data.quantity);
       formData.append("categoryId", data.categoryId);
       formData.append("description", data.description);
       if (showDialogCERef.current.show && showDialogCERef.current.id) {
@@ -157,6 +159,7 @@ const DiscountManage = () => {
           progress: undefined,
           theme: "light",
         });
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -308,6 +311,7 @@ const DiscountManage = () => {
         cancel={handleCloseDialogCE}
         title="Discount"
         dataToEdit={showDialogCE.dataToEdit}
+        loading={loading}
       />
       <DialogAlert show={showAlert} cancel={handleCloseAlert} />
     </>

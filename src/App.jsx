@@ -33,8 +33,8 @@ const ColorManage = lazy(() => import("./module/color/ColorManage"));
 const VoucherPage = lazy(() => import("./pages/VoucherPage"));
 const ProductManagePage = lazy(() => import("./module/product/ProductManage"));
 const ProductCEPage = lazy(() => import("./module/product/ProductCEPage"));
-const ProductAddPage = lazy(() => import("./module/product/ProductAddPage"));
 const OrderManage = lazy(() => import("./module/order/OrderManage"));
+const ProductAddPage = lazy(() => import("./module/product/ProductAddPage"));
 const AccountManage = lazy(() => import("./module/account/AccountManage"));
 const HashtagManage = lazy(() => import("./module/hashtag/HashtagManage"));
 const Information = lazy(() => import("./module/dashboard/Information"));
@@ -103,8 +103,10 @@ function App() {
               path="/admin/product/edit/:id"
               element={<ProductCEPage></ProductCEPage>}
             ></Route>
-            <Route path="/admin/account"
-              element={<AccountManage></AccountManage>}></Route>
+            <Route
+              path="/admin/account"
+              element={<AccountManage></AccountManage>}
+            ></Route>
             <Route
               path="/admin/category"
               element={<CategoryManage></CategoryManage>}
@@ -112,10 +114,6 @@ function App() {
             <Route
               path="/admin/brand"
               element={<BrandManage></BrandManage>}
-            ></Route>
-            <Route
-              path="/admin/voucher"
-              element={<VoucherManage></VoucherManage>}
             ></Route>
             <Route
               path="/admin/payment"

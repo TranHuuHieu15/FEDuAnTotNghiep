@@ -1,20 +1,21 @@
-
+// ProductForm.jsx
 import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
-import Input from "../../components/input/Input";
-import SelectDefault from "../../components/select/SelectDefault";
-import Button from "../../components/button/Button";
+import Input from "../../../components/input/Input";
+import SelectDefault from "../../../components/select/SelectDefault";
+import Button from "../../../components/button/Button";
 import { yupResolver } from "@hookform/resolvers/yup";
-import ImageUpload from "../../components/imageUpload/ImageUpload";
-import Select from "../../components/select/Select";
-import axios from "../../config/axios";
-import Textarea from "../../components/textarea/Textarea.jsx";
-import DialogHashtag from "../../components/dialog/DialogHashtag.jsx";
+import ImageUpload from "../../../components/imageUpload/ImageUpload";
+import Select from "../../../components/select/Select";
+import axios from "../../../config/axios";
+import Textarea from "../../../components/textarea/Textarea.jsx";
+import DialogHashtag from "../../../components/dialog/DialogHashtag.jsx";
 import PropTypes from "prop-types";
 
-const ProductForm = ({ category, onSubmitCallback }) => {
+const ProductForm = ({ onSubmitCallback, initialData, hashtags, isUpdate }) => {
   const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [selectHashTag, setSelectHashtag] = useState([]);
   const [selectedHashtags, setSelectedHashtags] = useState([]);
   const [openDialogHashtag, setDialogHashtag] = useState(false);
@@ -31,48 +32,48 @@ const ProductForm = ({ category, onSubmitCallback }) => {
     };
     fetchBrands();
   }, []);
-
   useEffect(() => {
-    const fetchBrands = async () => {
+    const fetchCategory = async () => {
       try {
-        const response = await axios.get("/brand");
-        setBrands(response.data);
+        const response = await axios.get("/category");
+        setCategories(response.data);
       } catch (error) {
         console.error("Error fetching brands:", error);
       }
     };
-    fetchBrands();
+    fetchCategory();
   }, []);
 
-  const schema = yup.object({
-    image: yup
-      .mixed()
-      .test("file", "Please choose a valid image file", (value) => {
-        if (value instanceof File) {
-          const acceptedExtensions = [".jpg", ".jpeg", ".png"];
-          const fileExtension = value.name.split(".").pop().toLowerCase();
-          return acceptedExtensions.includes(`.${fileExtension}`);
-        } else if (typeof value === "string") {
-          const imageExtensions = [".jpg", ".jpeg", ".png"];
-          return imageExtensions.some((extension) =>
-            value.toLowerCase().endsWith(extension)
-          );
-        }
-        return false;
-      }),
-    name: yup.string().required("Please enter product name !"),
-    season: yup.string().required("Please enter product season !"),
-    gender: yup.string().required("Please enter product gender !"),
-    categoryId: yup.string().required("Please enter product category !"),
-    brandId: yup.string().required("Please enter product brands ! ok"),
-    description: yup.string().required("Please enter product description !"),
-  })
+  const schema = yup
+    .object({
+      image: yup
+        .mixed()
+        .test("file", "Please choose a valid image file", (value) => {
+          if (value instanceof File) {
+            const acceptedExtensions = [".jpg", ".jpeg", ".png"];
+            const fileExtension = value.name.split(".").pop().toLowerCase();
+            return acceptedExtensions.includes(`.${fileExtension}`);
+          } else if (typeof value === "string") {
+            const imageExtensions = [".jpg", ".jpeg", ".png"];
+            return imageExtensions.some((extension) =>
+              value.toLowerCase().endsWith(extension)
+            );
+          }
+          return false;
+        }),
+      name: yup.string().required("Please enter product name"),
+      season: yup.string().required("Please enter product season"),
+      gender: yup.string().required("Please enter product gender"),
+      categoryId: yup.string().required("Please enter product category"),
+      brandId: yup.string().required("Please enter product brand"),
+    })
     .required();
 
   const {
     formState: { errors, isValid: dynamicForm },
     control,
     handleSubmit: handleSubmit,
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -148,12 +149,25 @@ const ProductForm = ({ category, onSubmitCallback }) => {
     );
   };
 
+  useEffect(() => {
+    if (initialData) {
+      // Đặt dữ liệu vào các trường form tương ứng
+      reset(initialData);
+      // Đặt các trạng thái khác nếu cần
+      if (hashtags && hashtags.length > 0) {
+        // Chèn các hashtag từ props vào trạng thái của component
+        setSelectHashtag([...selectHashTag, ...hashtags]);
+      }
+    }
+  }, [initialData, reset]);
+
   return (
     <div className="flex rounded w-full p-10">
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex flex-row gap-3">
           <div className="flex-col p-2">
             <ImageUpload
+              isUpdate={isUpdate}
               name="image"
               className="w-[200px]"
               control={control}
@@ -162,13 +176,6 @@ const ProductForm = ({ category, onSubmitCallback }) => {
               size="w-[500px] h-[300px]"
             />
           </div>
-          {/* <ImageUpload
-                        name="image"
-                        className="w-full"
-                        control={control}
-                        errors={errors}
-                        disabled={isSaved}
-                    /> */}
           <div className="flex flex-col min-w-[635px] max-w-[635px]">
             <Input
               label="Name"
@@ -216,7 +223,7 @@ const ProductForm = ({ category, onSubmitCallback }) => {
                   name="categoryId"
                   control={control}
                   errors={errors}
-                  options={category}
+                  options={categories}
                   disabled={isSaved}
                 />
                 <Select
@@ -257,7 +264,7 @@ const ProductForm = ({ category, onSubmitCallback }) => {
                 </Button>
               </div>
             </div>
-            <div className="mt-2 w-full p-2">
+            <div className="mt-2 w-full">
               <Textarea
                 label="Description"
                 name="description"
@@ -290,7 +297,10 @@ const ProductForm = ({ category, onSubmitCallback }) => {
 };
 
 ProductForm.propTypes = {
-  category: PropTypes.array,
+  isUpdate: PropTypes.bool,
   onSubmitCallback: PropTypes.func,
+  onResetForm: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
+  initialData: PropTypes.object,
+  hashtags: PropTypes.array,
 };
 export default ProductForm;

@@ -5,7 +5,7 @@ import axios from "../../config/axios.js";
 import { toast } from "react-toastify";
 import { CiEdit } from "react-icons/ci";
 import { BsTrash3 } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { selectCurrentToken } from "../../redux/features/authSlice.jsx";
 import { useSelector } from "react-redux";
 import Pagination from "../../components/pagination/Pagination.jsx";
@@ -21,7 +21,6 @@ const ProductManage = () => {
     id: null,
   });
 
-
   //Call api
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +32,7 @@ const ProductManage = () => {
       } catch (error) {
         console.log(error);
       }
-    }
+    };
     fetchData();
   }, [currentPage]);
 
@@ -63,9 +62,7 @@ const ProductManage = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setProductData(
-          productData.filter((item) => item.id !== showDialog.id)
-        );
+        setProductData(productData.filter((item) => item.id !== showDialog.id));
         handleCloseDialog();
         toast.success("Delete product successfully!", {
           position: "top-right",
@@ -95,12 +92,14 @@ const ProductManage = () => {
 
   return (
     <>
-      <Button
-        className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
-      // onClick={handleCreateTrue}
-      >
-        Add new product
-      </Button>
+      <Link to="/admin/product/add">
+        <Button
+          className="cursor-pointer float-right mr-2 mb-2 bg-light-green-500"
+          // onClick={handleCreateTrue}
+        >
+          Add new product
+        </Button>
+      </Link>
       <table className="w-full table-auto text-center">
         <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-400">
           <tr>

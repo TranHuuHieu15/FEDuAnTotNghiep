@@ -108,6 +108,7 @@ const DiscountManage = () => {
         setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -162,6 +163,7 @@ const DiscountManage = () => {
         setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };

@@ -98,6 +98,7 @@ const CategoryManage = () => {
         setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -143,6 +144,7 @@ const CategoryManage = () => {
       }
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };

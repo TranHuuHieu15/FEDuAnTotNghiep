@@ -109,6 +109,7 @@ const VoucherManage = () => {
       }
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -168,6 +169,7 @@ const VoucherManage = () => {
       }
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };

@@ -12,8 +12,11 @@ import Textarea from "../../components/textarea/Textarea.jsx";
 import { updateUserInfo } from "../../redux/features/authSlice.jsx";
 import { useDispatch } from "react-redux";
 import { useUpdateInfoMutation } from "../../redux/api/authApi";
+import ClipLoader from "react-spinners/ClipLoader";
+import { useState } from "react";
 
 const AccountInfo = () => {
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
   const [updateInfo] = useUpdateInfoMutation();
@@ -44,6 +47,7 @@ const AccountInfo = () => {
   const onSubmitHandler = async (data) => {
     if (!isValid) return;
     try {
+      setLoading(true);
       const formData = new FormData();
       typeof data.image === "string"
         ? formData.append("image", data.image)
@@ -86,7 +90,9 @@ const AccountInfo = () => {
         progress: undefined,
         theme: "light",
       });
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       toast.error("Update user fail!", {
         position: "top-right",
         autoClose: 2000,
@@ -195,7 +201,16 @@ const AccountInfo = () => {
                   type="submit"
                   disabled={!isDirty}
                 >
-                  Update
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      size={15}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                  ) : (
+                    "Update"
+                  )}
                 </Button>
               )}
             </div>

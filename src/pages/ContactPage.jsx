@@ -82,6 +82,7 @@ const ContactPage = () => {
       });
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error creating feedback:", error);
     }
   };

@@ -253,6 +253,7 @@ const ProductAddPage = () => {
       }
       setLoading(false);
     } catch (response) {
+      setLoading(false);
       console.log(response);
       toast.error("Create new product fail!", {
         position: "top-right",

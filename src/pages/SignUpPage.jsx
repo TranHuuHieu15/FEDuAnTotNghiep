@@ -96,6 +96,7 @@ const SignUpPage = () => {
         });
       }
       dispatch(registerFailure(error.data.message));
+      setLoading(false);
     }
   };
   const handleOpenGoogle = () => {

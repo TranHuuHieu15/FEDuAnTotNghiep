@@ -14,6 +14,7 @@ import RadioButton from "../../components/radioButton/RadioButton";
 import ImageUpload from "../../components/imageUpload/ImageUpload";
 import Textarea from "../../components/textarea/Textarea";
 import { useEffect } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const DialogCEAccount = ({
   show,
@@ -21,6 +22,7 @@ const DialogCEAccount = ({
   handleSubmitData,
   isUpdate,
   dataToEdit,
+  loading,
 }) => {
   const schema = yup
     .object({
@@ -169,7 +171,16 @@ const DialogCEAccount = ({
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  Submit
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      size={15}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </div>
             </DialogFooter>
@@ -186,6 +197,7 @@ DialogCEAccount.propTypes = {
   cancel: PropTypes.func,
   show: PropTypes.bool,
   dataToEdit: PropTypes.object,
+  loading: PropTypes.bool,
 };
 
 export default DialogCEAccount;

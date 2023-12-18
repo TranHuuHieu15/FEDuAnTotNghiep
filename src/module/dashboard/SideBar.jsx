@@ -30,13 +30,13 @@ const SideBar = () => {
   };
   return (
     <>
-      <Card className="w-full h-screen max-w-xs max-h-screen">
+      <Card className="w-full h-auto max-w-xs">
         <div className="flex items-center justify-center">
           <Link to="/admin">
             <img src={logo} alt="" className="h-28 w-28" />
           </Link>
         </div>
-        <div className="overflow-auto scrollbar scrollbar-thin scrollbar-thumb-blue-gray-100 max-h-[calc(100vh-72px">
+        <div className="overflow-auto scrollbar scrollbar-thin scrollbar-thumb-blue-gray-100 max-h-[calc(100vh-72px)]">
           <List className="px-5">
             <Link to="/admin">
               <ListItem>

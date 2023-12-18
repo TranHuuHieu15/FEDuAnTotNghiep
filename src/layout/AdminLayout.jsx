@@ -6,7 +6,7 @@ const AdminLayout = () => {
     <>
       <div className="grid grid-cols-5 gap-0">
         <SideBar></SideBar>
-        <div className="col-span-4">
+        <div className="h-screen col-span-4">
           <Header></Header>
           <div className="my-10">
             <Outlet></Outlet>

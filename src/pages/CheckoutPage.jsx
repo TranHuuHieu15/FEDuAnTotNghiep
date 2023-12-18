@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { resetCart } from "../redux/features/cartSlice";
 import { CarouselTransition } from "../components/carousel/Carousel";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const deliveryMethods = [
   { id: 1, name: "Standard", description: "4-10 business days", price: 5.0 },
@@ -23,6 +24,7 @@ const deliveryMethods = [
 ];
 
 const CheckoutPage = () => {
+  const [loading, setLoading] = useState(false);
   const token = useSelector(selectCurrentToken);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -104,6 +106,19 @@ const CheckoutPage = () => {
       });
       return;
     }
+    if (cartData.length === 0) {
+      toast.error("Please add product to cart!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     const orderItem = {
       orderDto: {
         total: total,
@@ -115,6 +130,7 @@ const CheckoutPage = () => {
       discount: discount,
     };
     try {
+      setLoading(true);
       const response = await axios.post(`/order/create`, orderItem, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -148,6 +164,7 @@ const CheckoutPage = () => {
         progress: undefined,
         theme: "light",
       });
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -336,7 +353,16 @@ const CheckoutPage = () => {
                   onClick={handleOrder}
                   className="w-full shadow-none bg-[#1F2937] text-[#FFF] hover:scale-105"
                 >
-                  Confirm Order
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      size={15}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                  ) : (
+                    "Confirm Order"
+                  )}
                 </Button>
               </div>
             </div>

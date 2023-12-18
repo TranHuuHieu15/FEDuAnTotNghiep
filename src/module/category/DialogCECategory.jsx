@@ -81,6 +81,7 @@ const DialogCECategory = ({
                 name="description"
                 label="Description"
                 control={control}
+                errors={errors}
               />
             </div>
             <DialogFooter className="float-right">

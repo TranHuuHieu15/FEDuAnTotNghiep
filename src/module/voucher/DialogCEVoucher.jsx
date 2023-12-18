@@ -235,6 +235,7 @@ const DialogCEVoucher = ({
                   name="description"
                   label="Description"
                   control={control}
+                  errors={errors}
                 />
               </div>
             </div>

@@ -150,7 +150,13 @@ const SignInPage = () => {
         <div className="flex items-center justify-center gap-3">
           <div className="z-10 flex flex-col self-center lg:px-14 sm:max-w-4xl xl:max-w-md w-[550px]">
             <div className="flex-col items-center self-start justify-center hidden gap-0 text-gray-300 lg:flex">
-              <img src={logo} alt="Logo" width="80%" />
+              <img
+                src={logo}
+                alt="Logo"
+                width="80%"
+                className="cursor-pointer"
+                onClick={() => navigate("/")}
+              />
               <h1 className="text-3xl font-semibold text-gray-900 font-eculid">
                 Welcome Back
               </h1>

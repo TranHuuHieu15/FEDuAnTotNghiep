@@ -158,7 +158,7 @@ const DialogCEAccount = ({
                     errors={errors}
                   ></RadioButton>
                 </div>
-                <Textarea label="Address" name="address" control={control} />
+                <Textarea label="Address" name="address" control={control}  errors={errors}/>
               </div>
             </div>
             <DialogFooter className="float-right">

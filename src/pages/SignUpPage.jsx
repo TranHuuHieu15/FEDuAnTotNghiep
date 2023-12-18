@@ -251,7 +251,13 @@ const SignUpPage = () => {
           </div>
           <div className="z-10 flex flex-col justify-center sm:max-w-4xl w-[620px]">
             <div className="flex-col items-center justify-center hidden w-full gap-2 text-gray-300 lg:flex ">
-              <img src={logo} alt="Logo" width="50%" />
+              <img
+                src={logo}
+                alt="Logo"
+                width="50%"
+                className="cursor-auto"
+                onClick={() => navigate("/")}
+              />
               <h1 className="mx-2 text-2xl font-semibold text-gray-900 font-eculid">
                 Register Now for Exclusive Shopping Benefits!
               </h1>

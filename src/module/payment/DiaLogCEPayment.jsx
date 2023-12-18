@@ -103,6 +103,7 @@ const DialogCEPayment = ({
                     label="Description"
                     name="description"
                     control={control}
+                    errors={errors}
                   />
                 </div>
               </div>

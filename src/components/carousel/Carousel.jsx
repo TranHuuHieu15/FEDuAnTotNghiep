@@ -24,7 +24,9 @@ export function CarouselTransition() {
           size="lg"
           onClick={handlePrev}
           className="!absolute top-2/4 left-4 -translate-y-2/4 hidden"
-        ></IconButton>
+        >
+          null
+        </IconButton>
       )}
       nextArrow={({ handleNext }) => (
         <IconButton
@@ -33,7 +35,9 @@ export function CarouselTransition() {
           size="lg"
           onClick={handleNext}
           className="!absolute top-2/4 !right-4 -translate-y-2/4 hidden"
-        ></IconButton>
+        >
+          null
+        </IconButton>
       )}
       navigation={({ setActiveIndex, activeIndex, length }) => (
         <div className="absolute z-50 hidden gap-2 bottom-4 left-2/4 -translate-x-2/4">

@@ -149,7 +149,7 @@ const CheckoutPage = () => {
         if (responseVNPay) {
           const paymentUrl = responseVNPay.data;
           // Mở URL trong trình duyệt mới
-          window.open(paymentUrl, "_blank"); //"_blank là mở một cửa sổ mới"
+          window.open(paymentUrl, "_blank");
         }
       }
       dispatch(resetCart());
@@ -166,6 +166,7 @@ const CheckoutPage = () => {
       });
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };

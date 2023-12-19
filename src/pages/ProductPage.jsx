@@ -37,10 +37,10 @@ const ProductPage = () => {
   useEffect(() => {
     if (brand || category || gender || season) {
       fetchData(
-        `/product?season=${season}&gender=${gender}&category=${category}&brand=${brand}`
+        `/product?season=${season}&gender=${gender}&category=${category}&brand=${brand}&size=16`
       );
     } else if (queryDebounce) {
-      fetchData(`/product/search?key=${queryDebounce}`);
+      fetchData(`/product/search?key=${queryDebounce}&size=16`);
     } else {
       fetchData(`/product?page=${currentPage}&size=16`);
     }
